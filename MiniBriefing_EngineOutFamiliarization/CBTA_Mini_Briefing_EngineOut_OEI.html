@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engine Out Familiarization Briefing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="author" content="Capt. Supakit Punyangam">
+<meta name="copyright" content="© Capt. Supakit Punyangam">
+<!-- © Capt. Supakit Punyangam. Engine Out Familiarization mini briefing. Do not copy or distribute without permission. -->
+<link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0D1521; --panel:#152033; --panel2:#1D2C45; --line:#2E3F5C; --fg:#EDF1F7; --muted:#9BA9BD;
+  --accent:#FFC72C; --accent-ink:#13171F; --accent-text:#FFC72C; --accent-soft:rgba(255,199,44,0.16);
+  --lift:#6DB7FF; --weight:#FF8F66; --ok:#5ED39A; --bad:#FF6B6B;
+  --f-body:'B612',system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  --f-mono:'B612 Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --f-disp:'Barlow Condensed','Arial Narrow','Helvetica Neue',Arial,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#F2F5F9; --panel:#FFFFFF; --panel2:#E6ECF4; --line:#C5D0DF; --fg:#111B2B; --muted:#53617A;
+    --accent:#FFC72C; --accent-ink:#13171F; --accent-text:#7A5200; --accent-soft:rgba(255,199,44,0.35);
+    --lift:#0B5FC0; --weight:#BF3B0B; --ok:#0E7A4B; --bad:#B3261E; color-scheme:light;
+  }
+}
+:root[data-theme="light"] {
+  --bg:#F2F5F9; --panel:#FFFFFF; --panel2:#E6ECF4; --line:#C5D0DF; --fg:#111B2B; --muted:#53617A;
+  --accent:#FFC72C; --accent-ink:#13171F; --accent-text:#7A5200; --accent-soft:rgba(255,199,44,0.35);
+  --lift:#0B5FC0; --weight:#BF3B0B; --ok:#0E7A4B; --bad:#B3261E; color-scheme:light;
+}
+html { height:100%; box-sizing:border-box; }
+body { height:100%; box-sizing:border-box; margin:0; overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:var(--bg); color:var(--fg); font-family:var(--f-body); }
+:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+body.idle { cursor:none; }
+#viewport { position:relative; width:100%; height:100%; overflow:hidden; }
+#stage { position:absolute; left:50%; top:50%; width:1920px; height:1080px; margin:-540px 0 0 -960px; transform:scale(var(--s,1)); transform-origin:50% 50%; }
+
+.top { position:absolute; left:96px; right:96px; top:36px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.brand, .topic { font:700 20px/1 var(--f-mono); letter-spacing:.16em; color:var(--muted); white-space:nowrap; }
+.stages { display:flex; gap:10px; list-style:none; margin:0; padding:0; }
+.stages li { display:flex; gap:10px; align-items:baseline; font:400 20px/1 var(--f-mono); padding:12px 18px; border:1.5px solid var(--line); border-radius:4px; color:var(--muted); }
+.stages li b { font-weight:700; }
+.stages li.on { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+
+.foot { position:absolute; left:96px; right:96px; bottom:30px; height:174px; display:flex; align-items:flex-end; justify-content:space-between; }
+.credit { position:absolute; left:0; bottom:40px; font:400 17px/1 var(--f-mono); letter-spacing:.06em; color:var(--muted); white-space:nowrap; opacity:.85; user-select:none; }
+.count { font:400 22px/1 var(--f-mono); color:var(--muted); } .count b { color:var(--fg); font-weight:700; }
+.corner { display:flex; align-items:flex-end; gap:24px; }
+.cgrid { display:grid; grid-template-columns:repeat(3,54px); grid-auto-rows:54px; gap:6px; }
+.wheelc { display:block; width:174px; height:174px; }
+.seg .sh { fill:var(--panel); stroke:var(--line); stroke-width:1.5; transition:fill .25s, stroke .25s; }
+.seg .ar { fill:none; stroke:var(--line); stroke-width:14; transition:stroke .25s; }
+.seg .ah { fill:var(--line); transition:fill .25s; }
+.seg text { font:700 12.5px var(--f-mono); fill:var(--muted); text-anchor:middle; } .seg text.at { font-size:10.5px; letter-spacing:.04em; }
+.seg.p .sh { fill:var(--accent); stroke:var(--accent); } .seg.p .ar { stroke:var(--accent); } .seg.p .ah { fill:var(--accent); } .seg.p text { fill:var(--accent-ink); }
+.seg.s .sh { fill:var(--accent-soft); stroke:var(--accent); } .seg.s .ar { stroke:var(--accent); stroke-opacity:.45; } .seg.s .ah { fill:var(--accent); fill-opacity:.45; } .seg.s text { fill:var(--accent-text); }
+.cell { display:grid; place-items:center; align-content:center; border:1.5px solid var(--line); border-radius:3px; color:var(--muted); transition:background .25s,color .25s,border-color .25s; }
+.cell .c { font:700 16px/1 var(--f-mono); } .cell .n { display:none; }
+.cell.p { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.cell.s { background:var(--accent-soft); border-color:var(--accent); color:var(--accent-text); }
+.cgrid.big { grid-template-columns:repeat(3,1fr); grid-auto-rows:172px; gap:10px; }
+.cgrid.big .cell { padding:10px 12px; gap:8px; text-align:left; justify-items:start; }
+.cgrid.big .cell .c { font-size:24px; }
+.cgrid.big .cell .n { display:block; font:400 17px/1.25 var(--f-body); }
+
+.slide { position:absolute; left:96px; right:96px; top:128px; height:742px; display:none; }
+.slide.on { display:block; }
+.eyebrow { margin:0 0 16px; font:700 22px/1 var(--f-mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent-text); }
+h1 { margin:0; font:700 76px/1 var(--f-disp); letter-spacing:.005em; text-wrap:balance; }
+h3 { margin:0 0 14px; font:700 26px/1.2 var(--f-body); }
+.hint { margin:14px 0 0; font-size:26px; color:var(--muted); }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:24px 28px; }
+.v { display:inline-block; margin-left:8px; padding:3px 8px; border:1.5px solid var(--accent); border-radius:3px; font:700 15px/1 var(--f-mono); color:var(--accent-text); letter-spacing:.06em; vertical-align:2px; white-space:nowrap; }
+.v.ok { border-color:var(--ok); color:var(--ok); }
+.rv { opacity:0; transition:opacity .35s ease, transform .35s ease; }
+.rv.h { transform:translateY(14px); }
+.rv.on { opacity:1; } .rv.h.on { transform:none; }
+.focus .rv.on:not(.cur) { opacity:.5; }
+.notes { display:none; }
+@media (prefers-reduced-motion: reduce) { .rv,.cell { transition:none; } .rv.h { transform:none; } }
+
+/* 1 */
+.s1 h1 { font-size:176px; line-height:.92; text-transform:uppercase; letter-spacing:.01em; }
+.s1 .sub { margin:22px 0 0; font-size:38px; color:var(--muted); }
+.s1 .by { margin:14px 0 0; font:700 24px/1.2 var(--f-mono); letter-spacing:.08em; color:var(--accent-text); }
+.roadmap { position:absolute; left:0; right:0; bottom:0; display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+.roadmap .panel { padding:22px 26px; }
+.roadmap .num { font:700 44px/1 var(--f-mono); color:var(--accent-text); }
+.roadmap .t { margin:12px 0 6px; font:700 30px/1.15 var(--f-body); }
+.roadmap .d { font-size:22px; line-height:1.35; color:var(--muted); }
+/* 2 */
+.s2 .wrap { display:grid; grid-template-columns:1fr 640px; gap:56px; margin-top:28px; }
+.comp-list { display:grid; gap:14px; align-content:start; min-width:0; }
+.comp { display:grid; grid-template-columns:120px 1fr; gap:24px; align-items:center; padding:18px 24px; }
+.chip { display:grid; place-items:center; height:64px; border:1.5px solid var(--accent); border-radius:4px; font:700 28px/1 var(--f-mono); color:var(--accent-text); background:var(--accent-soft); }
+.chip.p { background:var(--accent); color:var(--accent-ink); }
+.comp .nm { font:700 28px/1.2 var(--f-body); }
+.comp .ob { margin-top:6px; font-size:24px; line-height:1.35; color:var(--muted); }
+.outcome { margin-top:4px; padding:20px 28px; background:var(--accent); color:var(--accent-ink); border-radius:6px; font:700 28px/1.3 var(--f-body); }
+/* 3 */
+.qs { display:grid; gap:14px; margin-top:22px; }
+.q { display:grid; grid-template-columns:210px 1fr 130px; gap:28px; align-items:center; padding:18px 28px; background:var(--panel); border:1px solid var(--line); border-radius:6px; }
+.q .lv { font:700 20px/1 var(--f-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.q p { margin:0; font-size:36px; line-height:1.22; }
+.q .chip { height:52px; font-size:22px; }
+.q.cur { border-color:var(--accent); }
+
+/* shared drawing styles */
+.lbl { font:700 24px var(--f-mono); } .lbl.lift { fill:var(--lift); } .lbl.weight { fill:var(--weight); } .lbl.muted { fill:var(--muted); } .lbl.acc { fill:var(--accent-text); } .lbl.bad { fill:var(--bad); }
+.dgl { font:700 15px var(--f-mono); fill:var(--muted); text-anchor:middle; letter-spacing:.08em; }
+.dg { fill:var(--bg); stroke:var(--line); stroke-width:2; }
+.dgt { font:700 24px var(--f-mono); fill:var(--fg); text-anchor:middle; } .dgt.s { font-size:20px; } .dgt.xs { font-size:16px; }
+.msg { font:700 19px var(--f-mono); fill:var(--accent-text); text-anchor:middle; } .msg.ok { fill:var(--ok); } .msg.bad { fill:var(--bad); }
+.w-rim { fill:none; stroke:var(--fg); stroke-width:10; } .w-arm { fill:none; stroke:var(--fg); stroke-width:10; stroke-linecap:round; }
+.w-grip { fill:var(--fg); } .w-idx { fill:var(--accent); } .w-ref { fill:var(--fg); }
+.ped { fill:var(--panel2); stroke:var(--fg); stroke-width:3; } .ped.act { fill:var(--accent); stroke:var(--accent); }
+.slat { stroke:var(--fg); stroke-width:3; opacity:.45; } .ped-c { fill:var(--panel2); stroke:var(--fg); stroke-width:3; }
+.pbar { fill:var(--weight); }
+.sc { stroke:var(--muted); stroke-width:2; } .sct { font:400 15px var(--f-mono); fill:var(--muted); text-anchor:middle; }
+.ptr-tri { fill:var(--accent); }
+.shake { animation:shk .22s infinite; transform-box:fill-box; transform-origin:center; }
+@keyframes shk { 0%,100% { transform:translate(0,0) rotate(0); } 25% { transform:translate(-1.5px,1px) rotate(-2deg); } 75% { transform:translate(1.5px,-1px) rotate(2deg); } }
+@media (prefers-reduced-motion: reduce) { .shake { animation:none; } }
+.track { height:14px; background:var(--panel2); border-radius:2px; overflow:hidden; }
+
+/* 4 rudder input */
+.s4.on { display:grid; grid-template-columns:900px 1fr; gap:60px; }
+.s4 .left, .s4 .right { min-width:0; }
+#rudSvg { display:block; width:900px; height:560px; }
+.t-body { fill:var(--fg); } .t-eng { fill:var(--muted); } .t-engop { fill:var(--panel2); stroke:var(--lift); stroke-width:3; }
+.t-thr { stroke:var(--lift); stroke-width:8; stroke-linecap:round; fill:none; } .t-rud { stroke:var(--weight); stroke-width:8; stroke-linecap:round; fill:none; }
+.t-yaw { stroke:var(--accent-text); stroke-width:5; fill:none; stroke-linecap:round; } .t-rudder { fill:var(--weight); } .t-x { stroke:var(--bad); stroke-width:6; stroke-linecap:round; }
+.hd-ref { stroke:var(--muted); stroke-width:2; stroke-dasharray:6 8; }
+.rud-ctl { display:flex; align-items:center; gap:12px; margin-top:10px; }
+.rud-ctl label { font:700 18px/1 var(--f-mono); color:var(--muted); letter-spacing:.1em; white-space:nowrap; }
+.rud-ctl input[type=range] { flex:1; min-width:60px; accent-color:var(--accent); height:28px; }
+.pre { display:flex; gap:8px; }
+.pre button { font:700 18px/1 var(--f-mono); padding:12px 12px; color:var(--fg); background:var(--panel); border:1.5px solid var(--line); border-radius:4px; cursor:pointer; white-space:nowrap; }
+.pre button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.readout2 { margin-top:16px; padding:16px 26px; }
+.readout2 .rn { font:700 64px/1 var(--f-disp); text-transform:uppercase; letter-spacing:.02em; color:var(--ok); }
+.readout2 .rn.bad { color:var(--bad); }
+.readout2 .kv2 { display:grid; grid-template-columns:230px 1fr; gap:8px 12px; margin-top:10px; font-size:24px; line-height:1.25; }
+.readout2 .kv2 span { color:var(--muted); font:400 19px/1.5 var(--f-mono); }
+.chain { list-style:none; margin:12px 0 0; padding:0; }
+.chain li { display:grid; grid-template-columns:48px 1fr; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); font-size:24px; line-height:1.25; }
+.chain li .k { font:700 22px/1 var(--f-mono); color:var(--accent-text); }
+.chain li:last-child { border-bottom:0; }
+
+/* 5 animation */
+.s5.on { display:grid; grid-template-columns:1080px 1fr; gap:36px; }
+.s5 .left, .s5 .right { min-width:0; }
+.s5 h1 { font-size:56px; } .s5 .eyebrow { margin-bottom:10px; }
+.pt { display:flex; align-items:center; gap:12px; margin:0 0 6px; font:700 17px/1 var(--f-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.pt i { display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--accent); color:var(--accent-ink); font-style:normal; font-size:17px; }
+.pt em { margin-left:auto; font-style:normal; color:var(--accent-text); font-size:14px; border:1.5px solid var(--accent); border-radius:3px; padding:3px 7px; }
+.s5 .panel { padding:10px 14px; }
+#profSvg { display:block; width:1052px; height:321px; }
+.ground { stroke:var(--line); stroke-width:2; } .rwy { fill:var(--panel2); stroke:var(--line); } .rwy-m { stroke:var(--muted); stroke-width:3; stroke-dasharray:14 12; }
+.pth { fill:none; stroke-width:5; stroke-linecap:round; stroke-linejoin:round; opacity:.55; }
+.pth.l { stroke:var(--muted); } .pth.d { stroke:var(--lift); } .pth.f { stroke:var(--accent); } .pth.g { stroke:var(--weight); }
+.chp rect { fill:var(--panel2); stroke:var(--line); stroke-width:1.5; } .chp text { font:700 17px var(--f-mono); fill:var(--muted); text-anchor:middle; letter-spacing:.06em; }
+.chp.on rect { fill:var(--accent); stroke:var(--accent); } .chp.on text { fill:var(--accent-ink); }
+.a-body { fill:var(--fg); } .a-wing { fill:var(--muted); } .a-eng { fill:var(--muted); stroke:var(--bg); stroke-width:2; } .a-glow { fill:var(--weight); }
+.ptxt { font:400 18px var(--f-mono); fill:var(--muted); } .ptxt.acc { fill:var(--accent-text); font-weight:700; }
+.actl { display:flex; align-items:center; gap:10px; margin-top:8px; }
+.actl button { font:700 17px/1 var(--f-mono); color:var(--fg); background:var(--panel); border:1.5px solid var(--line); border-radius:4px; padding:11px 14px; cursor:pointer; white-space:nowrap; }
+.actl button:hover { border-color:var(--accent); }
+.actl button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.actl input[type=range] { flex:1; min-width:80px; accent-color:var(--accent); height:26px; }
+.cap { margin-top:8px; padding:12px 18px; }
+.cap .ct { font:700 28px/1.1 var(--f-disp); letter-spacing:.04em; text-transform:uppercase; color:var(--accent-text); margin-bottom:8px; }
+.cap .cg { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.cap .cg div { font-size:21px; line-height:1.3; }
+.cap .cg b { display:block; font:700 15px/1 var(--f-mono); letter-spacing:.12em; color:var(--muted); margin-bottom:5px; }
+#ctlSvg, #instSvg { display:block; width:100%; height:auto; }
+.d-track { fill:none; stroke:var(--line); stroke-width:9; stroke-linecap:round; } .d-red { fill:none; stroke:var(--bad); stroke-width:9; }
+.d-tick { stroke:var(--muted); stroke-width:2; } .d-num { font:400 14px var(--f-mono); fill:var(--muted); text-anchor:middle; }
+.d-ptr { stroke:var(--accent); stroke-width:5; stroke-linecap:round; } .d-hub { fill:var(--fg); }
+.eh { font:700 20px var(--f-mono); letter-spacing:.1em; } .eh.op { fill:var(--accent-text); } .eh.id { fill:var(--muted); }
+
+/* 6 trim */
+.s6.on { display:grid; grid-template-columns:900px 1fr; gap:60px; }
+.s6 .left, .s6 .right { min-width:0; }
+#trimSvg { display:block; width:900px; height:516px; margin-top:6px; }
+.note-box { margin-top:16px; padding:16px 22px; border:1.5px solid var(--bad); border-radius:6px; font-size:23px; line-height:1.3; }
+.note-box b { color:var(--bad); font-family:var(--f-mono); font-size:19px; letter-spacing:.08em; display:block; margin-bottom:4px; }
+
+/* 7 refs */
+.cols3 { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:22px; }
+.col { min-width:0; }
+.col .tag { margin:0 0 12px; font:700 22px/1 var(--f-mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent-text); }
+.col ul { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.col li { padding-bottom:11px; border-bottom:1px solid var(--line); font-size:23px; line-height:1.28; }
+.col li:last-child { border-bottom:0; }
+.col li b { font-family:var(--f-mono); font-size:21px; }
+.col li .d { display:block; margin-top:4px; color:var(--muted); font-size:21px; }
+.fn { position:absolute; left:0; right:0; bottom:0; font-size:21px; color:var(--muted); }
+/* 8 sim */
+.phases { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:22px; }
+.phase { min-width:0; padding:20px 22px; }
+.phase .ph { font:700 20px/1 var(--f-mono); letter-spacing:.12em; color:var(--accent-text); text-transform:uppercase; }
+.phase h3 { margin:10px 0 12px; font-size:32px; }
+.phase ul { margin:0; padding-left:24px; display:grid; gap:9px; font-size:23px; line-height:1.28; }
+.cond { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; margin-top:20px; }
+.cond .panel { padding:14px 22px; font-size:22px; line-height:1.35; }
+.cond b { font:700 18px var(--f-mono); letter-spacing:.1em; color:var(--accent-text); text-transform:uppercase; }
+.tols { display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin-top:18px; }
+.tol { display:flex; align-items:baseline; gap:12px; padding:10px 20px; background:var(--accent); color:var(--accent-ink); border-radius:4px; }
+.tol span { font:700 19px/1 var(--f-mono); letter-spacing:.1em; } .tol b { font:700 36px/1 var(--f-disp); }
+.pm { margin-top:12px; font-size:23px; color:var(--muted); }
+/* 9 */
+.s9.on { display:grid; grid-template-columns:1120px 1fr; gap:56px; }
+.s9 .left, .s9 .right { min-width:0; }
+.errs { display:grid; gap:10px; margin-top:20px; }
+.erow { display:grid; grid-template-columns:300px 400px 1fr; gap:18px; padding:13px 18px; background:var(--panel); border:1px solid var(--line); border-radius:6px; font-size:22px; line-height:1.28; }
+.erow.head { background:transparent; border-color:transparent; padding:0 18px; font:700 17px/1 var(--f-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.erow .fx { color:var(--accent-text); font-weight:700; }
+.debrief { margin-top:20px; padding:26px; background:var(--panel); border:1px solid var(--accent); border-radius:6px; }
+.debrief ol { margin:0; padding-left:34px; display:grid; gap:24px; font-size:30px; line-height:1.3; }
+.debrief ol li::marker { font:700 26px var(--f-mono); color:var(--accent-text); }
+/* 10 */
+.stats { display:grid; grid-template-columns:1fr 1fr 1fr 1.4fr; gap:20px; margin-top:28px; }
+.stat { padding:22px 26px; }
+.stat .num { font:700 100px/.95 var(--f-disp); color:var(--lift); white-space:nowrap; text-transform:uppercase; }
+.stat .num.tol3 { font-size:54px; line-height:1.08; }
+.stat .capt { margin-top:10px; font-size:24px; line-height:1.3; color:var(--muted); }
+.why { margin-top:26px; font-size:34px; line-height:1.35; max-width:1500px; }
+.remember { margin-top:22px; padding:24px 32px; background:var(--accent); color:var(--accent-ink); border-radius:6px; font:700 46px/1.2 var(--f-disp); letter-spacing:.01em; }
+
+#controls { position:fixed; left:50%; transform:translateX(-50%); bottom:max(12px,env(safe-area-inset-bottom,0px)); display:flex; flex-wrap:wrap; justify-content:center; gap:6px; padding:6px; max-width:calc(100% - 32px); background:var(--panel); border:1px solid var(--line); border-radius:6px; z-index:20; transition:opacity .3s; }
+body.idle #controls { opacity:0; pointer-events:none; }
+#controls button { font:700 14px/1 var(--f-mono); color:var(--fg); background:transparent; border:1px solid var(--line); border-radius:4px; padding:10px 12px; cursor:pointer; }
+#controls button:hover { border-color:var(--accent); }
+#controls button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+#notes { position:fixed; left:0; right:0; bottom:0; max-height:44vh; overflow:auto; z-index:15; background:var(--panel); border-top:2px solid var(--accent); font:400 17px/1.5 var(--f-body); color:var(--fg); padding:16px max(24px,env(safe-area-inset-right,0px)) 72px max(24px,env(safe-area-inset-left,0px)); }
+#notes h4 { margin:0 0 6px; font:700 14px/1 var(--f-mono); letter-spacing:.14em; color:var(--accent-text); text-transform:uppercase; }
+#notes p { margin:0 0 8px; max-width:110ch; }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <header class="top">
+      <div class="brand">NOK AIR · TRAINING</div>
+      <ol class="stages" aria-label="CBTA stages">
+        <li data-s="1"><b>1</b> Competencies</li><li data-s="2"><b>2</b> Questions</li><li data-s="3"><b>3</b> Knowledge</li><li data-s="4"><b>4</b> Simulator</li>
+      </ol>
+      <div class="topic">ENGINE OUT FAMILIARIZATION · B737-800</div>
+    </header>
+
+    <!-- 1 TITLE -->
+    <section class="slide s1" data-stage="0" data-comp="">
+      <p class="eyebrow">Competency-based training · mini briefing</p>
+      <h1>Engine Out<br>Familiarization</h1>
+      <p class="sub">Rudder input first, then rudder trim · FCTM Chapter 7 · Boeing 737-800 · Full flight simulator</p>
+      <p class="by">Prepared by Capt. Supakit Punyangam</p>
+      <div class="roadmap">
+        <div class="panel"><div class="num">1</div><div class="t">Competencies</div><div class="d">What we will assess</div></div>
+        <div class="panel"><div class="num">2</div><div class="t">Questions</div><div class="d">What you already know</div></div>
+        <div class="panel"><div class="num">3</div><div class="t">Knowledge</div><div class="d">Rudder input, profile, controls, instruments, then trim</div></div>
+        <div class="panel"><div class="num">4</div><div class="t">Simulator</div><div class="d">How to fly it</div></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>About 12 minutes. Keys: arrows or page keys to step, N notes (keep notes off the projector), F fullscreen, A reveal everything on a slide, T light or dark, P play or pause the animation on slides 5 and 6, Up and Down change the rudder input on slide 4.</p>
+        <p>Title and structure follow FCTM Chapter 7, Maneuvers: "Engine Out Familiarization" and "Rudder and Lateral Control", pages 7.2 to 7.4 (CONFIRMED). The briefing teaches rudder input first (slides 4 and 5) and rudder trim second (slide 6).</p>
+        <p>Engine out is the RIGHT engine throughout, as in the FCTM figure ("Condition: Engine out right wing"). The yaw is to the right, so the rudder input is LEFT. Mirror everything for a left engine.</p>
+        <p>Source labels: CONFIRMED = read in the current manual for this build. VERIFY = not checked, instructor to confirm. Values in the animations are illustrative (DERIVED), not performance data.</p>
+      </div>
+    </section>
+
+    <!-- 2 COMPETENCIES -->
+    <section class="slide s2" data-stage="1" data-comp="FPM*,KNO,SAW">
+      <p class="eyebrow">Stage 1 · Assessment competencies</p>
+      <h1>What we are assessing</h1>
+      <div class="wrap">
+        <div class="comp-list">
+          <div class="panel comp"><div class="chip p">FPM</div><div><div class="nm">Aeroplane Flight Path Management, Manual Control</div><div class="ob">Stops the yaw with rudder, holds heading and wings level, and keeps the control wheel approximately level.</div></div></div>
+          <div class="panel comp"><div class="chip">KNO</div><div><div class="nm">Application of Knowledge</div><div class="ob">Explains why rudder, not the wheel, answers the asymmetric thrust, and what the wheel position tells you.</div></div></div>
+          <div class="panel comp"><div class="chip">SAW</div><div><div class="nm">Situation Awareness and Management of Information</div><div class="ob">Links roll, heading, wheel position, pedal pressure and engine thrust in one scan.</div></div></div>
+          <div class="outcome">Outcome: the pilot flies the engine out familiarization with rudder input that keeps the wheel approximately level, then trims off the pedal pressure.</div>
+        </div>
+        <div class="cgrid big" id="bigGrid" aria-label="Boeing nine competencies"></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Primary competency is FPM (solid). KNO and SAW are secondary. WLM appears in the go-around phase. FCTM 7.3 notes that under instrument conditions the scan is centered around the attitude indicator; scanning is assessed under SAW or WLM, not FPM.</p>
+        <p>Observable behaviors are examples. Replace them with the exact OB wording from the current grade slip and competency framework. VERIFY.</p>
+      </div>
+    </section>
+
+    <!-- 3 QUESTIONS -->
+    <section class="slide s3 focus" data-stage="2" data-comp="KNO*,FPM,SAW">
+      <p class="eyebrow">Stage 2 · Assessment questions</p>
+      <h1>What do you already know?</h1>
+      <p class="hint">Think first. Answer aloud before the next question appears.</p>
+      <div class="qs">
+        <div class="q rv h" data-step="1" data-comp="KNO*"><span class="lv">Recall</span><p>Engine out on the right wing. Which rudder input do you apply, and how fast?</p><span class="chip">KNO</span></div>
+        <div class="q rv h" data-step="2" data-comp="SAW*,KNO"><span class="lv">Understand</span><p>What is usually the first indication of an asymmetric condition, and what do you do with it?</p><span class="chip">SAW</span></div>
+        <div class="q rv h" data-step="3" data-comp="FPM*,KNO"><span class="lv">Apply</span><p>How do you know the rudder input is correct?</p><span class="chip">FPM</span></div>
+        <div class="q rv h" data-step="4" data-comp="FPM*,KNO"><span class="lv">Apply</span><p>What do you see if you use the wheel only, or too much rudder?</p><span class="chip">FPM</span></div>
+      </div>
+      <div class="notes">
+        <h4>Expected answers and probes</h4>
+        <p><b>Q1 (KNO).</b> Left rudder, toward the operating engine. Stop the yaw by smoothly applying rudder at the same rate that thrust changes. CONFIRMED, FCTM 7.3.</p>
+        <p><b>Q2 (SAW, KNO).</b> Roll is usually the first indication. Roll control (ailerons) holds the wings level or the desired bank angle; the rudder stops the yaw. CONFIRMED, FCTM 7.3.</p>
+        <p><b>Q3 (FPM).</b> When the rudder input is correct, very little control wheel displacement is necessary. Refine the rudder input until the wheel is approximately level. In the FCTM figure the correct case shows the wheel approximately level, slip/skid slightly out, rudder as required. CONFIRMED, FCTM 7.3.</p>
+        <p><b>Q4 (FPM).</b> Wheel only, no rudder: the wheel is far over and the yaw is not stopped. Too much rudder: the wheel goes the other way. Both are marked incorrect in the FCTM figure (also "not enough rudder"). CONFIRMED figure, FCTM 7.3. If the airplane is trimmed with too much wheel displacement, full lateral control is not available and spoilers on one wing may be raised, increasing drag. CONFIRMED.</p>
+        <p>Pause after each question. Do not advance until the pilot has committed to an answer.</p>
+      </div>
+    </section>
+
+    <!-- 4 RUDDER INPUT -->
+    <section class="slide s4" data-stage="3" data-comp="FPM*,KNO">
+      <div class="left">
+        <svg id="rudSvg" viewBox="0 0 900 560" role="img" aria-label="Engine out on the right wing. Top view shows heading drift, with the control wheel and rudder pedals showing the input for the selected case">
+          <defs>
+            <marker id="mkT" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--lift)"/></marker>
+            <marker id="mkR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--weight)"/></marker>
+            <marker id="mkY" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-text)"/></marker>
+          </defs>
+          <text class="lbl muted" x="20" y="30">Condition: engine out right wing</text>
+          <line class="hd-ref" x1="210" y1="60" x2="210" y2="548"/>
+          <g id="topG" transform="translate(210 310) rotate(0) scale(.62) translate(-380 -290)">
+            <polygon class="t-body" points="356,250 130,350 130,372 356,322"/>
+            <polygon class="t-body" points="404,250 630,350 630,372 404,322"/>
+            <polygon class="t-body" points="356,455 270,488 270,500 356,478"/>
+            <polygon class="t-body" points="404,455 490,488 490,500 404,478"/>
+            <ellipse class="t-body" cx="380" cy="290" rx="24" ry="200"/>
+            <rect class="t-engop" x="236" y="300" width="28" height="58" rx="10"/>
+            <rect class="t-eng" x="496" y="300" width="28" height="58" rx="10"/>
+            <line class="t-x" x1="492" y1="296" x2="528" y2="362"/><line class="t-x" x1="528" y1="296" x2="492" y2="362"/>
+            <line class="t-thr" x1="250" y1="296" x2="250" y2="150" marker-end="url(#mkT)"/>
+            <path class="t-yaw" d="M330 92 A64 64 0 0 1 430 92" marker-end="url(#mkY)"/>
+            <rect class="t-body" x="377" y="450" width="6" height="40"/>
+            <g id="rudG" transform="rotate(14 380 490)"><rect class="t-rudder" x="376" y="490" width="8" height="30" rx="2"/></g>
+            <line id="rudA" class="t-rud" x1="366" y1="505" x2="466" y2="505" marker-end="url(#mkR)"/>
+          </g>
+          <text class="lbl lift" x="60" y="150">Thrust</text>
+          <text class="lbl muted" x="20" y="548">Dashed: original heading</text>
+          <text class="dgl" x="640" y="36" style="font-size:20px">CONTROL WHEEL</text>
+          <g id="tWheelHost"></g>
+          <text id="tWMsg" class="msg" x="640" y="330" style="font-size:22px">WHEEL APPROX LEVEL</text>
+          <text class="dgl" x="640" y="378" style="font-size:20px">RUDDER PEDALS</text>
+          <g id="tPedHost"></g>
+          <text id="tPMsg" class="msg" x="640" y="530" style="font-size:22px">LEFT RUDDER</text>
+        </svg>
+        <div class="rud-ctl">
+          <label for="rs">RUDDER</label>
+          <input id="rs" type="range" min="0" max="150" step="1" value="100" aria-label="Left rudder input, percent of the correct input">
+          <div class="pre" role="group" aria-label="Rudder cases from the FCTM figure">
+            <button type="button" data-r="100" aria-pressed="true">Correct</button>
+            <button type="button" data-r="0">Wheel only</button>
+            <button type="button" data-r="50">Not enough</button>
+            <button type="button" data-r="150">Too much</button>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Theoretical knowledge</p>
+        <h1>Rudder input first</h1>
+        <div class="panel readout2">
+          <div class="rn" id="rCase">Correct</div>
+          <div class="kv2">
+            <span>HEADING</span><b id="rHdg">holds</b>
+            <span>CONTROL WHEEL</span><b id="rWhl">approximately level</b>
+            <span>LATERAL CONTROL</span><b id="rLat">full authority available</b>
+          </div>
+        </div>
+        <ol class="chain">
+          <li class="rv" data-step="1"><span class="k">1</span><span>Roll is usually the first sign of asymmetry</span></li>
+          <li class="rv" data-step="2"><span class="k">2</span><span>Wheel holds the wings level</span></li>
+          <li class="rv" data-step="3"><span class="k">3</span><span>Rudder stops the yaw, at the same rate as thrust changes</span></li>
+          <li class="rv" data-step="4"><span class="k">4</span><span>Correct rudder: very little wheel needed</span></li>
+          <li class="rv" data-step="5"><span class="k">5</span><span>In turns, hold the rudder constant. Do not coordinate rudder and wheel</span></li>
+        </ol>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Slide the rudder, or use the four buttons that copy the FCTM figure: Correct (recommended), Wheel only no rudder, Not enough rudder, Too much rudder. The wheel and pedals are drawn as in the figure. 100% means the rudder input that keeps the wheel level; the percentage is a teaching scale (DERIVED), not a measured value.</p>
+        <p>Steps 1 to 4, FCTM 7.3 (CONFIRMED): "Roll is usually the first indication of an asymmetric condition. Roll control (ailerons) should be used to hold the wings level or maintain the desired bank angle. Stop the yaw by smoothly applying rudder at the same rate that thrust changes. When the rudder input is correct, very little control wheel displacement is necessary."</p>
+        <p>Step 5, FCTM 7.3 (CONFIRMED): make turns at a constant airspeed and hold the rudder displacement constant. Do not attempt to coordinate rudder and lateral control in turns. Rudder pedal inputs produce roll due to yaw and induce the pilot to counter rudder oscillations with opposite control wheel.</p>
+        <p>Direction. Engine out right wing: yaw and roll go toward the failed engine, so the rudder input is left and the wheel is turned left to hold the wings level. With too much rudder the airplane turns toward the operating engine and the wheel goes right. Heading drift and wheel angles are illustrative.</p>
+        <p>Spoilers: if the airplane is trimmed with too much wheel displacement, full lateral control is not available and spoilers on one wing may be raised, increasing drag. CONFIRMED, FCTM 7.3.</p>
+      </div>
+    </section>
+
+    <!-- 5 ANIMATION -->
+    <section class="slide s5" data-stage="3" data-comp="FPM*,SAW,KNO">
+      <div class="left">
+        <p class="eyebrow">Stage 3 · Profile, controls, engine instruments</p>
+        <h1>Rudder input follows thrust</h1>
+        <div class="rv h" data-step="1" data-comp="FPM*,KNO" style="margin-top:12px">
+          <p class="pt"><i>1</i> Flight profile <em>Not to scale</em></p>
+          <div class="panel">
+            <svg id="profSvg" viewBox="0 0 1060 324" role="img" aria-label="Side view profile: level flight with one thrust lever retarded, descent for final approach, then go-around, left to right">
+              <g class="chp" data-p="0"><rect x="50" y="10" width="240" height="32" rx="4"/><text x="170" y="32">1 LEVEL</text></g>
+              <g class="chp" data-p="1"><rect x="300" y="10" width="280" height="32" rx="4"/><text x="440" y="32">2 DESCENT</text></g>
+              <g class="chp" data-p="2"><rect x="590" y="10" width="160" height="32" rx="4"/><text x="670" y="32">3 FINAL</text></g>
+              <g class="chp" data-p="3"><rect x="760" y="10" width="270" height="32" rx="4"/><text x="895" y="32">4 GO-AROUND</text></g>
+              <line class="ground" x1="10" y1="296" x2="1050" y2="296"/>
+              <rect class="rwy" x="650" y="296" width="390" height="10"/>
+              <line class="rwy-m" x1="660" y1="301" x2="1030" y2="301"/>
+              <text class="ptxt" x="660" y="322">RUNWAY</text>
+              <defs>
+                <marker id="pT" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--lift)"/></marker>
+                <marker id="pR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--weight)"/></marker>
+              </defs>
+              <text class="ptxt" x="150" y="62" text-anchor="middle">TOP VIEW</text>
+              <line class="hd-ref" x1="150" y1="72" x2="150" y2="292"/>
+              <g id="tv" transform="translate(150 190) rotate(0) scale(.36) translate(-380 -290)">
+                <polygon class="t-body" points="356,250 130,350 130,372 356,322"/><polygon class="t-body" points="404,250 630,350 630,372 404,322"/>
+                <polygon class="t-body" points="356,455 270,488 270,500 356,478"/><polygon class="t-body" points="404,455 490,488 490,500 404,478"/>
+                <ellipse class="t-body" cx="380" cy="290" rx="24" ry="200"/>
+                <rect class="t-engop" x="236" y="300" width="28" height="58" rx="10"/><rect class="t-eng" x="496" y="300" width="28" height="58" rx="10"/>
+                <line class="t-x" x1="492" y1="296" x2="528" y2="362"/><line class="t-x" x1="528" y1="296" x2="492" y2="362"/>
+                <line id="tvThr" class="t-thr" x1="250" y1="296" x2="250" y2="150" marker-end="url(#pT)" style="stroke-width:12"/>
+                <rect class="t-body" x="377" y="450" width="6" height="40"/>
+                <g id="tvRudG"><rect class="t-rudder" x="376" y="490" width="8" height="30" rx="2"/></g>
+                <line id="tvRud" class="t-rud" x1="366" y1="505" x2="466" y2="505" marker-end="url(#pR)" style="stroke-width:12"/>
+              </g>
+              <polyline id="pL" class="pth l"/><polyline id="pD" class="pth d"/><polyline id="pF" class="pth f"/><polyline id="pG" class="pth g"/>
+              <text class="ptxt" x="20" y="322">ENG 2 (right) idle · glow = ENG 1 thrust</text>
+              <text class="ptxt" x="470" y="120">about 700 to 900 fpm</text>
+              <text class="ptxt acc" x="560" y="178">FLAPS 15</text>
+              <text class="ptxt acc" x="890" y="262">TO/GA · FLAPS 1</text>
+              <g id="acft" transform="translate(70 90)">
+                <ellipse id="glow" class="a-glow" cx="-84" cy="0" rx="20" ry="8" opacity=".6"/>
+                <polygon class="a-body" points="-66,-4 -50,-34 -38,-34 -34,-10"/>
+                <path class="a-body" d="M-66,-3 C-66,-11 -48,-13 -20,-13 L40,-13 C56,-13 68,-6 70,1 C68,8 56,11 40,11 L-24,11 C-50,11 -66,6 -66,-3Z"/>
+                <polygon class="a-wing" points="-4,6 22,6 -16,20 -34,20"/>
+                <rect class="a-eng" x="4" y="15" width="32" height="14" rx="6"/>
+                <g id="xm"><line x1="14" y1="16" x2="26" y2="28" stroke="var(--bad)" stroke-width="3.5" stroke-linecap="round"/><line x1="26" y1="16" x2="14" y2="28" stroke="var(--bad)" stroke-width="3.5" stroke-linecap="round"/></g>
+              </g>
+            </svg>
+          </div>
+          <div class="actl" role="group" aria-label="Animation controls">
+            <button type="button" id="playBtn" aria-pressed="false">Play</button>
+            <button type="button" id="rstBtn">Restart</button>
+            <button type="button" id="spdBtn" aria-pressed="false">0.5x</button>
+            <button type="button" id="lagBtn" aria-pressed="false">Late rudder</button>
+            <input id="scrub" type="range" min="0" max="36" step="0.05" value="0" aria-label="Animation time">
+            <button type="button" data-seek="0">Level</button>
+            <button type="button" data-seek="7">Descent</button>
+            <button type="button" data-seek="18">Final</button>
+            <button type="button" data-seek="25">Go-around</button>
+          </div>
+        </div>
+        <div class="panel cap rv h" data-step="4" data-comp="FPM*,SAW,KNO">
+          <div class="ct" id="capT">1 · Level</div>
+          <div class="cg">
+            <div><b>1 PROFILE</b><span id="capP"></span></div>
+            <div><b>2 CONTROLS</b><span id="capC"></span></div>
+            <div><b>3 INSTRUMENTS</b><span id="capI"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="rv h" data-step="2" data-comp="FPM*,KNO" style="margin-top:2px">
+          <p class="pt"><i>2</i> Flight controls <em>Illustrative</em></p>
+          <div class="panel">
+            <svg id="ctlSvg" viewBox="0 0 600 284" role="img" aria-label="Control wheel and rudder pedals">
+              <text class="dgl" x="130" y="18">CONTROL WHEEL</text>
+              <g id="aWheelHost"></g>
+              <text id="wMsg" class="msg" x="130" y="252">WHEEL APPROX LEVEL</text>
+              <text class="dgl" x="440" y="18">RUDDER PEDALS</text>
+              <rect class="dg" x="350" y="28" width="180" height="34" rx="4"/>
+              <text class="dgl" x="388" y="50">HDG</text><text id="hdgT" class="dgt xs" x="473" y="51">HOLDS</text>
+              <g id="aPedHost"></g>
+              <rect class="pbar" id="lpB" x="393" y="200" width="0" height="9" rx="3"/>
+              <rect class="pbar" id="rpB" x="487" y="200" width="0" height="9" rx="3"/>
+              <text class="dgl" x="393" y="228">LEFT</text><text class="dgl" x="487" y="228">RIGHT</text>
+              <text id="aAct" class="msg" x="440" y="262">NO ASYMMETRY</text>
+            </svg>
+          </div>
+        </div>
+        <div class="rv h" data-step="3" data-comp="SAW*,KNO" style="margin-top:8px">
+          <p class="pt"><i>3</i> Engine instruments <em>Upper display unit</em></p>
+          <div class="panel"><svg id="instSvg" viewBox="0 0 600 340" role="img" aria-label="N1 and EGT dials, N2 and fuel flow for engine 1 and engine 2"></svg></div>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p><b>Build order:</b> step 1 flight profile, step 2 flight controls, step 3 engine instruments, step 4 starts the animation and shows the caption. P plays or pauses. The phase buttons jump to the start of each phase. "Late rudder" delays the rudder input so the wheel moves, which is the wrong way to fly it.</p>
+        <p><b>What the controls show.</b> The pedals are the rudder INPUT. The wheel only moves when the rudder input does not match the thrust. Rudder trim is covered on the next slide.</p>
+        <p><b>Level.</b> Both engines at the same thrust, no rudder. Then one thrust lever (right) is retarded to idle while the other engine holds airspeed. Rudder goes in at the same rate that thrust changes and the wheel stays approximately level. CONFIRMED, FCTM 7.2 table ("When in trim, retard one thrust lever to idle") and 7.3.</p>
+        <p><b>Descent.</b> Thrust on the operating engine comes back, so the rudder input is eased off at the same rate. Pedal pressure first, then trim, to stay in trim on approaches. CONFIRMED, FCTM 5.31.</p>
+        <p><b>Final.</b> Stabilise on the selected speed with about 700 to 900 fpm on the desired glide path, in trim, by 500 ft above touchdown. CONFIRMED, FCTM 5.77. Company stabilised approach criteria in OM-A may differ. VERIFY.</p>
+        <p><b>Go-around.</b> From a Flaps 15 approach use Flaps 1 as the go-around flap. After TO/GA is engaged the pilot must control yaw with rudder and trim. Some rudder pedal pressure may be required even with full rudder trim. Select maximum continuous thrust when flaps are retracted to the desired setting. CONFIRMED, FCTM 5.86.</p>
+        <p><b>Engine instruments.</b> The NG has an upper display unit (N1, EGT, N2, fuel flow) and a lower display unit (oil and vibration); FCOM 7.11.1 to 7.11.12 (CONFIRMED, layout detail VERIFY on the aircraft). ENG 2 is at idle. Numbers are illustrative, scaled from N1 for teaching. They are not performance data. Redline marks are generic.</p>
+      </div>
+    </section>
+
+    <!-- 6 TRIM -->
+    <section class="slide s6" data-stage="3" data-comp="FPM*,KNO">
+      <div class="left">
+        <p class="eyebrow">Stage 3 · Rudder trim technique</p>
+        <svg id="trimSvg" viewBox="0 0 900 516" role="img" aria-label="Rudder trim panel with indicator and knob, top view of the aircraft, control wheel, rudder pedals and pedal pressure">
+          <g id="indG">
+            <rect x="0" y="0" width="430" height="126" rx="4" fill="#0A0E14"/>
+            <text x="215" y="24" text-anchor="middle" style="font:700 19px var(--f-mono);fill:#EDF1F7;letter-spacing:.06em">RUDDER TRIM</text>
+            <g id="indTicks"></g>
+            <rect x="8" y="76" width="414" height="26" fill="#B9BEC6"/>
+            <g id="rTrimP"><polygon points="215,76 202,102 228,102" fill="#FFFFFF" stroke="#0A0E14" stroke-width="1.5"/></g>
+            <text x="90" y="120" text-anchor="middle" style="font:700 17px var(--f-mono);fill:#EDF1F7">LEFT</text>
+            <text x="340" y="120" text-anchor="middle" style="font:700 17px var(--f-mono);fill:#EDF1F7">RIGHT</text>
+          </g>
+          <text id="rTrimTxt" class="lbl acc" x="215" y="152" text-anchor="middle" style="font-size:20px">TRIM 0</text>
+          <text class="dgl" x="215" y="182" style="font-size:16px">TOP VIEW · ENGINE OUT RIGHT</text>
+          <line class="hd-ref" x1="215" y1="192" x2="215" y2="486"/>
+          <g id="trTop" transform="translate(215 328) rotate(0) scale(.66) translate(-380 -290)">
+            <polygon class="t-body" points="356,250 130,350 130,372 356,322"/><polygon class="t-body" points="404,250 630,350 630,372 404,322"/>
+            <polygon class="t-body" points="356,455 270,488 270,500 356,478"/><polygon class="t-body" points="404,455 490,488 490,500 404,478"/>
+            <ellipse class="t-body" cx="380" cy="290" rx="24" ry="200"/>
+            <rect class="t-engop" x="236" y="300" width="28" height="58" rx="10"/><rect class="t-eng" x="496" y="300" width="28" height="58" rx="10"/>
+            <line class="t-x" x1="492" y1="296" x2="528" y2="362"/><line class="t-x" x1="528" y1="296" x2="492" y2="362"/>
+            <line id="trThr" class="t-thr" x1="250" y1="296" x2="250" y2="150" marker-end="url(#qT)" style="stroke-width:11"/>
+            <rect class="t-body" x="377" y="450" width="6" height="40"/>
+            <g id="trRudG"><rect class="t-rudder" x="376" y="490" width="8" height="30" rx="2"/></g>
+            <line id="trRud" class="t-rud" x1="366" y1="505" x2="466" y2="505" marker-end="url(#qR)" style="stroke-width:11"/>
+          </g>
+          <defs>
+            <marker id="qT" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--lift)"/></marker>
+            <marker id="qR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--weight)"/></marker>
+          </defs>
+          <text id="trHdg" class="msg ok" x="215" y="508" style="font-size:18px">HEADING HOLDS</text>
+          <g id="pilot" transform="translate(505 84)">
+            <g id="pilotF">
+              <circle r="44" fill="#F2C9A0" stroke="#5B6573" stroke-width="3"/>
+              <circle id="pRed" r="44" fill="#E5534B" opacity="0"/>
+              <path d="M-46,-12 C-46,-52 46,-52 46,-12 Z" fill="#1D2C45" stroke="#5B6573" stroke-width="3"/>
+              <rect x="-50" y="-16" width="100" height="9" rx="4" fill="#FFC72C" stroke="#5B6573" stroke-width="2"/>
+              <circle cx="0" cy="-34" r="5" fill="#FFC72C"/>
+              <circle id="pBL" cx="-24" cy="12" r="7" fill="#FF8FA3" opacity=".5"/><circle id="pBR" cx="24" cy="12" r="7" fill="#FF8FA3" opacity=".5"/>
+              <g id="pEyeO"><circle cx="-16" cy="2" r="5" fill="#111B2B"/><circle cx="16" cy="2" r="5" fill="#111B2B"/></g>
+              <g id="pEyeH" fill="none" stroke="#111B2B" stroke-width="3.5" stroke-linecap="round"><path d="M-23,5 Q-16,-5 -9,5"/><path d="M9,5 Q16,-5 23,5"/></g>
+              <line id="pBrL" x1="-24" y1="-8" x2="-9" y2="-8" stroke="#111B2B" stroke-width="3.5" stroke-linecap="round"/>
+              <line id="pBrR" x1="9" y1="-8" x2="24" y2="-8" stroke="#111B2B" stroke-width="3.5" stroke-linecap="round"/>
+              <path id="pMouth" d="M-14,18 Q0,32 14,18" fill="none" stroke="#111B2B" stroke-width="3.5" stroke-linecap="round"/>
+              <rect id="pTeeth" x="-12" y="17" width="24" height="9" rx="2" fill="#FFFFFF" stroke="#111B2B" stroke-width="2.5" opacity="0"/>
+              <ellipse id="pO" cx="0" cy="24" rx="8" ry="10" fill="#7A1F1F" stroke="#111B2B" stroke-width="3" opacity="0"/>
+              <path id="pSw1" d="M44,-6 q6,10 0,14 q-6,-4 0,-14z" fill="#6DB7FF" opacity="0"/>
+              <path id="pSw2" d="M-48,-2 q6,10 0,14 q-6,-4 0,-14z" fill="#6DB7FF" opacity="0"/>
+            </g>
+            <text id="pSay" class="msg ok" x="0" y="72" style="font-size:16px">AHH, TRIMMED!</text>
+          </g>
+          <text class="lbl muted" x="618" y="106" text-anchor="end" style="font-size:17px">NOSE</text><text class="lbl muted" x="618" y="126" text-anchor="end" style="font-size:17px">LEFT</text>
+          <text class="lbl muted" x="762" y="106" style="font-size:17px">NOSE</text><text class="lbl muted" x="762" y="126" style="font-size:17px">RIGHT</text>
+          <g transform="translate(690 100)">
+            <circle r="64" fill="#AEB4BD" stroke="#5B6573" stroke-width="3"/><circle r="46" fill="none" stroke="#5B6573" stroke-width="3"/>
+            <polygon points="0,-66 -8,-82 8,-82" fill="var(--fg)"/>
+            <g id="knobG"><rect x="-12" y="-58" width="24" height="116" rx="3" fill="#0A0E14"/><rect x="-2" y="-58" width="4" height="40" fill="#FFFFFF"/><text transform="rotate(90)" x="12" y="5" text-anchor="middle" style="font:700 15px var(--f-mono);fill:#EDF1F7;letter-spacing:.1em">RUDDER</text></g>
+          </g>
+          <text class="dgl" x="545" y="200" style="font-size:16px">CONTROL WHEEL</text>
+          <g id="rWheelHost"></g>
+          <text id="rWMsg" class="msg ok" x="545" y="388" style="font-size:18px">WHEEL APPROX LEVEL</text>
+          <text class="dgl" x="790" y="200" style="font-size:16px">RUDDER PEDALS</text>
+          <g id="rPedHost"></g>
+          <text class="dgl" x="675" y="418" style="font-size:16px">PEDAL PRESSURE</text>
+          <rect x="525" y="426" width="300" height="22" rx="3" style="fill:var(--panel2)"/>
+          <rect id="rPbL" class="pbar" x="675" y="426" width="0" height="22"/><rect id="rPbR" class="pbar" x="675" y="426" width="0" height="22" style="fill:var(--bad)"/>
+          <line x1="675" y1="420" x2="675" y2="454" stroke="var(--fg)" stroke-width="2"/>
+          <text class="dgl" x="560" y="470" style="font-size:14px">PUSH LEFT</text><text class="dgl" x="790" y="470" style="font-size:14px">PUSH RIGHT</text>
+          <text id="rMsg" class="msg" x="675" y="498" style="font-size:19px">PRESSURE ON THE PEDAL</text>
+        </svg>
+        <div class="actl" role="group" aria-label="Trim controls">
+          <label for="thrS" class="lbl muted" style="font-size:16px;white-space:nowrap">THRUST ENG 1</label>
+          <input id="thrS" type="range" min="30" max="96" step="1" value="80" aria-label="Engine 1 N1">
+          <b id="thrV" class="lbl acc" style="font-size:17px;min-width:70px">N1 80</b>
+          <button type="button" id="rRelease" aria-pressed="false" title="Take the feet off the pedals">Release pedals</button>
+        </div>
+        <div class="actl" role="group" aria-label="Rudder trim knob">
+          <button type="button" id="tL" title="Hold: trim nose left (key Z)">◄ Trim nose left</button>
+          <button type="button" id="tR" title="Hold: trim nose right (key C)">Trim nose right ►</button>
+          <button type="button" id="tRel" title="Trim to relieve the pedal pressure (key X)">Trim to relieve</button>
+          <button type="button" id="rRst">Reset</button>
+          <button type="button" id="rPlay" aria-pressed="false">Demo</button>
+          <input id="rScrub" type="range" min="0" max="13" step="0.05" value="0" aria-label="Demo time">
+        </div>
+      </div>
+      <div class="right">
+        <h1>Then trim off the pedal pressure</h1>
+        <ol class="chain" style="margin-top:18px">
+          <li class="rv" data-step="1"><span class="k">1</span><span>Refine the rudder input, then trim so the wheel stays approximately level</span></li>
+          <li class="rv" data-step="2"><span class="k">2</span><span>Trim to relieve the rudder pedal pressure</span></li>
+          <li class="rv" data-step="3"><span class="k">3</span><span>Trim toward the low side of the wheel until it is level</span></li>
+          <li class="rv" data-step="4"><span class="k">4</span><span>Trimmed: heading holds, small bank toward the operating engine, slip/skid slightly toward it</span></li>
+          <li class="rv" data-step="5"><span class="k">5</span><span>Thrust changes: the trim changes. Approach and go-around</span></li>
+        </ol>
+        <div class="note-box rv h" data-step="6"><b>DO NOT</b>Trim in with the wheel displaced. Full lateral control is lost and spoilers may rise, adding drag.</div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Rudder first, trim second. The panel is drawn like the FCOM rudder trim indicator and knob. Interactive: move the THRUST slider (or Up/Down keys) to change the required rudder; hold Trim nose left or right (keys Z and C) to run the trim; Trim to relieve (key X) runs it until the pedal pressure is zero; Release pedals shows what happens when the feet come off: with enough trim the heading and wheel hold, with too little they drift. Demo (P) plays: rudder held, trim relieves the pressure, thrust reduced so the trim is now too much, then re-trimmed. The pilot face shows the effort on the pedals: happy when trimmed, more strained the more pressure he has to hold, alarmed if the feet come off and the aircraft drifts. The model is illustrative (DERIVED): required rudder = 14 x (thrust fraction), pedal pressure = required rudder minus trim. The trim scale and numbers are illustrative (DERIVED). The FCOM states that the RUDDER trim control repositions the rudder feel and centering unit and that the rudder pedals are displaced proportionately (FCOM 9.20.11, CONFIRMED); the indicator shows trim in units (FCOM 9.10.6).</p>
+        <p>Steps 1 and 4, FCTM 7.3 (CONFIRMED): refine the rudder input as required and trim the rudder so the control wheel remains approximately level. When the rudder is trimmed to level the control wheel the airplane maintains heading. A small amount of bank toward the operating engine may be noticeable on the bank indicator. The slip/skid indicator is displaced slightly toward the operating engine.</p>
+        <p>Step 2. If an engine failure occurs with the autopilot engaged, manually position the rudder to approximately center the control wheel and add thrust. Trim the rudder to relieve rudder pedal pressure. CONFIRMED, FCTM 7.3.</p>
+        <p>Step 3. Primary rudder trim technique: trim the rudder in the direction corresponding to the down (low) side of the control wheel until the wheel indicates level, using the indices on top of the wheel. This technique is the preferred method for engine failure and gives near minimum drag. CONFIRMED, FCTM 1.31 and 1.32. The list of steps starts with "set symmetrical thrust", which does not apply with an engine out.</p>
+        <p>Step 5. Pedal pressure first, then rudder trim, on approaches (FCTM 5.31). With one engine inoperative the trim may be centered before landing so that most pedal pressure is removed when the operating engine goes to idle at touchdown; if touchdown occurs with the rudder still trimmed for the approach, expect higher pedal forces on rollout (FCTM 5.77). On a go-around some pedal pressure may be required even with full trim (FCTM 5.86). All CONFIRMED.</p>
+        <p>Do not: FCTM 7.3 and 1.32. If the airplane is trimmed with too much wheel displacement, full lateral control is not available and spoilers on one wing may be raised, increasing drag.</p>
+      </div>
+    </section>
+
+    <!-- 7 REFERENCES -->
+    <section class="slide s7" data-stage="3" data-comp="KNO*,PRO">
+      <p class="eyebrow">Stage 3 · References</p>
+      <h1>Where it is written</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1">
+          <p class="tag">Company</p>
+          <ul>
+            <li><b>FTM MN3-LAD-0032</b>, Issue 08 Rev 00<span class="d">RHS sessions list the ILS approach with OEI, manual OEI go-around on ATC instruction, and visual approach OEI landing. pp. 2-102, 2-103 <span class="v ok">CONFIRMED</span></span></li>
+            <li><b>FTM 3.1.11.2</b> Performance limits, p. 3-21<span class="d">With simulated engine failure: heading ±10°, speed +10 / -5 kt. Height generally ±100 ft <span class="v ok">CONFIRMED</span></span></li>
+            <li><b>SOP, OM-A, OM-B</b><span class="d">Engine-out callouts, stabilised approach criteria <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2">
+          <p class="tag">Regulation</p>
+          <ul>
+            <li><b>FTM p. 2-6</b> PPC item table<span class="d">Item 9: 3D operations, manual flight, one engine inoperative. Item 12: go-around with one engine inoperative after an instrument approach. Item 13: landing with critical engine inoperative <span class="v ok">CONFIRMED</span></span></li>
+            <li><b>CAAT AOCR, Part-FCL Appendix 9</b><span class="d">Item references behind the FTM table <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3">
+          <p class="tag">Boeing</p>
+          <ul>
+            <li><b>FCTM MN3-LAD-0031 Rev 25</b><span class="d">7.2 Engine Out Familiarization (conditions and exercise) · 7.3 Rudder and Lateral Control, figure · 7.4 autothrottle note · 1.31 to 1.32 rudder trim technique · 5.31, 5.77, 5.86 approach and go-around <span class="v ok">CONFIRMED</span></span></li>
+            <li><b>FCOM MN2-FLO-0021 Rev 23</b><span class="d">7.11.1 to 7.11.12 engine indications · 9.10.6 rudder trim indicator · 9.20.11 rudder trim control <span class="v ok">CONFIRMED</span></span></li>
+            <li><b>QRH</b><span class="d">Engine Failure and Shutdown checklist, landing flap setting <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">CONFIRMED = read in the current manual for this build. VERIFY = not checked, confirm before the session.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Show one column at a time. Page numbers are printed manual page identifiers. The Engine Out Familiarization table and the Rudder and Lateral Control text with the correct and incorrect figure are on FCTM pages 7.2 and 7.3. The autothrottle note ("should not be used with an engine inoperative") is on 7.4.</p>
+        <p>Open items for the instructor: (1) OM-A stabilised approach criteria against the FCTM "by 500 feet"; (2) the QRH landing flap setting for one engine inoperative; (3) PM callouts for engine-out approach from the SOP.</p>
+      </div>
+    </section>
+
+    <!-- 8 SIMULATOR -->
+    <section class="slide s8" data-stage="4" data-comp="FPM*,SAW,WLM,PRO">
+      <p class="eyebrow">Stage 4 · How to perform in the simulator</p>
+      <h1>The exercise, in order</h1>
+      <div class="phases">
+        <div class="panel phase rv h" data-step="1" data-comp="PRO*,FPM">
+          <div class="ph">1 · Set up</div><h3>Condition One or Two</h3>
+          <ul><li>In trim with both engines</li><li>Autothrottle off</li><li>Airspeed and configuration as in the table below</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="2" data-comp="FPM*,KNO">
+          <div class="ph">2 · Retard</div><h3>One thrust lever to idle</h3>
+          <ul><li>Roll is the first sign</li><li>Apply rudder at the same rate that thrust changes</li><li>Rudder toward the operating engine</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="3" data-comp="FPM*,SAW">
+          <div class="ph">3 · Fly</div><h3>Heading, wings level</h3>
+          <ul><li>Controls: maintain heading, wings level</li><li>Rudder: apply to center the wheel</li><li>Airspeed: thrust (Condition One), pitch (Condition Two)</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="4" data-comp="FPM*,WLM">
+          <div class="ph">4 · Trim</div><h3>Relieve the forces</h3>
+          <ul><li>Trim as required to relieve control forces</li><li>Rudder trim so the wheel stays approximately level</li><li>Turns: constant airspeed, rudder held constant</li></ul>
+        </div>
+      </div>
+      <div class="cond rv h" data-step="5">
+        <div class="panel"><b>Condition One</b><br>Flaps up maneuver speed · gear up · flaps up · thrust as required</div>
+        <div class="panel"><b>Condition Two</b><br>V2 · gear down · flaps 15 · MCT</div>
+      </div>
+      <div class="tols">
+        <div class="tol"><span>HDG</span><b>±10°</b></div>
+        <div class="tol"><span>SPEED</span><b>+10 / -5 kt</b></div>
+        <div class="tol"><span>HEIGHT</span><b>±100 ft</b></div>
+        <span class="v ok" style="margin:0">FTM 3.1.11.2 · SIMULATED ENGINE FAILURE</span>
+      </div>
+      <p class="pm">Engine-out approach and go-around: see the animation and FCTM 5.31, 5.77, 5.86. PM callouts: <span class="v">VERIFY SOP / OM-B</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>The four phases and both condition columns are the FCTM 7.2 table, in the source order: "When in trim, retard one thrust lever to idle. Controls: apply to maintain heading, wings level. Rudder: apply to center control wheel. Airspeed: maintain with thrust (Condition One), pitch (Condition Two). Trim: as required to relieve control forces." CONFIRMED. Condition One: flaps up maneuver speed, gear up, flaps up, thrust as required. Condition Two: V2, gear down, flaps 15, MCT. CONFIRMED.</p>
+        <p>"Autothrottle should not be used with an engine inoperative", FCTM 7.4, CONFIRMED; also FCTM 1.42 (disconnect the autothrottle, keep the thrust lever of the inoperative engine CLOSED).</p>
+        <p>FCTM 7.3 also says one engine out controllability is excellent during takeoff roll and after lift-off, and that minimum control speed in the air is below VR and VREF (FCTM 7.2, CONFIRMED).</p>
+        <p>Tolerances: FTM 3.1.11.2, general guidance for instrument flight with a simulated engine failure. The examiner allows for turbulence and simulator handling qualities. CONFIRMED.</p>
+        <p>Scanning is assessed under SAW and WLM, not FPM.</p>
+      </div>
+    </section>
+
+    <!-- 9 ERRORS -->
+    <section class="slide s9" data-stage="4" data-comp="FPM*,KNO,SAW,WLM">
+      <div class="left">
+        <p class="eyebrow">Stage 4 · Common errors</p>
+        <h1>Read the error back to the wheel</h1>
+        <div class="errs">
+          <div class="erow head"><span>What you see</span><span>Where it breaks</span><span>Fix</span></div>
+          <div class="erow rv h" data-step="1" data-comp="FPM*,KNO"><b>Wheel far over, heading drifting, spoilers up</b><span>Wheel only, no rudder: the yaw is not stopped</span><span class="fx">Stop the yaw with rudder, then refine until the wheel is level</span></div>
+          <div class="erow rv h" data-step="2" data-comp="FPM*,KNO"><b>Wheel still displaced, slow drift toward the failed engine</b><span>Not enough rudder</span><span class="fx">Add rudder until the wheel is approximately level</span></div>
+          <div class="erow rv h" data-step="3" data-comp="FPM*,KNO"><b>Wheel displaced the other way, turning toward the operating engine</b><span>Too much rudder</span><span class="fx">Ease off the rudder to level the wheel</span></div>
+          <div class="erow rv h" data-step="4" data-comp="FPM*,WLM"><b>Oscillation in turns, wheel countering the rudder</b><span>Rudder and wheel coordinated in the turn, or rudder late on thrust changes</span><span class="fx">Constant airspeed, rudder held constant. Rudder at the same rate as thrust</span></div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="debrief">
+          <h3>Debrief prompts</h3>
+          <ol>
+            <li class="rv h" data-step="5" data-comp="SAW*">What did the wheel tell you about the rudder?</li>
+            <li class="rv h" data-step="6" data-comp="KNO*">When did the rudder input fall behind the thrust?</li>
+            <li class="rv h" data-step="7" data-comp="FPM*">What would you do earlier next time?</li>
+          </ol>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Rows 1 to 3 are the three incorrect cases of the FCTM 7.3 figure (wheel only no rudder, not enough rudder, too much rudder), CONFIRMED. Row 4: FCTM 7.3 on turns and on rudder pedal inputs producing roll due to yaw (CONFIRMED); "late on thrust changes" is DERIVED from the "same rate as thrust" statement.</p>
+        <p>Debrief prompts are open questions. Let the pilot talk, then tie the answer to the grid: SAW for what was noticed, KNO for why, FPM for the inputs.</p>
+        <p>TEM: threat is asymmetric thrust at every thrust change. Error: rudder behind the thrust, or wheel-only control. Countermeasure: move rudder with the thrust lever, check the wheel is level.</p>
+      </div>
+    </section>
+
+    <!-- 10 SUMMARY -->
+    <section class="slide s10" data-stage="0" data-comp="FPM*,KNO,SAW">
+      <p class="eyebrow">Summary</p>
+      <h1>What to take away</h1>
+      <div class="stats">
+        <div class="panel stat"><div class="num">Rudder</div><div class="capt">Stop the yaw, at the same rate as thrust changes</div></div>
+        <div class="panel stat"><div class="num">Level</div><div class="capt">Wheel approximately level means the input is right</div></div>
+        <div class="panel stat"><div class="num">Trim</div><div class="capt">Then trim to relieve the pedal pressure</div></div>
+        <div class="panel stat"><div class="num tol3">±10° · +10/-5 kt<br>±100 ft</div><div class="capt">Heading, speed and height with simulated engine failure</div></div>
+      </div>
+      <p class="why rv h" data-step="1">The rudder answers the asymmetric thrust. The wheel only holds the wings level, and too much wheel costs lateral control and adds drag.</p>
+      <div class="remember rv h" data-step="2">Rudder first. Wheel level. Then trim.</div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Close with the sentence to remember, then move to the simulator. Tolerances: FTM 3.1.11.2, CONFIRMED.</p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="count" id="count"></div>
+      <div class="credit">© Capt. Supakit Punyangam · Do not copy or distribute without permission</div>
+      <div class="corner">
+        <svg class="wheelc" id="wheel" viewBox="0 0 200 200" role="img" aria-label="Competency pyramid with communication and leadership arrows, assessed ones highlighted"></svg>
+        <div class="cgrid" id="cgrid" aria-label="Nine competencies grid, assessed ones highlighted"></div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div id="controls" role="toolbar" aria-label="Presentation controls">
+  <button type="button" data-act="prev" aria-label="Previous">← Prev</button>
+  <button type="button" data-act="next" aria-label="Next">Next →</button>
+  <button type="button" data-act="all" aria-pressed="false" title="Reveal everything on this slide (A)">Reveal all</button>
+  <button type="button" data-act="notes" aria-pressed="false" title="Instructor notes (N)">Notes</button>
+  <button type="button" data-act="theme" title="Light or dark (T)">Theme</button>
+  <button type="button" data-act="full" id="fullBtn" title="Fullscreen (F)">Fullscreen</button>
+</div>
+<aside id="notes" hidden aria-label="Instructor notes"></aside>
+
+<script>
+(function () {
+  var COMPS = [
+    ['KNO','Application of Knowledge'],['FPM','Aeroplane Flight Path Management, Manual Control'],['FPA','Aeroplane Flight Path Management, Automation'],
+    ['PRO','Application of Procedures and Compliance with Regulations'],['WLM','Workload Management'],['SAW','Situation Awareness and Management of Information'],
+    ['PSD','Problem Solving and Decision Making'],['COM','Communication'],['LTW','Leadership and Teamwork']
+  ];
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function ss(a, b, t) { var x = clamp((t - a) / (b - a), 0, 1); return x * x * (3 - 2 * x); }
+
+  var stage = $('#stage'), vp = $('#viewport');
+  var slides = $$('.slide');
+  var si = 0, st = 0, all = false;
+  var THEORY = 3, ANIM = 4, TRIM = 5;
+  function fit() { var s = Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080); stage.style.setProperty('--s', s > 0 ? s : 1); }
+
+  /* ---------- competency grid + pyramid ---------- */
+  function buildGrid(el) {
+    el.innerHTML = COMPS.map(function (c) { return '<div class="cell" data-c="' + c[0] + '" title="' + c[1] + '"><span class="c">' + c[0] + '</span><span class="n">' + c[1] + '</span></div>'; }).join('');
+  }
+  function paintGrid(el, spec) {
+    var m = {};
+    (spec || '').split(',').forEach(function (x) { if (!x) return; m[x.replace('*', '')] = x.indexOf('*') > -1 ? 'p' : 's'; });
+    $$('.cell, .seg', el).forEach(function (c) { c.classList.remove('p', 's'); var k = m[c.dataset.c]; if (k) c.classList.add(k); });
+  }
+  function buildWheel(el) {
+    var out = '', order = ['PSD','SAW','WLM','PRO','FPA','FPM','KNO'], names = {};
+    COMPS.forEach(function (c) { names[c[0]] = c[1]; });
+    var top = 38, bot = 150, h = (bot - top) / order.length;
+    function wAt(y) { return 46 + 74 * (y - top) / (bot - top); }
+    order.forEach(function (code, i) {
+      var y0 = top + i * h, y1 = y0 + h, w0 = wAt(y0) / 2, w1 = wAt(y1) / 2;
+      var pts = [(100 - w0), y0, (100 + w0), y0, (100 + w1), y1, (100 - w1), y1].map(function (n) { return n.toFixed(1); });
+      var poly = pts[0] + ',' + pts[1] + ' ' + pts[2] + ',' + pts[3] + ' ' + pts[4] + ',' + pts[5] + ' ' + pts[6] + ',' + pts[7];
+      out += '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title><polygon class="sh" points="' + poly + '"/><text x="100" y="' + ((y0 + y1) / 2 + 4.2).toFixed(1) + '">' + code + '</text></g>';
+    });
+    var R = 92, C = 100;
+    function pt(d) { var a = d * Math.PI / 180; return [C + R * Math.sin(a), C - R * Math.cos(a)]; }
+    function arrow(code, d0, d1, ty) {
+      var a = pt(d0), b = pt(d1), r = d1 * Math.PI / 180, tx = Math.cos(r), tyv = Math.sin(r), nx = -tyv, ny = tx;
+      var tip = [b[0] + tx * 18, b[1] + tyv * 18], l = [b[0] + nx * 13, b[1] + ny * 13], rr = [b[0] - nx * 13, b[1] - ny * 13];
+      return '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title>' +
+        '<path class="ar" d="M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + '"/>' +
+        '<polygon class="ah" points="' + tip[0].toFixed(1) + ',' + tip[1].toFixed(1) + ' ' + l[0].toFixed(1) + ',' + l[1].toFixed(1) + ' ' + rr[0].toFixed(1) + ',' + rr[1].toFixed(1) + '"/>' +
+        '<text class="at" x="100" y="' + ty + '">' + code + '</text></g>';
+    }
+    out += arrow('COM', -60, 56, 12.6); out += arrow('LTW', 120, 236, 196.4);
+    el.innerHTML = out;
+  }
+  function maxStep(sl) { var m = 0; $$('[data-step]', sl).forEach(function (e) { m = Math.max(m, +e.dataset.step); }); return m; }
+  var cgrid = $('#cgrid'), bigGrid = $('#bigGrid'), notes = $('#notes'), wheelc = $('#wheel');
+  buildGrid(cgrid); buildGrid(bigGrid); buildWheel(wheelc);
+
+  /* ---------- control wheel and rudder pedals (as in the FCTM figure) ---------- */
+  function wheelSVG(p, cx, cy, s) {
+    return '<g transform="translate(' + cx + ' ' + cy + ') scale(' + s + ')">' +
+      '<rect class="w-grip" x="-9" y="40" width="18" height="74" rx="6"/>' +
+      '<polygon class="w-ref" points="0,-52 -9,-72 9,-72"/>' +
+      '<g id="' + p + 'W">' +
+        '<rect class="w-rim" x="-34" y="-34" width="68" height="84" rx="30"/>' +
+        '<path class="w-arm" d="M-34,0 C-62,0 -80,-22 -86,-54"/><path class="w-arm" d="M34,0 C62,0 80,-22 86,-54"/>' +
+        '<rect class="w-grip" x="-100" y="-84" width="26" height="42" rx="9"/><rect class="w-grip" x="74" y="-84" width="26" height="42" rx="9"/>' +
+        '<rect class="w-idx" x="-5" y="-45" width="10" height="14" rx="2"/>' +
+      '</g></g>';
+  }
+  function pedalsSVG(p, cx, cy, s) {
+    function ped(id, x) {
+      return '<g id="' + p + id + '"><rect class="ped" x="' + x + '" y="-22" width="62" height="46" rx="5"/>' +
+        '<line class="slat" x1="' + (x + 8) + '" y1="-8" x2="' + (x + 54) + '" y2="-8"/><line class="slat" x1="' + (x + 8) + '" y1="2" x2="' + (x + 54) + '" y2="2"/><line class="slat" x1="' + (x + 8) + '" y1="12" x2="' + (x + 54) + '" y2="12"/></g>';
+    }
+    return '<g transform="translate(' + cx + ' ' + cy + ') scale(' + s + ')"><rect class="ped-c" x="-14" y="24" width="28" height="12" rx="3"/>' + ped('LP', -78) + ped('RP', 16) + '</g>';
+  }
+  function setCtl(p, wd, lp, rp) {
+    $('#' + p + 'W').setAttribute('transform', 'rotate(' + wd.toFixed(1) + ' 0 8)');
+    var l = $('#' + p + 'LP'), r = $('#' + p + 'RP');
+    l.setAttribute('transform', 'translate(0 ' + (-clamp(lp, 0, 1.3) * 30).toFixed(1) + ')');
+    r.setAttribute('transform', 'translate(0 ' + (-clamp(rp, 0, 1.3) * 30).toFixed(1) + ')');
+    l.firstChild.classList.toggle('act', lp > 0.08); r.firstChild.classList.toggle('act', rp > 0.08);
+  }
+  $('#tWheelHost').innerHTML = wheelSVG('t', 640, 170, 1.15);
+  $('#tPedHost').innerHTML = pedalsSVG('t', 640, 440, 1.3);
+  $('#aWheelHost').innerHTML = wheelSVG('a', 130, 128, 0.8);
+  $('#aPedHost').innerHTML = pedalsSVG('a', 440, 150, 1);
+  $('#rWheelHost').innerHTML = wheelSVG('r', 545, 285, 0.62);
+  $('#rPedHost').innerHTML = pedalsSVG('r', 790, 300, 0.85);
+
+  /* ---------- generic animator ---------- */
+  function makeAnim(end, draw, onPlay) {
+    var a = { t: 0, playing: false, speed: 1, last: 0 };
+    a.seek = function (t) { a.t = clamp(t, 0, end); draw(a.t); };
+    a.setPlaying = function (on) { a.playing = on; a.last = 0; if (onPlay) onPlay(on); if (on) requestAnimationFrame(a.tick); };
+    a.tick = function (ts) {
+      if (!a.playing) return;
+      if (!a.last) a.last = ts;
+      var dt = Math.min(0.1, (ts - a.last) / 1000); a.last = ts;
+      a.t += dt * a.speed;
+      if (a.t >= end) { a.t = end; draw(a.t); a.setPlaying(false); return; }
+      draw(a.t); requestAnimationFrame(a.tick);
+    };
+    return a;
+  }
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- slide 4: rudder input cases ---------- */
+  var rs = $('#rs');
+  function drawRud(r) {
+    r = clamp(r, 0, 150);
+    var err = (100 - r) / 100;
+    $('#topG').setAttribute('transform', 'translate(210 310) rotate(' + (err * 18).toFixed(1) + ') scale(.62) translate(-380 -290)');
+    $('#rudG').setAttribute('transform', 'rotate(' + (r / 100 * 14).toFixed(1) + ' 380 490)');
+    $('#rudA').setAttribute('x2', (370 + Math.max(4, r)).toFixed(1));
+    var wd = clamp(-err * 70, -75, 75);
+    setCtl('t', wd, r / 100, 0);
+    var ok = Math.abs(err) < 0.1;
+    var wm = $('#tWMsg');
+    wm.textContent = Math.abs(wd) < 8 ? 'WHEEL APPROX LEVEL' : 'WHEEL ' + (wd < 0 ? 'LEFT' : 'RIGHT');
+    wm.setAttribute('class', 'msg' + (Math.abs(wd) < 8 ? ' ok' : ' bad'));
+    $('#tPMsg').textContent = r < 4 ? 'NO RUDDER' : 'LEFT RUDDER';
+    var cs = ok ? 'Correct' : r <= 15 ? 'Wheel only, no rudder' : r < 100 ? 'Not enough rudder' : 'Too much rudder';
+    var rc = $('#rCase'); rc.textContent = cs; rc.classList.toggle('bad', !ok);
+    $('#rHdg').textContent = ok ? 'holds' : err > 0 ? 'drifts toward the failed engine' : 'turns toward the operating engine';
+    $('#rWhl').textContent = Math.abs(wd) < 8 ? 'approximately level' : (wd < 0 ? 'left, ' : 'right, ') + Math.round(Math.abs(wd)) + '° (illustrative)';
+    $('#rLat').textContent = Math.abs(wd) > 35 ? 'reduced, spoilers may rise' : 'full authority available';
+    rs.value = r;
+    $$('.s4 .pre button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.r === Math.round(r))); });
+  }
+  rs.addEventListener('input', function () { drawRud(+rs.value); });
+  rs.addEventListener('change', function () { rs.blur(); });
+  $$('.s4 .pre button').forEach(function (b) { b.addEventListener('click', function () { drawRud(+b.dataset.r); b.blur(); }); });
+
+  /* ---------- slide 5: model (illustrative) ---------- */
+  var TEND = 36;
+  function T(n) { return Math.max(0, (n - 30) / 70); }
+  function n1L(t) {
+    if (t < 2) return 70;
+    if (t < 4.5) return 70 + 10 * ss(2, 4.5, t);
+    if (t < 7) return 80;
+    if (t < 12) return 80 - 28 * ss(7, 12, t);
+    if (t < 25) return 52;
+    if (t < 28.5) return 52 + 44 * ss(25, 28.5, t);
+    return 96;
+  }
+  function n1R(t) { if (t < 2) return 70; if (t < 4.5) return 70 - 40 * ss(2, 4.5, t); return 30; }
+  function asym(t) { return 14 * (T(n1L(t)) - T(n1R(t))); }
+  var lag = 0.7;
+  function rin(t) { return asym(Math.max(0, t - lag)); }
+  function phaseAt(t) { return t >= 25 ? 3 : t >= 18 ? 2 : t >= 7 ? 1 : 0; }
+  var KEYS = [[0,70,90],[7,300,90],[24,740,252],[25,755,253],[27,785,246],[31,865,190],[36,985,100]];
+  function posAt(t) {
+    t = clamp(t, 0, TEND);
+    for (var i = 1; i < KEYS.length; i++) {
+      if (t <= KEYS[i][0]) { var a = KEYS[i - 1], b = KEYS[i], f = (t - a[0]) / (b[0] - a[0]); return [a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]; }
+    }
+    var k = KEYS[KEYS.length - 1]; return [k[1], k[2]];
+  }
+  function sample(t0, t1) { var pts = []; for (var t = t0; t < t1 + 0.001; t += 0.5) { var p = posAt(t); pts.push(p[0].toFixed(1) + ',' + p[1].toFixed(1)); } return pts.join(' '); }
+  $('#pL').setAttribute('points', sample(0, 7)); $('#pD').setAttribute('points', sample(7, 18)); $('#pF').setAttribute('points', sample(18, 25)); $('#pG').setAttribute('points', sample(25, 36));
+
+  /* engine instruments */
+  var DIALS = {};
+  function polar(cx, cy, r, a) { var rad = a * Math.PI / 180; return [cx + r * Math.sin(rad), cy - r * Math.cos(rad)]; }
+  function arc(cx, cy, r, a0, a1) {
+    var s = polar(cx, cy, r, a0), e = polar(cx, cy, r, a1);
+    return 'M' + s[0].toFixed(1) + ' ' + s[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + ((a1 - a0) > 180 ? 1 : 0) + ' 1 ' + e[0].toFixed(1) + ' ' + e[1].toFixed(1);
+  }
+  function dial(id, cx, cy, r, max, step, redAt, label, nums) {
+    DIALS[id] = { cx: cx, cy: cy, max: max };
+    var s = '<path class="d-track" d="' + arc(cx, cy, r, -120, 120) + '"/><path class="d-red" d="' + arc(cx, cy, r, -120 + 240 * redAt / max, 120) + '"/>';
+    for (var v = 0; v <= max + 0.1; v += step) {
+      var a = -120 + 240 * v / max, p1 = polar(cx, cy, r - 8, a), p2 = polar(cx, cy, r - 18, a), pn = polar(cx, cy, r - 32, a);
+      s += '<line class="d-tick" x1="' + p1[0].toFixed(1) + '" y1="' + p1[1].toFixed(1) + '" x2="' + p2[0].toFixed(1) + '" y2="' + p2[1].toFixed(1) + '"/>';
+      if (nums && v % 20 === 0) s += '<text class="d-num" x="' + pn[0].toFixed(1) + '" y="' + (pn[1] + 5).toFixed(1) + '">' + (v / 10) + '</text>';
+    }
+    s += '<text class="dgl" x="' + cx + '" y="' + (cy - 14) + '">' + label + '</text>';
+    s += '<g id="' + id + 'P" transform="rotate(-120 ' + cx + ' ' + cy + ')"><line class="d-ptr" x1="' + cx + '" y1="' + cy + '" x2="' + cx + '" y2="' + (cy - r + 14) + '"/></g><circle class="d-hub" cx="' + cx + '" cy="' + cy + '" r="7"/>';
+    var by = cy + r * 0.38;
+    s += '<rect class="dg" x="' + (cx - 44) + '" y="' + by + '" width="88" height="30" rx="4"/><text id="' + id + 'T" class="dgt" x="' + cx + '" y="' + (by + 23) + '">---</text>';
+    return s;
+  }
+  (function () {
+    var s = '<text class="eh op" x="150" y="24" text-anchor="middle">ENG 1 · OPERATING</text><text class="eh id" x="450" y="24" text-anchor="middle">ENG 2 · IDLE</text>';
+    s += dial('n1a', 150, 102, 64, 110, 10, 104, 'N1', true) + dial('n1b', 450, 102, 64, 110, 10, 104, 'N1', true);
+    s += dial('egta', 150, 226, 48, 1000, 200, 930, 'EGT', false) + dial('egtb', 450, 226, 48, 1000, 200, 930, 'EGT', false);
+    function box(x, y, lab, id) { return '<rect class="dg" x="' + x + '" y="' + y + '" width="130" height="32" rx="4"/><text class="dgl" x="' + (x + 28) + '" y="' + (y + 21) + '">' + lab + '</text><text id="' + id + '" class="dgt s" x="' + (x + 92) + '" y="' + (y + 23) + '">---</text>'; }
+    s += box(15, 284, 'N2', 'n2a') + box(155, 284, 'FF', 'ffa') + box(315, 284, 'N2', 'n2b') + box(455, 284, 'FF', 'ffb');
+    s += '<text class="dgl" x="300" y="335">ILLUSTRATIVE VALUES · SCALED FROM N1</text>';
+    $('#instSvg').innerHTML = s;
+  })();
+  function setDial(id, v) { var d = DIALS[id], a = -120 + 240 * clamp(v / d.max, 0, 1); $('#' + id + 'P').setAttribute('transform', 'rotate(' + a.toFixed(1) + ' ' + d.cx + ' ' + d.cy + ')'); }
+  function eng(suffix, n1) {
+    var egt = 330 + (n1 - 30) * 5.6, n2 = 70 + 0.5 * (n1 - 45), ff = 0.35 + 2.2 * Math.pow(Math.max(0, n1 - 30) / 70, 2.2);
+    setDial('n1' + suffix, n1); setDial('egt' + suffix, egt);
+    $('#n1' + suffix + 'T').textContent = n1.toFixed(1); $('#egt' + suffix + 'T').textContent = Math.round(egt);
+    $('#n2' + suffix).textContent = n2.toFixed(1); $('#ff' + suffix).textContent = ff.toFixed(1);
+  }
+
+  var CAP = [
+    { t: '1 · Level, one thrust lever to idle', p: 'Level flight. The right thrust lever is retarded to idle; the left engine holds airspeed.', c: 'Left rudder goes in at the same rate that thrust changes. Wheel stays approximately level.', i: 'ENG 2 N1 to idle. ENG 1 N1 up to hold speed.' },
+    { t: '2 · Descent, thrust reduced', p: 'Descent for the approach. Thrust on the operating engine comes back.', c: 'Thrust comes back and the wheel moves a little: the rudder is still in. Reduce the rudder input and the wheel returns to level.', i: 'ENG 1 N1 falls clearly. Rudder input follows N1.' },
+    { t: '3 · Final approach', p: 'Stabilised on the profile, Flaps 15.', c: 'Reduced rudder input held steady. Wheel approximately level.', i: 'N1 steady at approach thrust.' },
+    { t: '4 · Go-around', p: 'TO/GA. Climb away, Flaps 1.', c: 'Thrust up, yaw returns and the wheel moves: add left rudder to bring it level. Pedal pressure may remain.', i: 'N1 rises fast. The rudder must keep up.' }
+  ];
+  var lastPh = -1;
+  function drawAnim(t) {
+    var nL = n1L(t), nR = n1R(t), req = asym(t), inp = rin(t), err = req - inp;
+    var p = posAt(t), pa = posAt(t - 0.4), pb = posAt(t + 0.4);
+    var ang = Math.atan2(pb[1] - pa[1], pb[0] - pa[0]) * 180 / Math.PI * 0.5;
+    $('#acft').setAttribute('transform', 'translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+    var gr = 6 + 30 * (nL - 30) / 66, g = $('#glow'); g.setAttribute('rx', gr.toFixed(1)); g.setAttribute('cx', (-62 - 0.7 * gr).toFixed(1));
+    $('#xm').style.opacity = ss(2, 4.5, t).toFixed(2);
+    /* controls: pedals are the input, the wheel only moves when the input does not match thrust */
+    var tvr = clamp(err * 4, -22, 22);
+    $('#tv').setAttribute('transform', 'translate(150 190) rotate(' + tvr.toFixed(1) + ') scale(.36) translate(-380 -290)');
+    $('#tvThr').setAttribute('y2', (296 - 30 - 150 * T(nL)).toFixed(1));
+    $('#tvRud').setAttribute('x2', (370 + Math.max(4, inp * 8)).toFixed(1));
+    $('#tvRudG').setAttribute('transform', 'rotate(' + (clamp(inp, 0, 14)).toFixed(1) + ' 380 490)');
+    var wd = clamp(-err * 16, -75, 75);
+    setCtl('a', wd, inp / 14, 0);
+    var wm = $('#wMsg');
+    if (Math.abs(wd) < 15) { wm.textContent = 'WHEEL APPROX LEVEL'; wm.setAttribute('class', 'msg ok'); }
+    else { wm.textContent = 'WHEEL ' + (wd < 0 ? 'LEFT' : 'RIGHT'); wm.setAttribute('class', 'msg bad'); }
+    var hd = $('#hdgT');
+    if (Math.abs(err) < 0.7) { hd.textContent = 'HOLDS'; } else { hd.textContent = err > 0 ? 'DRIFTS RIGHT' : 'DRIFTS LEFT'; }
+    var ac = $('#aAct');
+    if (Math.abs(err) < 0.7) { ac.textContent = req < 0.4 ? 'NO ASYMMETRY' : 'RUDDER MATCHES THRUST'; ac.setAttribute('class', 'msg ok'); }
+    else if (err > 0) { ac.textContent = 'ADD LEFT RUDDER'; ac.setAttribute('class', 'msg bad'); }
+    else { ac.textContent = 'EASE OFF RUDDER'; ac.setAttribute('class', 'msg bad'); }
+    var lb = clamp(inp / 14, 0, 1) * 72;
+    $('#lpB').setAttribute('width', lb.toFixed(1)); $('#lpB').setAttribute('x', (393 - lb / 2).toFixed(1));
+    $('#rpB').setAttribute('width', '0');
+    eng('a', nL); eng('b', nR);
+    var ph = phaseAt(t);
+    if (ph !== lastPh) {
+      lastPh = ph;
+      $$('#profSvg .chp').forEach(function (c) { c.classList.toggle('on', +c.dataset.p === ph); });
+      $('#capT').textContent = CAP[ph].t; $('#capP').textContent = CAP[ph].p; $('#capC').textContent = CAP[ph].c; $('#capI').textContent = CAP[ph].i;
+    }
+    $('#scrub').value = t;
+  }
+  var A = makeAnim(TEND, drawAnim, function (on) { var b = $('#playBtn'); b.textContent = on ? 'Pause' : 'Play'; b.setAttribute('aria-pressed', String(on)); });
+  function seekA(t) { lastPh = -1; A.seek(t); }
+  $('#playBtn').addEventListener('click', function () { if (A.t >= TEND) seekA(0); A.setPlaying(!A.playing); this.blur(); });
+  $('#rstBtn').addEventListener('click', function () { seekA(0); A.setPlaying(true); this.blur(); });
+  $('#spdBtn').addEventListener('click', function () { A.speed = A.speed === 1 ? 0.5 : 1; this.textContent = A.speed === 1 ? '0.5x' : '1x'; this.setAttribute('aria-pressed', String(A.speed !== 1)); this.blur(); });
+  $('#lagBtn').addEventListener('click', function () { lag = lag < 1.5 ? 2.0 : 0.7; this.setAttribute('aria-pressed', String(lag > 1.5)); this.textContent = lag > 1.5 ? 'Rudder in time' : 'Late rudder'; seekA(A.t); this.blur(); });
+  $('#scrub').addEventListener('input', function () { seekA(+this.value); });
+  $$('.actl [data-seek]').forEach(function (b) { b.addEventListener('click', function () { seekA(+b.dataset.seek); b.blur(); }); });
+
+  /* ---------- slide 6: interactive rudder trim ---------- */
+  (function () {
+    var g = '', u = 12.67;
+    for (var v = -15; v <= 15; v++) {
+      var x = 215 + v * u, mj = v % 5 === 0;
+      g += '<line x1="' + x.toFixed(1) + '" y1="' + (mj ? 54 : 62) + '" x2="' + x.toFixed(1) + '" y2="74" stroke="#EDF1F7" stroke-width="' + (mj ? 3 : 2) + '"/>';
+      if (mj) g += '<text x="' + x.toFixed(1) + '" y="48" text-anchor="middle" style="font:400 18px var(--f-mono);fill:#EDF1F7">' + Math.abs(v) + '</text>';
+    }
+    $('#indTicks').innerHTML = g;
+  })();
+  var TS = { n1: 80, trim: 0, dir: 0, knob: 0, release: false, auto: false, key: 0 };
+  function trimDraw() {
+    var Tn = T(TS.n1), R = 14 * Tn, held = !TS.release;
+    var rud = held ? R : TS.trim, err = R - rud, P = held ? R - TS.trim : 0;
+    $('#rTrimP').setAttribute('transform', 'translate(' + (-TS.trim * 12.67).toFixed(1) + ' 0)');
+    $('#rTrimTxt').textContent = Math.abs(TS.trim) < 0.05 ? 'TRIM 0' : 'TRIM ' + (TS.trim > 0 ? 'LEFT ' : 'RIGHT ') + Math.abs(TS.trim).toFixed(1);
+    $('#knobG').setAttribute('transform', 'rotate(' + TS.knob.toFixed(1) + ')');
+    $('#trTop').setAttribute('transform', 'translate(215 328) rotate(' + clamp(err * 4, -22, 22).toFixed(1) + ') scale(.66) translate(-380 -290)');
+    $('#trThr').setAttribute('y2', (266 - 150 * Tn).toFixed(1));
+    $('#trRud').setAttribute('x2', (370 + Math.max(4, rud * 8)).toFixed(1));
+    $('#trRudG').setAttribute('transform', 'rotate(' + clamp(rud, 0, 14).toFixed(1) + ' 380 490)');
+    var h = $("#trHdg");
+    if (Math.abs(err) < 0.7) { h.textContent = 'HEADING HOLDS'; h.setAttribute('class', 'msg ok'); }
+    else { h.textContent = err > 0 ? 'DRIFTS RIGHT · WHEEL LEFT' : 'DRIFTS LEFT · WHEEL RIGHT'; h.setAttribute('class', 'msg bad'); }
+    var wd = clamp(-err * 16, -75, 75);
+    setCtl('r', wd, rud / 14, 0);
+    var wm = $('#rWMsg');
+    if (Math.abs(wd) < 12) { wm.textContent = 'WHEEL APPROX LEVEL'; wm.setAttribute('class', 'msg ok'); }
+    else { wm.textContent = 'WHEEL ' + (wd < 0 ? 'LEFT' : 'RIGHT'); wm.setAttribute('class', 'msg bad'); }
+    var px = clamp(P * 10, -150, 150);
+    $('#rPbL').setAttribute('x', (675 - Math.max(0, px)).toFixed(1)); $('#rPbL').setAttribute('width', Math.max(0, px).toFixed(1));
+    $('#rPbR').setAttribute('x', '675'); $('#rPbR').setAttribute('width', Math.max(0, -px).toFixed(1));
+    var m = $('#rMsg');
+    if (TS.release) { m.textContent = Math.abs(err) < 0.7 ? 'PEDALS RELEASED · TRIM HOLDS IT' : 'PEDALS RELEASED · NOT ENOUGH TRIM'; m.setAttribute('class', 'msg' + (Math.abs(err) < 0.7 ? ' ok' : ' bad')); }
+    else if (Math.abs(P) < 0.4) { m.textContent = 'NO PEDAL PRESSURE · TRIMMED'; m.setAttribute('class', 'msg ok'); }
+    else if (P > 0) { m.textContent = 'PUSHING LEFT RUDDER'; m.setAttribute('class', 'msg'); }
+    else { m.textContent = 'OVER-TRIMMED · PUSH RIGHT'; m.setAttribute('class', 'msg bad'); }
+    var e = TS.release ? (Math.abs(err) > 0.7 ? 1 : 0) : clamp(Math.abs(P) / 6, 0, 1);
+    if (!TS.release && Math.abs(P) < 0.4) e = 0;
+    var panic = TS.release && Math.abs(err) > 0.7, happy = e < 0.12;
+    $('#pEyeH').style.display = happy ? '' : 'none'; $('#pEyeO').style.display = happy ? 'none' : '';
+    var er = e > 0.7 ? 3.2 : 5; $$('#pEyeO circle').forEach(function (c) { c.setAttribute('r', panic ? 7 : er); });
+    var inn = happy ? -9 : -8 - 8 * e;
+    $('#pBrL').setAttribute('y1', happy ? -10 : -8); $('#pBrL').setAttribute('y2', inn);
+    $('#pBrR').setAttribute('y2', happy ? -10 : -8); $('#pBrR').setAttribute('y1', inn);
+    var endY = 18 + 4 * e, ctrl = 32 - 28 * e;
+    $('#pMouth').setAttribute('d', 'M-14,' + endY.toFixed(1) + ' Q0,' + ctrl.toFixed(1) + ' 14,' + endY.toFixed(1));
+    $('#pMouth').style.display = panic ? 'none' : '';
+    $('#pTeeth').setAttribute('opacity', (!panic && e > 0.6) ? 1 : 0);
+    $('#pO').setAttribute('opacity', panic ? 1 : 0);
+    $('#pRed').setAttribute('opacity', (e * 0.45).toFixed(2));
+    $('#pBL').setAttribute('opacity', ((1 - e) * 0.5).toFixed(2)); $('#pBR').setAttribute('opacity', ((1 - e) * 0.5).toFixed(2));
+    $('#pSw1').setAttribute('opacity', e > 0.35 ? 1 : 0); $('#pSw2').setAttribute('opacity', e > 0.7 ? 1 : 0);
+    $('#pilotF').classList.toggle('shake', e > 0.8);
+    var say = $('#pSay');
+    say.textContent = panic ? 'WHOA! DRIFTING!' : e === 0 ? 'AHH, TRIMMED!' : e < 0.4 ? 'A BIT OF PUSH' : e < 0.75 ? 'PUSHING...' : 'OOF! SO HEAVY!';
+    say.setAttribute('class', 'msg' + (e === 0 ? ' ok' : e > 0.7 ? ' bad' : ''));
+    $('#thrV').textContent = 'N1 ' + Math.round(TS.n1); $('#thrS').value = TS.n1;
+    $('#rRelease').setAttribute('aria-pressed', String(TS.release));
+  }
+  function demoState(t) {
+    var n1 = t < 7 ? 80 : t < 9.5 ? 80 - 28 * ss(7, 9.5, t) : 52;
+    function tr(t) { return t < 1.5 ? 0 : t < 6.5 ? 10 * ss(1.5, 6.5, t) : t < 10.5 ? 10 : t < 12.5 ? 10 - 5.6 * ss(10.5, 12.5, t) : 4.4; }
+    var d = tr(t + 0.08) - tr(t);
+    TS.n1 = n1; TS.trim = tr(t); TS.release = false; TS.dir = 0; TS.knob = Math.abs(d) > 0.0005 ? (d > 0 ? -35 : 35) : 0;
+  }
+  function drawDemo(t) { demoState(t); trimDraw(); $('#rScrub').value = t; }
+  var B = makeAnim(13, drawDemo, function (on) { var b = $('#rPlay'); b.textContent = on ? 'Pause demo' : 'Demo'; b.setAttribute('aria-pressed', String(on)); });
+  function userTouch() { if (B.playing) B.setPlaying(false); TS.auto = false; }
+  var loopOn = false, loopLast = 0;
+  function loop(ts) {
+    if (!loopOn) return;
+    var dt = loopLast ? Math.min(0.1, (ts - loopLast) / 1000) : 0; loopLast = ts;
+    if (!B.playing) {
+      var d = TS.dir || TS.key;
+      if (TS.auto) {
+        var R = 14 * T(TS.n1), diff = R - TS.trim;
+        if (Math.abs(diff) < 0.05) { TS.trim = R; TS.auto = false; d = 0; } else { d = diff > 0 ? 1 : -1; TS.trim += d * Math.min(Math.abs(diff), dt * 3); d = d; }
+      } else if (d) { TS.trim = clamp(TS.trim + d * dt * 2, -15, 15); }
+      var tk = d > 0 ? -35 : d < 0 ? 35 : 0;
+      TS.knob += (tk - TS.knob) * Math.min(1, dt * 12);
+      trimDraw();
+    }
+    requestAnimationFrame(loop);
+  }
+  function loopStart() { if (!loopOn) { loopOn = true; loopLast = 0; requestAnimationFrame(loop); } }
+  function loopStop() { loopOn = false; }
+  function holdBtn(id, dir) {
+    var el = $(id);
+    el.addEventListener('pointerdown', function (e) { userTouch(); TS.dir = dir; try { el.setPointerCapture(e.pointerId); } catch (x) {} });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(function (ev) { el.addEventListener(ev, function () { TS.dir = 0; }); });
+  }
+  holdBtn('#tL', 1); holdBtn('#tR', -1);
+  $('#tRel').addEventListener('click', function () { userTouch(); TS.auto = true; this.blur(); });
+  $('#rRelease').addEventListener('click', function () { userTouch(); TS.release = !TS.release; trimDraw(); this.blur(); });
+  $('#thrS').addEventListener('input', function () { userTouch(); TS.n1 = +this.value; trimDraw(); });
+  $('#thrS').addEventListener('change', function () { this.blur(); });
+  $('#rRst').addEventListener('click', function () { userTouch(); TS.n1 = 80; TS.trim = 0; TS.release = false; TS.knob = 0; trimDraw(); this.blur(); });
+  $('#rPlay').addEventListener('click', function () { if (B.t >= 13) B.seek(0); B.setPlaying(!B.playing); this.blur(); });
+  $('#rScrub').addEventListener('input', function () { if (B.playing) B.setPlaying(false); B.seek(+this.value); });
+
+  /* ---------- deck ---------- */
+  var startedA = false, startedB = false;
+  function render() {
+    var sl = slides[si], max = maxStep(sl), eff = all ? max : st;
+    slides.forEach(function (s, i) { s.classList.toggle('on', i === si); });
+    $$('[data-step]', sl).forEach(function (e) { var n = +e.dataset.step; e.classList.toggle('on', n <= eff); e.classList.toggle('cur', eff > 0 && n === eff); });
+    var spec = sl.dataset.comp;
+    if (eff > 0) { var cur = $$('[data-step]', sl).filter(function (e) { return +e.dataset.step === eff && e.dataset.comp; })[0]; if (cur) spec = cur.dataset.comp; }
+    paintGrid(cgrid, spec); paintGrid(wheelc, spec);
+    if (si === 1) paintGrid(bigGrid, sl.dataset.comp);
+    $$('.stages li').forEach(function (li) { li.classList.toggle('on', li.dataset.s === sl.dataset.stage); });
+    var n = si + 1;
+    $('#count').innerHTML = '<b>' + (n < 10 ? '0' + n : n) + '</b> / ' + (slides.length < 10 ? '0' + slides.length : slides.length) + (max > 0 ? '  ·  ' + eff + '/' + max : '');
+    var nt = $('.notes', sl); notes.innerHTML = nt ? nt.innerHTML : '';
+    $('[data-act="all"]').setAttribute('aria-pressed', String(all));
+    if (si === ANIM && eff >= 4) { if (!startedA) { startedA = true; seekA(0); if (!reduce) A.setPlaying(true); } }
+    else { if (A.playing) A.setPlaying(false); if (startedA) { startedA = false; seekA(0); } }
+    if (si === TRIM) loopStart(); else loopStop();
+    if (si === TRIM && eff >= 1) { if (!startedB) { startedB = true; B.seek(0); if (!reduce) B.setPlaying(true); } }
+    else { if (B.playing) B.setPlaying(false); if (startedB) { startedB = false; B.seek(0); } }
+  }
+  function next() { var max = maxStep(slides[si]); if (!all && st < max) { st++; } else if (si < slides.length - 1) { si++; st = 0; } render(); }
+  function prev() { if (!all && st > 0) { st--; } else if (si > 0) { si--; st = maxStep(slides[si]); } render(); }
+  function effTheme() { var t = document.documentElement.getAttribute('data-theme'); if (t) return t; return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
+  function toggleTheme() { var nt = effTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', nt); try { localStorage.setItem('engOutFamTheme', nt); } catch (e) {} }
+  function toggleNotes() { notes.hidden = !notes.hidden; $('[data-act="notes"]').setAttribute('aria-pressed', String(!notes.hidden)); }
+  function toggleFull() { try { if (document.fullscreenElement) { document.exitFullscreen(); } else if (document.documentElement.requestFullscreen) { var p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(function () {}); } } catch (e) {} }
+  if (!document.fullscreenEnabled) $('#fullBtn').hidden = true;
+  $('#controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var a = b.dataset.act;
+    if (a === 'next') next(); else if (a === 'prev') prev(); else if (a === 'all') { all = !all; render(); }
+    else if (a === 'notes') toggleNotes(); else if (a === 'theme') toggleTheme(); else if (a === 'full') toggleFull();
+    b.blur();
+  });
+  document.addEventListener('keydown', function (e) {
+    var tg = e.target, tag = tg && tg.tagName;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (tag === 'INPUT') return;
+    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); si = 0; st = 0; render(); }
+    else if (k === 'End') { e.preventDefault(); si = slides.length - 1; st = 0; render(); }
+    else if (k === 'ArrowUp' && si === THEORY) { e.preventDefault(); drawRud(+rs.value + 10); }
+    else if (k === 'ArrowDown' && si === THEORY) { e.preventDefault(); drawRud(+rs.value - 10); }
+    else if ((k === 'p' || k === 'P') && si === ANIM) { if (A.t >= TEND) seekA(0); A.setPlaying(!A.playing); }
+    else if ((k === 'p' || k === 'P') && si === TRIM) { if (B.t >= 13) B.seek(0); B.setPlaying(!B.playing); }
+    else if (k === 'ArrowUp' && si === TRIM) { e.preventDefault(); userTouch(); TS.n1 = clamp(TS.n1 + 4, 30, 96); trimDraw(); }
+    else if (k === 'ArrowDown' && si === TRIM) { e.preventDefault(); userTouch(); TS.n1 = clamp(TS.n1 - 4, 30, 96); trimDraw(); }
+    else if ((k === 'z' || k === 'Z') && si === TRIM) { userTouch(); TS.key = 1; }
+    else if ((k === 'c' || k === 'C') && si === TRIM) { userTouch(); TS.key = -1; }
+    else if ((k === 'x' || k === 'X') && si === TRIM) { userTouch(); TS.auto = true; }
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 't' || k === 'T') toggleTheme();
+    else if (k === 'a' || k === 'A') { all = !all; render(); }
+  });
+  document.addEventListener('keyup', function (e) { if (e.key === 'z' || e.key === 'Z' || e.key === 'c' || e.key === 'C') TS.key = 0; });
+  var tx0 = null;
+  document.addEventListener('touchstart', function (e) { tx0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (tx0 === null) return; var dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+    if (Math.abs(dx) > 60 && !e.target.closest('input,button,#notes')) { if (dx < 0) next(); else prev(); }
+  }, { passive: true });
+  var idleT;
+  function wake() { document.body.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(function () { document.body.classList.add('idle'); }, 3000); }
+  ['pointermove', 'pointerdown'].forEach(function (ev) { document.addEventListener(ev, wake); });
+  try { var saved = localStorage.getItem('engOutFamTheme'); if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved); } catch (e) {}
+  window.addEventListener('resize', fit);
+  fit(); drawRud(100); seekA(0); B.seek(0); render(); wake();
+})();
+</script>
+</body>
+</html>
