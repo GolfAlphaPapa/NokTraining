@@ -1,0 +1,1538 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emergency Descent Briefing</title>
+<meta name="author" content="Capt. Supakit Punyangam">
+<meta name="copyright" content="© Capt. Supakit Punyangam">
+<!-- © Capt. Supakit Punyangam. Emergency Descent mini briefing. Do not copy or distribute without permission. -->
+<link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D1521; --panel: #152033; --panel2: #1D2C45; --line: #2E3F5C;
+  --fg: #EDF1F7; --muted: #9BA9BD;
+  --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #FFC72C; --accent-soft: rgba(255,199,44,0.16);
+  --lift: #6DB7FF; --weight: #FF8F66; --green: #46C37B;
+  --f-body: 'B612', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --f-mono: 'B612 Mono', ui-monospace, Menlo, Consolas, monospace;
+  --f-disp: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F2F5F9; --panel: #FFFFFF; --panel2: #E6ECF4; --line: #C5D0DF; --fg: #111B2B; --muted: #53617A;
+    --accent-text: #7A5200; --accent-soft: rgba(255,199,44,0.35);
+    --lift: #0B5FC0; --weight: #BF3B0B; --green: #1B8A47; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F2F5F9; --panel: #FFFFFF; --panel2: #E6ECF4; --line: #C5D0DF; --fg: #111B2B; --muted: #53617A;
+  --accent-text: #7A5200; --accent-soft: rgba(255,199,44,0.35);
+  --lift: #0B5FC0; --weight: #BF3B0B; --green: #1B8A47; color-scheme: light;
+}
+html { height: 100%; box-sizing: border-box; }
+body { height: 100%; box-sizing: border-box; margin: 0; overflow: hidden; background: var(--bg); color: var(--fg); font-family: var(--f-body); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+body.idle { cursor: none; }
+#viewport { position: relative; width: 100%; height: 100%; overflow: hidden; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; margin: -540px 0 0 -960px; transform: scale(var(--s,1)); transform-origin: 50% 50%; }
+
+.top { position: absolute; left: 96px; right: 96px; top: 36px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand, .topic { font: 700 20px/1 var(--f-mono); letter-spacing: 0.16em; color: var(--muted); white-space: nowrap; }
+.stages { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.stages li { display: flex; gap: 10px; align-items: baseline; font: 400 20px/1 var(--f-mono); padding: 12px 18px; border: 1.5px solid var(--line); border-radius: 4px; color: var(--muted); }
+.stages li b { font-weight: 700; }
+.stages li.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.foot { position: absolute; left: 96px; right: 96px; bottom: 30px; height: 174px; display: flex; align-items: flex-end; justify-content: space-between; }
+.count { font: 400 22px/1 var(--f-mono); color: var(--muted); }
+.count b { color: var(--fg); font-weight: 700; }
+.credit { position: absolute; left: 0; bottom: 40px; font: 400 17px/1 var(--f-mono); letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; opacity: 0.85; user-select: none; }
+.corner { display: flex; align-items: flex-end; gap: 24px; }
+.cgrid { display: grid; grid-template-columns: repeat(3, 54px); grid-auto-rows: 54px; gap: 6px; }
+.wheel { display: block; width: 174px; height: 174px; }
+.seg .sh { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; transition: fill .25s, stroke .25s; }
+.seg .ar { fill: none; stroke: var(--line); stroke-width: 14; transition: stroke .25s; }
+.seg .ah { fill: var(--line); transition: fill .25s; }
+.seg text { font: 700 12.5px var(--f-mono); fill: var(--muted); text-anchor: middle; }
+.seg text.at { font-size: 10.5px; letter-spacing: .04em; }
+.seg.p .sh { fill: var(--accent); stroke: var(--accent); } .seg.p .ar { stroke: var(--accent); } .seg.p .ah { fill: var(--accent); } .seg.p text { fill: var(--accent-ink); }
+.seg.s .sh { fill: var(--accent-soft); stroke: var(--accent); } .seg.s .ar { stroke: var(--accent); stroke-opacity: .45; } .seg.s .ah { fill: var(--accent); fill-opacity: .45; } .seg.s text { fill: var(--accent-text); }
+.cell { display: grid; place-items: center; align-content: center; border: 1.5px solid var(--line); border-radius: 3px; color: var(--muted); transition: background .25s, color .25s, border-color .25s; }
+.cell .c { font: 700 16px/1 var(--f-mono); } .cell .n { display: none; }
+.cell.p { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cell.s { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.cgrid.big { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 172px; gap: 10px; }
+.cgrid.big .cell { padding: 10px 12px; gap: 8px; text-align: left; justify-items: start; }
+.cgrid.big .cell .c { font-size: 24px; }
+.cgrid.big .cell .n { display: block; font: 400 17px/1.25 var(--f-body); }
+
+.slide { position: absolute; left: 96px; right: 96px; top: 128px; height: 742px; display: none; }
+.slide.on { display: block; }
+.eyebrow { margin: 0 0 16px; font: 700 22px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-text); }
+h1 { margin: 0; font: 700 76px/1 var(--f-disp); letter-spacing: .005em; text-wrap: balance; }
+h3 { margin: 0 0 14px; font: 700 26px/1.2 var(--f-body); }
+.hint { margin: 14px 0 0; font-size: 26px; color: var(--muted); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 24px 28px; }
+.v { display: inline-block; margin-left: 8px; padding: 3px 8px; border: 1.5px solid var(--accent); border-radius: 3px; font: 700 15px/1 var(--f-mono); color: var(--accent-text); letter-spacing: .06em; vertical-align: 2px; white-space: nowrap; }
+.fn { position: absolute; left: 0; right: 0; bottom: 0; font-size: 22px; color: var(--muted); }
+.rv { opacity: 0; transition: opacity .35s ease, transform .35s ease; }
+.rv.h { transform: translateY(14px); }
+.rv.on { opacity: 1; } .rv.h.on { transform: none; }
+.focus .rv.on:not(.cur) { opacity: .5; }
+.notes { display: none; }
+@media (prefers-reduced-motion: reduce) { .rv, .cell { transition: none; } .rv.h { transform: none; } }
+
+.s1 h1 { font-size: 220px; line-height: .9; text-transform: uppercase; }
+.s1 .sub { margin: 18px 0 0; font-size: 40px; color: var(--muted); }
+.s1 .by { margin: 14px 0 0; font: 700 24px/1.2 var(--f-mono); letter-spacing: .08em; color: var(--accent-text); }
+.roadmap { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.roadmap .panel { padding: 22px 26px; }
+.roadmap .num { font: 700 44px/1 var(--f-mono); color: var(--accent-text); }
+.roadmap .t { margin: 12px 0 6px; font: 700 30px/1.15 var(--f-body); }
+.roadmap .d { font-size: 22px; line-height: 1.35; color: var(--muted); }
+
+.s2 .wrap { display: grid; grid-template-columns: 1fr 640px; gap: 56px; margin-top: 28px; }
+.comp-list { display: grid; gap: 10px; align-content: start; min-width: 0; }
+.comp { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: center; padding: 8px 24px; }
+.chip { display: grid; place-items: center; height: 56px; border: 1.5px solid var(--accent); border-radius: 4px; font: 700 28px/1 var(--f-mono); color: var(--accent-text); background: var(--accent-soft); }
+.chip.p { background: var(--accent); color: var(--accent-ink); }
+.comp .nm { font: 700 26px/1.2 var(--f-body); }
+.comp .ob { margin-top: 4px; font-size: 22px; line-height: 1.35; color: var(--muted); }
+.outcome { margin-top: 2px; padding: 14px 24px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 25px/1.3 var(--f-body); }
+
+.qs { display: grid; gap: 9px; margin-top: 16px; }
+.q { display: grid; grid-template-columns: 210px 1fr 130px; gap: 28px; align-items: center; padding: 9px 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.q .lv { font: 700 20px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.q p { margin: 0; font-size: 31px; line-height: 1.22; }
+.q .chip { height: 52px; font-size: 22px; }
+.q.cur { border-color: var(--accent); }
+
+.two.on { display: grid; grid-template-columns: 900px 1fr; gap: 64px; }
+.two .left, .two .right { min-width: 0; }
+.defs { list-style: none; margin: 20px 0 0; padding: 0; }
+.defs li { display: grid; grid-template-columns: 230px 1fr; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 26px; line-height: 1.25; }
+.defs li:last-child { border-bottom: 0; }
+.defs .k { font: 700 40px/1 var(--f-disp); color: var(--accent-text); }
+.rule { margin-top: 20px; padding: 22px 28px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; }
+.rule .three { font: 700 30px/1.3 var(--f-body); }
+
+/* altitude profile */
+#prof { display: block; width: 900px; height: 560px; }
+.lbl { font: 700 24px var(--f-mono); fill: var(--fg); }
+.lg { font: 700 19px var(--f-mono); }
+.lg.acc { fill: var(--accent-text); } .lg.muted { fill: var(--muted); } .lg.lift { fill: var(--lift); } .lg.weight { fill: var(--weight); } .lg.green { fill: var(--green); }
+.pf { fill: none; stroke: var(--lift); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.pg { stroke: var(--line); stroke-width: 2; stroke-dasharray: 8 8; }
+.pa { stroke: var(--accent); stroke-width: 3; stroke-dasharray: 10 8; }
+.pt { fill: var(--accent); }
+
+.steps { list-style: none; margin: 18px 0 0; padding: 0; counter-reset: s; }
+.steps li { display: grid; grid-template-columns: 56px 1fr 150px; gap: 8px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 23px; line-height: 1.22; }
+.steps li::before { counter-increment: s; content: counter(s); font: 700 24px/1 var(--f-mono); color: var(--accent-text); }
+.steps li:last-child { border-bottom: 0; }
+.steps .who { font: 700 18px var(--f-mono); color: var(--accent-text); letter-spacing: .06em; text-align: right; }
+.steps .st { color: var(--muted); font-size: 19px; display: block; margin-top: 1px; }
+
+.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 26px; }
+.col { min-width: 0; }
+.col .tag { margin: 0 0 14px; font: 700 22px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent-text); }
+.col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.col li { padding-bottom: 14px; border-bottom: 1px solid var(--line); font-size: 26px; line-height: 1.3; }
+.col li:last-child { border-bottom: 0; }
+.col li b { font-family: var(--f-mono); font-size: 23px; }
+.col li .d { display: block; margin-top: 6px; color: var(--muted); font-size: 22px; }
+
+.px { display: grid; gap: 8px; margin-top: 12px; }
+.px .row { display: grid; grid-template-columns: 340px 1fr 220px; gap: 24px; align-items: center; padding: 7px 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.px .row.head { background: transparent; border-color: transparent; padding: 0 26px; font: 700 18px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.px .when { font-size: 23px; line-height: 1.3; color: var(--muted); }
+.px .when b { font: 700 26px var(--f-mono); color: var(--accent-text); margin-right: 8px; }
+.px .say { font: 700 27px/1.25 var(--f-mono); color: var(--accent-text); }
+.px .say small { display: block; margin-top: 4px; font: 400 19px/1.3 var(--f-body); color: var(--muted); }
+.px .atc { font: 700 24px/1.2 var(--f-mono); }
+
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 26px; }
+.phase { min-width: 0; }
+.phase .ph { font: 700 20px/1 var(--f-mono); letter-spacing: .12em; color: var(--accent-text); text-transform: uppercase; }
+.phase h3 { margin: 10px 0 14px; font-size: 32px; }
+.phase ul { margin: 0; padding-left: 24px; display: grid; gap: 10px; font-size: 24px; line-height: 1.3; }
+.tols { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 22px; }
+.tol { display: flex; align-items: baseline; gap: 12px; padding: 14px 24px; background: var(--accent); color: var(--accent-ink); border-radius: 4px; }
+.tol span { font: 700 18px/1 var(--f-mono); letter-spacing: .1em; }
+.tol b { font: 700 34px/1 var(--f-disp); }
+.pm { margin-top: 18px; font-size: 26px; color: var(--muted); }
+
+.s8.on { display: grid; grid-template-columns: 1140px 1fr; gap: 56px; }
+.s8 .left, .s8 .right { min-width: 0; }
+.errs { display: grid; gap: 7px; margin-top: 14px; }
+.erow { display: grid; grid-template-columns: 300px 340px 1fr; gap: 20px; padding: 9px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 22px; line-height: 1.28; }
+.erow.head { background: transparent; border-color: transparent; padding: 0 20px; font: 700 18px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.erow .fx { color: var(--accent-text); font-weight: 700; }
+.debrief { margin-top: 22px; padding: 28px; background: var(--panel); border: 1px solid var(--accent); border-radius: 6px; }
+.debrief ol { margin: 0; padding-left: 36px; display: grid; gap: 22px; font-size: 28px; line-height: 1.3; }
+.debrief ol li::marker { font: 700 28px var(--f-mono); color: var(--accent-text); }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 28px; }
+.stat { padding: 20px 26px; }
+.stat .num { font: 700 100px/0.95 var(--f-disp); color: var(--lift); white-space: nowrap; }
+.stat .cap { margin-top: 10px; font-size: 23px; line-height: 1.3; color: var(--muted); }
+.why { margin-top: 26px; font-size: 34px; line-height: 1.35; max-width: 1500px; }
+.remember { margin-top: 22px; padding: 24px 32px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 44px/1.2 var(--f-disp); }
+
+#controls { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(12px, env(safe-area-inset-bottom,0px)); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 6px; max-width: calc(100% - 32px); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; z-index: 20; transition: opacity .3s; }
+body.idle #controls { opacity: 0; pointer-events: none; }
+#controls button { font: 700 14px/1 var(--f-mono); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; cursor: pointer; }
+#controls button:hover { border-color: var(--accent); }
+#controls button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 44vh; overflow: auto; z-index: 15; background: var(--panel); border-top: 2px solid var(--accent); font: 400 17px/1.5 var(--f-body); color: var(--fg); padding: 16px 24px 72px; }
+#notes h4 { margin: 0 0 6px; font: 700 14px/1 var(--f-mono); letter-spacing: .14em; color: var(--accent-text); text-transform: uppercase; }
+#notes p { margin: 0 0 8px; max-width: 110ch; }
+
+/* memory checklist */
+.mi { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 14px; }
+.mi .panel { padding: 14px 22px 10px; }
+.mi h3 { margin: 0 0 4px; font: 700 34px/1.1 var(--f-disp); letter-spacing: .02em; text-transform: uppercase; }
+.mi .src { margin: 0 0 8px; font: 400 17px/1.3 var(--f-mono); color: var(--muted); }
+.mi ol { list-style: none; margin: 0; padding: 0; counter-reset: m; }
+.mi li { display: grid; grid-template-columns: 44px 44px 1fr; gap: 10px; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--line); font-size: 21px; line-height: 1.25; cursor: pointer; }
+.mi li:last-child { border-bottom: 0; }
+.mi li::before { counter-increment: m; content: counter(m); font: 700 22px/1 var(--f-mono); color: var(--accent-text); }
+.mi li .box { order: -1; }
+.box { width: 34px; height: 34px; border: 2.5px solid var(--accent); border-radius: 4px; display: grid; place-items: center; font: 700 24px/1 var(--f-mono); color: var(--accent-ink); }
+.mi li.ok .box { background: var(--accent); }
+.mi li.ok .box::after { content: "\2713"; }
+.mi li .sub { display: block; color: var(--muted); font-size: 18px; margin-top: 1px; }
+.mi .sep { margin: 8px 0 2px; padding: 8px 0 0; border-top: 3px dashed var(--accent); font: 700 17px/1.3 var(--f-mono); letter-spacing: .08em; color: var(--accent-text); }
+.miscore { margin-top: 16px; display: flex; gap: 20px; align-items: center; font-size: 24px; color: var(--muted); }
+.miscore b { font: 700 40px/1 var(--f-disp); color: var(--accent-text); }
+/* profile slider */
+.lb { opacity: .45; transition: opacity .25s; } .lb.on { opacity: 1; }
+.ctl { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+.ctl label { font: 700 19px/1 var(--f-mono); color: var(--muted); letter-spacing: .1em; }
+.ctl input[type="range"] { flex: 1; min-width: 0; accent-color: var(--accent); height: 28px; }
+.ctl button { font: 700 20px/1 var(--f-mono); padding: 11px 20px; color: var(--accent-ink); background: var(--accent); border: 0; border-radius: 4px; cursor: pointer; min-width: 96px; }
+.phst { margin-top: 10px; padding: 12px 20px; min-height: 120px; }
+.phn { font: 700 34px/1.1 var(--f-disp); letter-spacing: .02em; text-transform: uppercase; color: var(--accent-text); }
+.pht { margin-top: 4px; font-size: 22px; line-height: 1.3; }
+/* gauges */
+.pre { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.pre button { font: 700 18px/1 var(--f-mono); padding: 10px 14px; color: var(--fg); background: var(--panel); border: 1.5px solid var(--line); border-radius: 4px; cursor: pointer; }
+.pre button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.gp { display: block; width: 820px; height: 488px; }
+.rd { display: grid; grid-template-columns: 1.25fr 1.1fr 1fr 1.05fr .8fr; gap: 10px; margin-top: 8px; font: 700 15px/1 var(--f-mono); color: var(--muted); letter-spacing: .06em; }
+.rd b { display: block; margin-top: 4px; font-size: 21px; color: var(--fg); letter-spacing: 0; }
+.rd i { font-style: normal; }
+.ring { fill: none; stroke: #FF5A3C; stroke-width: 5; stroke-dasharray: 10 6; opacity: 0; transition: opacity .2s; }
+.ring.on { opacity: 1; }
+.ctl .pre { margin: 0; flex: none; } .ctl .pre button { font-size: 17px; padding: 10px 12px; }
+.sigs { margin-top: 12px; display: grid; gap: 10px; }
+.sig { padding: 14px 20px; border: 2px solid var(--line); border-left-width: 8px; border-radius: 4px; background: var(--panel); font-size: 24px; line-height: 1.25; transition: background .2s, border-color .2s; }
+.sig.lit { background: rgba(255,90,60,.2); border-color: #FF5A3C; }
+.sig b { font: 700 21px var(--f-mono); letter-spacing: .04em; color: var(--accent-text); }
+/* TUC */
+.tuc { display: grid; grid-template-columns: 150px 1fr; gap: 28px; align-items: stretch; min-height: 640px; }
+.vsw { position: relative; display: flex; gap: 8px; height: 640px; }
+.vlab { list-style: none; margin: 0; padding: 14px 0; display: flex; flex-direction: column; justify-content: space-between; text-align: right; flex: 1; font: 700 22px/1 var(--f-mono); color: var(--muted); }
+.vlab li.on { color: var(--accent-text); font-size: 30px; }
+.vs { writing-mode: vertical-lr; direction: rtl; -webkit-appearance: slider-vertical; appearance: slider-vertical; width: 52px; height: 640px; accent-color: var(--accent); cursor: pointer; }
+.tout { display: flex; flex-direction: column; gap: 14px; padding-top: 6px; }
+.tcap { margin: 0; font: 700 20px/1 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.tfl { font: 700 110px/1 var(--f-disp); color: var(--accent-text); }
+.trow { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.trow .tl { font: 700 20px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+.trow.tr .tl { color: var(--weight); } .trow.tn .tl { color: var(--lift); }
+.trow .tv { font: 700 52px/1.1 var(--f-disp); margin: 8px 0 10px; min-height: 58px; }
+.tb { position: relative; height: 22px; background: var(--panel2); border-radius: 3px; }
+.tb i { position: absolute; top: 0; bottom: 0; border-radius: 3px; transition: left .25s, width .25s; }
+.tr .tb i { background: var(--weight); } .tn .tb i { background: var(--lift); }
+.taxis { display: flex; justify-content: space-between; font: 700 17px/1 var(--f-mono); color: var(--muted); }
+.tsrc { margin: 4px 0 0; font-size: 18px; line-height: 1.35; color: var(--muted); }
+.tnote { margin: 10px 0 0; font-size: 24px; line-height: 1.3; color: var(--fg); }
+.tmv { font: 700 22px/1 var(--f-mono); color: var(--fg); min-width: 84px; text-align: right; }
+.test { list-style: none; margin: 18px 0 0; padding: 0; counter-reset: t; }
+.test li { display: grid; grid-template-columns: 44px 1fr; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 24px; line-height: 1.28; }
+.test li:last-child { border-bottom: 0; }
+.test li::before { counter-increment: t; content: counter(t); font: 700 24px/1.2 var(--f-mono); color: var(--accent-text); }
+.test .d { display: block; margin-top: 4px; color: var(--muted); font-size: 21px; }
+.ok-t { color: var(--green); font-weight: 700; } .no-t { color: var(--weight); font-weight: 700; }
+/* rapid vs slow */
+#dec { display: block; width: 900px; height: 560px; }
+.dc { display: grid; gap: 0; margin-top: 16px; }
+.dc .r { display: grid; grid-template-columns: 170px 1fr 1fr; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 22px; line-height: 1.28; }
+.dc .r.head { font: 700 18px/1 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; border-bottom-width: 2px; }
+.dc .r.head .rp { color: var(--weight); } .dc .r.head .sl { color: var(--lift); }
+.dc .k { font: 700 19px/1.3 var(--f-mono); color: var(--accent-text); }
+.dc .r.both span:nth-child(2) { grid-column: span 2; }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <header class="top">
+      <div class="brand">NOK AIR · TRAINING</div>
+      <ol class="stages" aria-label="CBTA stages">
+        <li data-s="1"><b>1</b> Competencies</li>
+        <li data-s="2"><b>2</b> Questions</li>
+        <li data-s="3"><b>3</b> Knowledge</li>
+        <li data-s="4"><b>4</b> Simulator</li>
+      </ol>
+      <div class="topic">EMERGENCY DESCENT · B737-800</div>
+    </header>
+
+    <!-- 1 TITLE -->
+    <section class="slide s1" data-stage="0" data-comp="">
+      <p class="eyebrow">Competency-based training · mini briefing</p>
+      <h1>Emergency Descent</h1>
+      <p class="sub">Cabin altitude warning · Rapid depressurization · QRH procedure · Callouts · Boeing 737-800 · Full flight simulator</p>
+      <p class="by">Prepared by Capt. Supakit Punyangam</p>
+      <div class="roadmap">
+        <div class="panel"><div class="num">1</div><div class="t">Competencies</div><div class="d">What we will assess</div></div>
+        <div class="panel"><div class="num">2</div><div class="t">Questions</div><div class="d">What you already know</div></div>
+        <div class="panel"><div class="num">3</div><div class="t">Knowledge</div><div class="d">The procedure, the technique, the callouts, and where it is written</div></div>
+        <div class="panel"><div class="num">4</div><div class="t">Simulator</div><div class="d">How to perform</div></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>About 15 minutes. Controls: arrow keys or page keys to step, N notes (keep notes off the projector), F fullscreen, A reveal everything on a slide, T light or dark.</p>
+        <p>The grid and pyramid in the bottom-right corner are the Boeing nine-competency map. On each slide the assessed competencies are highlighted: solid for primary, outlined for secondary.</p>
+        <p>Scope: Emergency Descent after a CABIN ALTITUDE WARNING or rapid depressurization, in the B737-800 simulator. Content was read from the current NOK manuals (QRH Rev 23, FCTM Rev 25, SOP Issue 04, OM-A Issue 08, FTM Issue 08). Items marked VERIFY need a check against the manual page or grade slip before presenting.</p>
+        <p>Method: ask first, then fill the gaps. Stage 2 questions come before any theory.</p>
+      </div>
+    </section>
+
+    <!-- 2 COMPETENCIES -->
+    <section class="slide s2" data-stage="1" data-comp="PRO*,FPA*,WLM*,COM*,SAW">
+      <p class="eyebrow">Stage 1 · Assessment competencies</p>
+      <h1>What we are assessing</h1>
+      <div class="wrap">
+        <div class="comp-list">
+          <div class="panel comp"><div class="chip p">PRO</div><div><div class="nm">Application of Procedures and Compliance with Regulations</div><div class="ob">Does the CABIN ALTITUDE and Emergency Descent items in the right order, by recall, then the checklist.</div></div></div>
+          <div class="panel comp"><div class="chip p">FPA</div><div><div class="nm">Aeroplane Flight Path Management, Automation</div><div class="ob">Descends with the autopilot in LVL CHG, sets the level-off altitude, and captures it smoothly with speedbrakes.</div></div></div>
+          <div class="panel comp"><div class="chip p">WLM</div><div><div class="nm">Workload Management</div><div class="ob">High workload in the first minutes: splits tasks between PF and PM, prioritizes flying and the descent, defers the rest.</div></div></div>
+          <div class="panel comp"><div class="chip p">COM</div><div><div class="nm">Communication</div><div class="ob">Masks and crew communications first, PA to the cabin, MAYDAY and altimeter setting to ATC, altitude callouts.</div></div></div>
+          <div class="outcome">Outcome: the crew masks up, starts the descent without delay, flies it deliberately to the lowest safe altitude or 10,000 ft, and tells ATC and the cabin.</div>
+        </div>
+        <div class="cgrid big" id="bigGrid" aria-label="Boeing nine competencies"></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Four primary competencies: PRO, FPA, WLM, COM. FCTM 7.5 recommends the autopilot with LVL CHG for the rapid descent, so the flight path competency is FPA and FPM is not assessed in this exercise. WLM is primary because the first minutes carry a very high workload: masks, communications, pressurization, PA, ATC call, descent, checklist.</p>
+        <p>Look for: PF flies and monitors the descent, PM runs the checklist and ATC, nobody does two things at once, non-essential items deferred until level-off. SAW is secondary: lowest safe altitude, terrain, and cabin altitude monitoring. KNO supports all three and is shown in the knowledge stage. Instrument scanning is tagged SAW or WLM, not FPM.</p>
+        <p>Observable behaviors are examples. Replace them with the exact OB wording from the current grade slip and competency framework.</p>
+      </div>
+    </section>
+
+    <!-- 3 QUESTIONS -->
+    <section class="slide s3 focus" data-stage="2" data-comp="PRO*,FPA,COM">
+      <p class="eyebrow">Stage 2 · Assessment questions</p>
+      <h1>What do you already know?</h1>
+      <p class="hint">Think first. Answer aloud before the next question appears.</p>
+      <div class="qs">
+        <div class="q rv h" data-step="1" data-comp="PRO*"><span class="lv">Recall</span><p>The CABIN ALTITUDE warning horn sounds. What are your first actions?</p><span class="chip p">PRO</span></div>
+        <div class="q rv h" data-step="2" data-comp="PRO*"><span class="lv">Recall</span><p>When do you go from that checklist to the Emergency Descent checklist?</p><span class="chip p">PRO</span></div>
+        <div class="q rv h" data-step="3" data-comp="PRO*,FPA"><span class="lv">Understand</span><p>Where do you descend to, and how do you decide?</p><span class="chip p">PRO</span></div>
+        <div class="q rv h" data-step="4" data-comp="FPA*,PRO"><span class="lv">Apply</span><p>Autopilot is on. How do you fly the descent, and how do you level off?</p><span class="chip p">FPA</span></div>
+        <div class="q rv h" data-step="5" data-comp="WLM*,PRO"><span class="lv">Apply</span><p>Workload is very high. Who does what, and what can wait until level-off?</p><span class="chip p">WLM</span></div>
+        <div class="q rv h" data-step="6" data-comp="COM*,PRO"><span class="lv">Apply</span><p>Who tells the cabin and who tells ATC, and what is said?</p><span class="chip p">COM</span></div>
+      </div>
+      <div class="notes">
+        <h4>Expected answers and probes</h4>
+        <p><b>Q1 (PRO).</b> Don oxygen masks and set regulators to 100%. Establish crew communications. Then pressurization mode selector MAN, outflow VALVE switch hold in CLOSE until fully closed. Source: QRH NNC 2.1 CABIN ALTITUDE WARNING or Rapid Depressurization. Probe: which of these are memory items, and why masks before anything else? Items 1 to 5 are above the dashed line in the QRH. See the memory check on slide 4.</p>
+        <p><b>Q2 (PRO).</b> If cabin altitude is uncontrollable: passenger signs ON, PASS OXYGEN switch ON, then go to the Emergency Descent checklist. Source: QRH NNC 2.1 step 5. Probe: the Emergency Descent checklist condition also covers "a rapid descent is needed". Give an example. (QRH NNC 0.1.)</p>
+        <p><b>Q3 (PRO).</b> The lowest safe altitude or 10,000 ft, whichever is higher. FCTM 7.5: lowest safe altitude is the MEA, MORA, or any altitude based on terrain clearance, navigation aid reception, or other appropriate criteria. PM checks it. Probe: what if terrain needs a level-off above 10,000 ft? (SOP chapter 33: do not exceed the passenger oxygen envelope, then continue to 10,000 ft once terrain is cleared.)</p>
+        <p><b>Q4 (FPA).</b> Set the lower altitude in the MCP window, select LVL CHG, close the thrust levers and extend the speedbrakes (FLIGHT DETENT). Target speed MMO/VMO. Approaching level-off: set LRC or about 300 kt, retract the speedbrakes smoothly and slowly. Use of V/S is not recommended. FCTM 7.5 to 7.6. Probe: why not V/S?</p>
+        <p><b>Q5 (WLM).</b> PF flies the descent and monitors the flight path, and advises the cabin by PA. PM advises ATC, gets the altimeter setting, checks the lowest safe altitude and runs the checklist. Descent first. Defer the Descent, Approach and Landing checklist items until after level-off. Probe: what do you drop first if you are overloaded? Source: QRH NNC 0.1 step 1, FCTM 7.5 (deliberate and methodical, do not be distracted from flying).</p>
+        <p><b>Q6 (COM).</b> PF advises the cabin crew by PA of the impending rapid descent. PM advises ATC and obtains the area altimeter setting. PM calls out 2,000 ft and 1,000 ft above the level-off altitude. QRH NNC 0.1 step 1, FCTM 7.5. Probe: what do you say to ATC? Show the SOP phraseology in Stage 3.</p>
+        <p>Pause after each question and do not advance until the pilot has committed to an answer.</p>
+      </div>
+    </section>
+
+    <!-- 3b MEMORY CHECKLIST -->
+    <section class="slide s3m" data-stage="2" data-comp="PRO*,WLM">
+      <p class="eyebrow">Stage 2 · Memory items check</p>
+      <h1>Say it without the book</h1>
+      <div class="mi">
+        <div class="panel">
+          <h3>Cabin Altitude Warning <small class="v">memory items</small></h3>
+          <p class="src">QRH NNC 2.1 · CABIN ALTITUDE WARNING or Rapid Depressurization</p>
+          <ol>
+            <li class="rv h" data-step="1" data-k="1"><span class="box"></span><span>Don oxygen masks and set regulators to 100%.</span></li>
+            <li class="rv h" data-step="2" data-k="1"><span class="box"></span><span>Establish crew communications.</span></li>
+            <li class="rv h" data-step="3" data-k="1"><span class="box"></span><span>Pressurization mode selector . . . MAN</span></li>
+            <li class="rv h" data-step="4" data-k="1"><span class="box"></span><span>Outflow VALVE switch . . . Hold in CLOSE<span class="sub">until the outflow VALVE indication shows fully closed</span></span></li>
+            <li class="rv h" data-step="5" data-k="1"><span class="box"></span><span><b>If</b> cabin altitude is <b>uncontrollable</b>:<span class="sub">Passenger signs . . . ON</span><span class="sub">PASS OXYGEN switch . . . ON</span><span class="sub">►► Go to the Emergency Descent checklist on page 0.1</span></span></li>
+          </ol>
+        </div>
+        <div class="panel">
+          <h3>Emergency Descent <small class="v">memory items</small></h3>
+          <p class="src">QRH NNC 0.1 · memory items stop at the dashed line</p>
+          <ol>
+            <li class="rv h" data-step="6" data-k="2"><span class="box"></span><span>Announce the emergency descent. The pilot flying will advise the cabin crew, on the PA system, of impending rapid descent. The pilot monitoring will advise ATC and obtain the area altimeter setting.</span></li>
+            <li class="rv h" data-step="7" data-k="2"><span class="box"></span><span>Passenger signs . . . ON</span></li>
+            <li class="rv h" data-step="8" data-k="2"><span class="box"></span><span><b>Without delay</b>, descend to the lowest safe altitude or 10,000 feet, whichever is higher.</span></li>
+            <li class="rv h" data-step="9" data-k="2"><span class="box"></span><span>ENGINE START switches (both) . . . CONT</span></li>
+            <li class="rv h" data-step="10" data-k="2"><span class="box"></span><span>Thrust levers (both) . . . Reduce thrust to minimum or as needed for anti-ice</span></li>
+            <li class="rv h" data-step="11" data-k="2"><span class="box"></span><span>Speedbrake . . . FLIGHT DETENT<span class="sub">If structural integrity is in doubt, limit speed as much as possible and avoid high maneuvering loads.</span></span></li>
+            <li class="rv h" data-step="12" data-k="2"><span class="box"></span><span>Set target speed to Mmo/Vmo.</span></li>
+          </ol>
+          <div class="sep rv h" data-step="12">Reference items start below this line</div>
+        </div>
+      </div>
+      <div class="miscore"><span>Click a row when the pilot says it in order.</span><span><b id="miN">0</b> / 12 recalled</span></div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Items appear one at a time with each step (Next or arrow key), Cabin Altitude Warning first, then Emergency Descent, so you can reveal an item only after the pilot has said it. Ask the pilot to recite both lists from memory, in order, with no checklist in hand. Tick each item (click the row) as it is said. Do not prompt. Mark order errors and missing items for the debrief.</p>
+        <p>Source: QRH MN1-FLO-0023 Rev 23, NNC 2.1 (printed page 2.1) and NNC 0.1. QRH Checklist Instructions: memory items are immediate actions done before reading the rest of the checklist, and the last memory item is followed by a dashed horizontal line. On the Cabin Altitude Warning page the dashed line comes after step 5, so items 1 to 5 are memory items. On the Emergency Descent page the dashed line comes after step 7, so items 1 to 7 are memory items. Step 8 onward are reference items. Both pages were checked on the PDF itself.</p>
+        <p>FCOM NP.21.26 (takeoff briefing): on airplanes without the CABIN ALTITUDE and TAKEOFF CONFIG lights installed or activated, the horn indication and memory items must be briefed for the first flight of the day and after a crew change: immediately don masks and set regulators 100%, establish crew communications, do the CABIN ALTITUDE WARNING or Rapid Depressurization NNC. Both pilots verify on the Cabin Altitude Panel that cabin altitude is stabilized at or below 10,000 ft before removing masks.</p>
+        <p>Pass mark is for the instructor and the grade slip to set. Suggested focus: the first two items (masks, communications) and the order.</p>
+      </div>
+    </section>
+
+    <!-- 4 THEORY: PROFILE -->
+    <section class="slide two" id="sProf" data-stage="3" data-comp="FPA*,PRO,KNO">
+      <div class="left">
+        <svg id="prof" viewBox="0 0 900 480" role="img" aria-label="Altitude against time. The airplane cruises, the warning occurs, the airplane descends at VMO or MMO with speedbrakes out, and levels off at the lowest safe altitude or 10,000 feet. A slider moves the airplane along the path. Marks at 2000 and 1000 feet above level off show the callouts.">
+          <line class="pg" x1="60" y1="380" x2="880" y2="380"/>
+          <text class="lg acc" x="64" y="406">LOWEST SAFE ALTITUDE or 10,000 ft (higher)</text>
+          <line class="pa" x1="60" y1="300" x2="880" y2="300"/>
+          <line class="pa" x1="60" y1="340" x2="880" y2="340"/>
+          <path id="pBase" class="pf" d="M60,80 L400,80 L640,330 L700,380 L880,380" style="opacity:.35"/>
+          <path id="pDone" class="pf" d="M60,80 L400,80 L640,330 L700,380 L880,380" style="stroke:var(--green)"/>
+          <circle class="pt" cx="200" cy="80" r="7" style="opacity:.7"/>
+          <g id="gW" class="lb"><text class="lg weight" x="70" y="50">CABIN ALTITUDE WARNING</text>
+          <text class="lg muted" x="70" y="116">1  Masks · comms · MAN</text>
+          <text class="lg muted" x="70" y="140">2  Pass signs · PASS OXYGEN</text></g>
+          <g id="gD" class="lb"><text class="lg lift" x="70" y="166">Speedbrake FLIGHT DETENT</text>
+          <text class="lg lift" x="70" y="188">Thrust minimum · MMO/VMO</text></g>
+          <g id="gQ" class="lb"><text class="lg acc" x="70" y="216">QUIET WINDOW · memory items done</text>
+          <text class="lg lift" x="70" y="238">PM: ATC or broadcast · QNH · 7700</text>
+          <text class="lg lift" x="70" y="260">Exterior lights ON · traffic watch</text>
+          <text class="lg lift" x="70" y="282">PF: call checklist, read items 8 on</text></g>
+          <g id="g2" class="lb"><text class="lg acc" x="620" y="282">2,000 ft to level off</text></g>
+          <g id="g1" class="lb"><text class="lg acc" x="672" y="322">PRELEVEL</text></g>
+          <g id="gL" class="lb"><text class="lg green" x="60" y="440">Speedbrake DOWN · LRC or 300 kt</text>
+          <text class="lg green" x="60" y="464">Recheck pressurization</text></g>
+          <g id="acm" transform="translate(60 80)"><circle r="15" fill="var(--accent)" stroke="var(--bg)" stroke-width="3"/><polygon points="9,0 -6,-7 -6,7" fill="var(--accent-ink)"/></g>
+        </svg>
+        <div class="ctl">
+          <label for="prog">PROGRESS</label>
+          <input id="prog" type="range" min="0" max="100" step="0.1" value="0" aria-label="Progress along the emergency descent">
+          <button type="button" id="playBtn">Play</button>
+        </div>
+        <div class="panel phst" aria-live="polite"><div class="phn" id="phN">Cruise</div><div class="pht" id="phT">Normal cruise, autopilot and autothrottle on. Drag the slider or press Play.</div></div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Theoretical knowledge</p>
+        <h1>Descent profile</h1>
+        <ul class="defs">
+          <li class="rv h" data-step="1" data-comp="PRO*,KNO"><span class="k">Trigger</span><span>Cabin altitude cannot be controlled, or a rapid descent is needed</span></li>
+          <li class="rv h" data-step="2" data-comp="PRO*,KNO"><span class="k">Target</span><span>Lowest safe altitude or 10,000 ft, whichever is higher</span></li>
+          <li class="rv h" data-step="3" data-comp="FPA*,KNO"><span class="k">Speed</span><span>MMO/VMO. Limit it if structural integrity is in doubt</span></li>
+          <li class="rv h" data-step="4" data-comp="WLM*,COM*,PRO"><span class="k">Meanwhile</span><span>7700, exterior lights ON, ATC or broadcast, checklist items 8 on <span class="v">DOC 4444</span></span></li>
+          <li class="rv h" data-step="5" data-comp="SAW*,COM"><span class="k">Callouts</span><span>PM: “2,000 ft to level off”, then “PRELEVEL” at 1,000 ft</span></li>
+        </ul>
+        <div class="rule rv h" data-step="6" data-comp="PRO*,FPA">
+          <div class="three">Masks first. Then descend without delay, deliberately, and level off smoothly.</div>
+        </div>
+      </div>
+      
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Use the PROGRESS slider or Play to move the airplane along the path. The label for the current phase lights up and the competency grid in the corner follows the phase. Teaching picture, not to scale; the profile and numbers follow QRH NNC 0.1 and FCTM 7.5. The phase boundaries are for teaching, not times from the manual.</p>
+        <p>QRH NNC 0.1 Emergency Descent. Condition: cabin altitude cannot be controlled, or a rapid descent is needed. Step 3: without delay, descend to the lowest safe altitude or 10,000 ft, whichever is higher. Step 7: set target speed to MMO/VMO. Step 8: when approaching the level-off altitude, smoothly lower the speedbrake lever to the DOWN detent and level off, add thrust and stabilize on altitude and airspeed.</p>
+        <p>FCTM 7.4 to 7.5: the maneuver brings the airplane down smoothly to a safe altitude, in minimum time, with the least passenger discomfort. Do it deliberately and methodically and do not be distracted from flying the airplane. The rapid descent is normally made with the landing gear up.</p>
+        <p>The FCTM "expedited descent" for freighters (CARGO FIRE) is a different maneuver. Not part of this briefing.</p>
+        <p>Quiet window. After the memory items (QRH NNC 0.1 steps 1 to 7) and a stable descent there is a short low-workload period before the 2,000 ft call. Use it for the items that are not memory items: (1) ATC call and altimeter setting by the PM; if no contact, broadcast on the frequency in use and on 121.5 MHz (backup 123.45). (2) Squawk 7700: ICAO Doc 4444 15.1.4.2 c) lists it as a pilot step in an emergency descent, unless ATC has directed another code (Note 2 to 15.1.1.1). OM-A p.12-31 says retain the current squawk until ATC requests otherwise, and squawk 7700 with a call on 121.5 if the initial call cannot be made. Agree the NOK standard before grading. (3) Exterior lights ON and a visual and ACAS traffic watch: Doc 4444 15.1.4.2 d) and e), also in SOP chapter 33. The ICAO sequence is: navigate, advise ATS, 7700, lights, traffic, then coordinate intentions with ATC when the descent is complete. See the notes on the 'More than the checklist' slide for the full ICAO wording and the China status. (4) PF calls for the checklist and PM reads the reference items, step 8 on (QRH NNC 0.1). Step 8 is the level-off action (speedbrake DOWN, add thrust), so reading it now sets up the capture. The Descent and Approach checklists wait until after level-off. The slider phase and the order are teaching sequence, not manual timings.</p>
+        <p>Teaching point: the pilot must see that nothing in the first minute is the descent itself. Masks and communication come first, so the crew is still able to think at altitude.</p>
+      </div>
+    </section>
+
+    <!-- 4b RAPID VS SLOW -->
+    <section class="slide two" data-stage="3" data-comp="SAW*,KNO,PRO">
+      <div class="left">
+        <svg id="dec" viewBox="0 0 900 560" role="img" aria-label="Cabin altitude against time. A rapid decompression climbs steeply through 10,000 ft, where the horn sounds, and 14,000 ft, where passenger masks drop. A slow decompression creeps up and crosses the same lines much later. Both are handled with the same checklist.">
+          <line x1="70" y1="40" x2="70" y2="500" stroke="var(--line)" stroke-width="2"/>
+          <line x1="70" y1="500" x2="880" y2="500" stroke="var(--line)" stroke-width="2"/>
+          <line class="pa" x1="70" y1="260" x2="880" y2="260"/>
+          <line class="pa" x1="70" y1="150" x2="880" y2="150" style="stroke:var(--weight)"/>
+          <text class="lg acc" x="290" y="250">10,000 ft · horn + CABIN ALTITUDE light</text>
+          <text class="lg weight" x="340" y="140">14,000 ft · passenger masks drop</text>
+          <polyline class="pf" style="stroke:var(--weight)" points="140,460 190,455 250,150 330,60"/>
+          <polyline class="pf" points="140,460 360,440 560,380 700,290 800,215 870,150"/>
+          <circle class="pt" cx="237" cy="260" r="8" style="fill:var(--weight)"/>
+          <circle class="pt" cx="722" cy="260" r="8" style="fill:var(--lift)"/>
+          <text class="lg weight" x="350" y="88">RAPID: seconds to minutes</text>
+          <text class="lg lift" x="450" y="350">SLOW: creeps up, easy to miss</text>
+          <text class="lbl" x="80" y="540">TIME →</text>
+          <text class="lbl" x="84" y="32" style="font-size:20px">CABIN ALTITUDE</text>
+        </svg>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Recognition</p>
+        <h1>Rapid or slow?</h1>
+        <div class="dc">
+          <div class="r head rv h" data-step="1" data-comp="SAW*"><span>Cue</span><span class="rp">Rapid</span><span class="sl">Slow</span></div>
+          <div class="r both rv h" data-step="2" data-comp="SAW*,KNO"><span class="k">Warning</span><span>Same for both: intermittent horn and CABIN ALTITUDE light at 10,000 ft</span></div>
+          <div class="r rv h" data-step="3" data-comp="SAW*"><span class="k">Cabin altitude</span><span>Climbs fast. Often no time to wait for the horn <span class="v">VERIFY</span></span><span>Creeps up. The horn may be the first sign <span class="v">VERIFY</span></span></div>
+          <div class="r rv h" data-step="4" data-comp="SAW*,PRO"><span class="k">Airframe</span><span>Suspect structural damage. Limit speed, avoid high loads</span><span>Usually a pressurization system problem</span></div>
+          <div class="r rv h" data-step="5" data-comp="SAW*"><span class="k">Body</span><span>Noise, ear pain, fog, flying dust <span class="v">VERIFY</span></span><span>Subtle. Hypoxia comes without warning <span class="v">VERIFY</span></span></div>
+        </div>
+        <div class="rule rv h" data-step="6" data-comp="PRO*,SAW">
+          <div class="three">Same first actions for both. Masks first. Then ask: is cabin altitude controllable?</div>
+        </div>
+      </div>
+      <p class="fn">Teaching picture, not to scale. Thresholds from FCOM. Cues marked VERIFY are teaching points, not found in the NOK manuals reviewed.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>The QRH does not split rapid from slow. One checklist, "CABIN ALTITUDE WARNING or Rapid Depressurization", covers both. The manual's decision point is controllability, not speed of onset: step 5 "If cabin altitude is uncontrollable": passenger signs ON, PASS OXYGEN ON, go to Emergency Descent. Step 6 "If cabin altitude is controllable": continue manual operation to maintain correct cabin altitude; when at or below 10,000 ft, masks may be removed. QRH NNC 2.1 to 2.2.</p>
+        <p>Manual-backed on this slide: cabin altitude warning activates when cabin altitude exceeds 10,000 ft, with an intermittent horn and the CABIN ALTITUDE light (FCOM Air Systems and Warning Systems, system description). The passenger oxygen system activates automatically at a cabin altitude of 14,000 ft, or when the PASS OXYGEN switch is ON (FCOM Emergency Equipment). FCTM 8.14: if the takeoff configuration horn sounds in flight it means cabin altitude has exceeded 10,000 ft, so start the NNC at once. FCTM 7.5: for a rapid loss of cabin pressure, masks on and communication at first indication, verify cabin pressure is uncontrollable, then begin descent. If structural damage exists or is suspected, limit airspeed to current speed or less, and avoid high maneuvering loads. QRH Emergency Descent step 7 note says the same.</p>
+        <p>Teaching points not found in the manuals reviewed (marked VERIFY): physical cues of a rapid event (loud noise, rush of air, fogging, flying debris, ear pain) and the subtle onset of a slow leak. Keep them as discussion prompts and agree the wording with Flight Operations Training before it is graded. No numeric rate or time to separate "rapid" from "slow" was found, so none is shown.</p>
+        <p>Probe: a slow leak with the horn only, cabin altitude controllable after MAN and outflow CLOSE. Does the crew still need the Emergency Descent? (No. QRH step 6.) Probe: PASS OXYGEN is ON before 14,000 ft in the QRH. Why? (Uncontrollable cabin altitude: do not wait for the automatic function.)</p>
+      </div>
+    </section>
+
+    <section class="slide two gsl" id="sGauge" data-first="unc" data-stage="3" data-comp="SAW*,PRO,KNO">
+      <div class="left">
+        <svg class="gp" viewBox="0 0 868 516" role="img" aria-label="Cabin Altitude Panel and Cabin Pressurization Panel. Cabin altitude and differential pressure dial, cabin climb rate gauge, outflow valve gauge and mode selector. A time slider moves the needles through the selected scenario."></svg>
+        <div class="rd"><span>CABIN ALT<b><i class="ra"></i> ft</b></span><span>FLT ALT<b>33,000 ft</b></span><span>DIFF PRESS<b><i class="rdf"></i> psi</b></span><span>CABIN RATE<b><i class="rr"></i> fpm</b></span><span>VALVE<b><i class="rv2"></i></b></span></div>
+        <div class="ctl">
+          <div class="pre" role="group" aria-label="Scenario"><button type="button" data-sc="ctrl" aria-pressed="false">Controllable</button><button type="button" data-sc="unc" aria-pressed="true">Uncontrollable</button></div>
+          <input class="tm" type="range" min="0" max="100" step="0.1" value="0" aria-label="Time since the event began">
+          <span class="tmv">0:00</span>
+          <button type="button" class="pl">Play</button>
+        </div>
+        <div class="panel phst" aria-live="polite"><div class="phn"></div><div class="pht"></div></div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Is cabin altitude controllable?</p>
+        <h1>Read the panel</h1>
+        <ol class="test">
+          <li class="rv h" data-step="1" data-comp="PRO*,SAW"><span>Selector to MAN, outflow VALVE switch to CLOSE until the valve gauge shows <b>fully closed</b><span class="d">QRH steps 3 and 4. Then read the Cabin Altitude Panel</span></span></li>
+          <li class="rv h" data-step="2" data-comp="SAW*,PRO"><span><span class="ok-t">Controllable:</span> rate falls to zero or shows a descent, cabin altitude stops rising, DIFF PRESS increases<span class="d">Continue manual operation. Small, momentary switch inputs</span></span></li>
+          <li class="rv h" data-step="3" data-comp="SAW*,PRO"><span><span class="no-t">Uncontrollable:</span> valve fully closed and the panel shows one or more of these<span class="d">Passenger signs ON, PASS OXYGEN ON, Emergency Descent</span></span></li>
+        </ol>
+        <div class="sigs">
+          <div class="sig rv h" data-step="4" data-sig="rate" data-comp="SAW*,KNO"><b>CABIN CLIMB</b> still shows a climb, valve closed</div>
+          <div class="sig rv h" data-step="5" data-sig="diff" data-comp="SAW*,KNO"><b>DIFF PRESS</b> falls to 0. No pressure difference left</div>
+          <div class="sig rv h" data-step="6" data-sig="alt" data-comp="SAW*,KNO"><b>CABIN ALT</b> equals <b>FLT ALT</b>. The cabin is at flight altitude</div>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Purpose: show the pilot where the cabin altitude and cabin rate indications are, and what an uncontrollable cabin altitude looks like on the real panel. The QRH wording is "if cabin altitude is uncontrollable" (step 5) or "controllable" (step 6) and gives no numbers or time limit. The test on this slide is built from the FCOM description of manual control: after the outflow valve switch is moved toward CLOSE, verify the outflow valve position indicator moves toward CLOSE, cabin altitude descends, and differential pressure increases (FCOM Supplementary Procedures, Air Systems, manual operation). If the valve is fully closed and none of this happens, the leak is larger than the system can overcome. This reading is an application of those two sources. The manuals do not state it as a rule, and give no time to wait before deciding. VERIFY with Flight Operations Training.</p>
+<p>The three signs lit on the panel (rings appear on the gauge as the slider reaches them): (1) CABIN CLIMB still shows a climb with the valve fully closed. (2) DIFF PRESS (outer scale of the big dial) falls to zero. (3) CABIN ALT (inner scale) reaches flight altitude: no pressurization is left. DIFF PRESS is computed in the animation from standard-atmosphere pressure at cabin altitude and at 33,000 ft, so it reads zero when the two altitudes are equal.</p>
+<p>Reading the big dial: the SHORT pointer is CABIN ALT (inner scale, x1000 ft). The LONG pointer is DIFF PRESS (outer scale, psi). The red and amber bug at 9 psi is a fixed marker on the instrument face. The pointers are drawn as on the real instrument.</p>
+<p>Gauges. FCOM Air Systems, Controls and Indicators, Cabin Altitude Panel: CABIN ALT / DIFF PRESS indicator (inner scale cabin altitude in feet, outer scale differential pressure in psi), CABIN rate of CLIMB indicator, ALT HORN CUTOUT switch (the horn sounds when cabin altitude exceeds 10,000 ft). Cabin Pressurization Panel: FLT ALT and LAND ALT windows, mode selector AUTO / ALTN / MAN, MANUAL outflow VALVE gauge and CLOSE / OPEN switch. In MAN mode the outflow valve runs on a separate DC motor, full travel up to 20 seconds. CAUTION in the FCOM: a small movement of the outflow valve can cause a large change in cabin rate; use momentary inputs.</p>
+<p>The panel is a redrawing of the simulator panel screenshot. The inner CABIN ALT scale spacing is approximated from the picture. All values in the animation (altitudes, rates, times) are illustrative, not from the manual. Show the real panel in the simulator and ask the pilot to point to each indication.</p>
+<p>Masks: both pilots must verify on the Cabin Altitude Panel that cabin altitude is stabilized at or below 10,000 ft before removing the oxygen masks (FCOM NP.21.26 amplified briefing). QRH step 6: when at or below 10,000 ft, masks may be removed. The passenger oxygen system activates automatically at 14,000 ft cabin altitude, or when the PASS OXYGEN switch is ON.</p>
+      </div>
+    </section>
+
+    <section class="slide two gsl" id="sGauge2" data-first="slow" data-stage="3" data-comp="SAW*,KNO,PRO">
+      <div class="left">
+        <svg class="gp" viewBox="0 0 868 516" role="img" aria-label="Cabin Altitude Panel and Cabin Pressurization Panel. A time slider moves the needles through a slow leak or a rapid decompression."></svg>
+        <div class="rd"><span>CABIN ALT<b><i class="ra"></i> ft</b></span><span>FLT ALT<b>33,000 ft</b></span><span>DIFF PRESS<b><i class="rdf"></i> psi</b></span><span>CABIN RATE<b><i class="rr"></i> fpm</b></span><span>VALVE<b><i class="rv2"></i></b></span></div>
+        <div class="ctl">
+          <div class="pre" role="group" aria-label="Scenario"><button type="button" data-sc="slow" aria-pressed="true">Slow leak</button><button type="button" data-sc="rapid" aria-pressed="false">Rapid</button></div>
+          <input class="tm" type="range" min="0" max="100" step="0.1" value="0" aria-label="Time since the event began">
+          <span class="tmv">0:00</span>
+          <button type="button" class="pl">Play</button>
+        </div>
+        <div class="panel phst" aria-live="polite"><div class="phn"></div><div class="pht"></div></div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Recognition on the panel</p>
+        <h1>Rapid or slow? Read the rate</h1>
+        <div class="dc">
+          <div class="r head rv h" data-step="1" data-comp="SAW*"><span>Read</span><span class="sl">Slow</span><span class="rp">Rapid</span></div>
+          <div class="r rv h" data-step="2" data-comp="SAW*"><span class="k">CABIN CLIMB</span><span>A few hundred to about a thousand fpm. Needle off zero but easy to miss</span><span>Thousands of fpm. Needle goes to the stop at once <span class="v">VERIFY</span></span></div>
+          <div class="r rv h" data-step="3" data-comp="SAW*,KNO"><span class="k">CABIN ALT</span><span>Drifts up over minutes. The horn at 10,000 ft may be the first sign</span><span>Climbs in a minute or two. Horn comes soon after the event</span></div>
+          <div class="r rv h" data-step="4" data-comp="SAW*"><span class="k">DIFF PRESS</span><span>Falls slowly</span><span>Falls fast toward zero</span></div>
+          <div class="r rv h" data-step="5" data-comp="PRO*,SAW"><span class="k">Action</span><span>Same first actions. Closing the valve may fix it</span><span>Same first actions. Likely uncontrollable, expect the descent</span></div>
+        </div>
+        <div class="rule rv h" data-step="6" data-comp="PRO*,SAW"><div class="three">The rate gauge tells you how fast. Masks first either way.</div></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>This puts the "Rapid or slow?" idea on the real panel. Use the scenario buttons and the TIME slider (or Play) to show the same panel in a slow leak and in a rapid event. Ask the pilot which indication gives the first clue, and which reading would make them expect an Emergency Descent. The next slide covers the cues that are not on the gauges, and how little time a pilot has at altitude.</p>
+<p>The manuals reviewed do not define "rapid" or "slow" by a rate or a time. The QRH uses one checklist for both: "CABIN ALTITUDE WARNING or Rapid Depressurization". All the numbers in the animation (rates, times) are illustrative and set for teaching; DIFF PRESS follows from standard-atmosphere pressure at the cabin altitude and at 33,000 ft. Marked VERIFY: the rate ranges in the table. Agree any wording with Flight Operations Training before grading.</p>
+<p>What is manual-backed: the gauge functions (FCOM Cabin Altitude Panel), the horn at 10,000 ft, passenger masks automatic at 14,000 ft, the single QRH checklist, and the decision by controllability (QRH steps 5 and 6). FCTM 7.5: for a rapid loss of cabin pressure, masks on and communication at the first indication, verify cabin pressure is uncontrollable, then begin descent; if structural damage exists or is suspected, limit airspeed and avoid high maneuvering loads.</p>
+<p>The animation shows no crew action in the slow and rapid cases, so you can see the raw rise. In real life the crew does the memory items as soon as the horn sounds.</p>
+      </div>
+    </section>
+
+    <section class="slide two" id="sTuc" data-stage="3" data-comp="SAW*,KNO*,PRO">
+      <div class="left">
+        <div class="tuc">
+          <div class="vsw">
+            <ul class="vlab">
+              <li data-i="8">FL500</li><li data-i="7">FL430</li><li data-i="6">FL400</li><li data-i="5">FL350</li><li data-i="4">FL300</li><li data-i="3">FL280</li><li data-i="2">FL250</li><li data-i="1">FL220</li><li data-i="0">FL180</li>
+            </ul>
+            <input class="vs" type="range" min="0" max="8" step="1" value="5" aria-label="Flight level" aria-orientation="vertical">
+          </div>
+          <div class="tout">
+            <p class="tcap">Time of useful consciousness</p>
+            <div class="tfl">FL350</div>
+            <div class="trow tr"><div class="tl">Rapid decompression</div><div class="tv"></div><div class="tb"><i></i></div></div>
+            <div class="trow tn"><div class="tl">Normal ascent, slow leak</div><div class="tv"></div><div class="tb"><i></i></div></div>
+            <div class="taxis"><span>5 s</span><span>30 s</span><span>2 min</span><span>10 min</span><span>30 min</span></div>
+            <p class="tnote">Move the slider up. The higher you are, the less time you have to get the mask on.</p>
+            <p class="tsrc">Averages from FAA AC 61-107, as tabulated in "Time of useful consciousness" (Wikipedia). Individual times vary. VERIFY against the primary FAA text. Cues marked VERIFY are teaching points, not in the NOK manuals reviewed.</p>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Recognition</p>
+        <h1>Beyond the gauges</h1>
+        <ol class="test">
+          <li class="rv h" data-step="1" data-comp="SAW*"><span>Loud bang or sudden noise<span class="v">VERIFY</span><span class="d">Often the first cue. Not always present</span></span></li>
+          <li class="rv h" data-step="2" data-comp="SAW*"><span>Rush of air, ear and sinus pain<span class="v">VERIFY</span><span class="d">Air leaves the cabin. Loose items move</span></span></li>
+          <li class="rv h" data-step="3" data-comp="SAW*"><span>Heavy mist or fog in the cabin<span class="v">VERIFY</span><span class="d">The air cools as the pressure drops</span></span></li>
+          <li class="rv h" data-step="4" data-comp="SAW*"><span>Flying dust, loose objects, debris<span class="v">VERIFY</span><span class="d">Suspect structural damage: limit speed, avoid high loads</span></span></li>
+          <li class="rv h" data-step="5" data-comp="SAW*,KNO"><span>Then the warnings: horn, CABIN ALTITUDE light, masks drop<span class="d">Horn above 10,000 ft. Passenger masks automatic at 14,000 ft</span></span></li>
+        </ol>
+        <div class="rule rv h" data-step="6" data-comp="PRO*,SAW,KNO"><div class="three">Slow leak: no bang, no fog. Hypoxia can dull your own judgement. Masks on at the first indication.</div></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Two jobs. First, the cues of a rapid decompression that are not on the gauges: a loud bang or noise, a rush of air, heavy mist or fog, flying dust and loose objects, ear and sinus pain. These are common aeromedical teaching points and they are not in the NOK manuals reviewed, so they are marked VERIFY. Agree the wording with Flight Operations Training before it is graded. The manual-backed warnings come after the event: horn and CABIN ALTITUDE light above 10,000 ft (FCOM) and automatic passenger masks at 14,000 ft. FCTM 7.5: masks on and communication at the first indication, then verify cabin pressure is uncontrollable.</p>
+        <p>Second, the vertical slider: time of useful consciousness (TUC) by altitude. The table behind it (flight level: normal ascent / rapid decompression): FL180 20 to 30 min / 10 to 15 min. FL220 10 min / 5 min. FL250 3 to 5 min / 1.5 to 3.5 min. FL280 2.5 to 3 min / 1.25 to 1.5 min. FL300 1 to 2 min / 30 to 60 s. FL350 30 to 60 s / 15 to 30 s. FL400 15 to 20 s / 7 to 10 s. FL430 9 to 12 s / 5 to 6 s. FL500 8 to 10 s / 5 s. Source: FAA Advisory Circular 61-107 averages, as tabulated on the Wikipedia page "Time of useful consciousness". These are not in the NOK manuals. Check against the primary FAA text and the company aeromedical training before grading. The bar axis is logarithmic so seconds and minutes fit on one scale.</p>
+        <p>Teaching link: the slider is a time budget. At a typical jet cruise level a rapid decompression leaves seconds, while the descent to 10,000 ft takes minutes. The mask is the bridge. That is why the memory items start with oxygen masks, and why QRH step 1 comes before any gauge reading. Ask: what would you do in the first 15 seconds at FL350? Who has the mask on first, and what is said?</p>
+      </div>
+    </section>
+
+    <!-- 5 THEORY: QRH STEPS -->
+    <section class="slide s5" data-stage="3" data-comp="PRO*,WLM,FPA">
+      <p class="eyebrow">Stage 3 · QRH Emergency Descent</p>
+      <h1>The checklist, step by step</h1>
+      <ol class="steps">
+        <li class="rv h" data-step="1" data-comp="COM*,WLM,PRO"><span>Announce the emergency descent.<span class="st">The pilot flying will advise the cabin crew, on the PA system, of impending rapid descent. The pilot monitoring will advise ATC and obtain the area altimeter setting.</span></span><span class="who"></span></li>
+        <li class="rv h" data-step="2" data-comp="PRO*"><span>Passenger signs . . . ON</span><span class="who"></span></li>
+        <li class="rv h" data-step="3" data-comp="PRO*,FPA"><span><b>Without delay</b>, descend to the lowest safe altitude or 10,000 feet, whichever is higher.</span><span class="who"></span></li>
+        <li class="rv h" data-step="4" data-comp="PRO*"><span>ENGINE START switches (both) . . . CONT</span><span class="who"></span></li>
+        <li class="rv h" data-step="5" data-comp="FPA*,PRO"><span>Thrust levers (both) . . . Reduce thrust to minimum or as needed for anti-ice</span><span class="who"></span></li>
+        <li class="rv h" data-step="6" data-comp="FPA*,PRO"><span>Speedbrake . . . FLIGHT DETENT<span class="st">If structural integrity is in doubt, limit speed as much as possible and avoid high maneuvering loads.</span></span><span class="who"></span></li>
+        <li class="rv h" data-step="7" data-comp="FPA*,PRO" style="border-bottom:3px dashed var(--accent)"><span>Set target speed to Mmo/Vmo.</span><span class="who">MEMORY ▲</span></li>
+        <li class="rv h" data-step="8" data-comp="FPA*,PRO"><span><b>When</b> approaching the level off altitude: Smoothly lower the SPEED BRAKE lever to the DOWN detent and level off. Add thrust and stabilize on altitude and airspeed.</span><span class="who"></span></li>
+        <li class="rv h" data-step="9" data-comp="PRO*,SAW"><span>Crew oxygen regulators . . . Normal<span class="st">Flight crew must use oxygen when cabin altitude is above 10,000 feet. To conserve oxygen, move the regulator to Normal.</span></span><span class="who"></span></li>
+        <li class="rv h" data-step="10" data-comp="PRO*"><span>ENGINE START switches (both) . . . As needed</span><span class="who"></span></li>
+        <li class="rv h" data-step="11" data-comp="WLM*,PSD"><span>The new course of action is based on weather, oxygen, fuel remaining and available airports. Use of long range cruise may be needed.</span><span class="who"></span></li>
+      </ol>
+      <p class="fn">Then Descent, Approach and Landing checklists (cabin altitude, outflow valve, landing data). QRH Rev 23, NNC 0.1.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Source: QRH MN1-FLO-0023 Rev 23, NNC 0.1 to 0.3 (Boeing 737 FCOM D6-27370-8AS-NOK, document date Sept 30, 2022 on the Emergency Descent pages). The eleven rows above are QRH steps 1 to 11 in the QRH wording. In the QRH step 12 asks whether the pressurization selector is in MAN, and step 13 is "Checklist complete except deferred items".</p>
+        <p>The QRH has a dashed line after step 7 on the Emergency Descent page, so steps 1 to 7 are the memory items (QRH Checklist Instructions: the last memory item is followed by a dashed horizontal line). Checked on the PDF. The memory items check is on slide 4.</p>
+        <p>Deferred items: Descent checklist (use momentary actuation of the outflow valve switch if the selector is in MAN; recall, autobrake, landing data), Approach checklist (altimeters; approach briefing), at pattern altitude outflow VALVE switch to OPEN until fully open to depressurize, Landing checklist (ENGINE START CONT, speedbrake ARMED, gear down, flaps).</p>
+        <p>Probe for COM: the QRH gives the PA to the PF and the ATC call to the PM. This matches FCTM 7.5.</p>
+      </div>
+    </section>
+
+    <!-- 6 THEORY: TECHNIQUE -->
+    <section class="slide s6" data-stage="3" data-comp="FPA*,KNO,PRO">
+      <p class="eyebrow">Stage 3 · FCTM technique</p>
+      <h1>Autopilot first</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1" data-comp="FPA*,PRO">
+          <p class="tag">Autopilot, LVL CHG (recommended)</p>
+          <ul>
+            <li>Turn if required with <b>HDG SEL</b><span class="d">Set the lower altitude in the MCP window</span></li>
+            <li>Select <b>LVL CHG</b>, close thrust levers, extend speedbrakes<span class="d">Leave the autothrottle connected</span></li>
+            <li>Speed window changes from MACH to IAS near 300 KIAS<span class="d">Manually reset to VMO as needed</span></li>
+            <li><b>V/S is not recommended</b></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2" data-comp="KNO*,PRO">
+          <p class="tag">Manual entry (reference only)</p>
+          <ul>
+            <li>Disconnect the autothrottle, thrust levers to idle<span class="d">Smoothly extend the speedbrakes</span></li>
+            <li>Disengage the autopilot, lower the nose to about <b>10° nose down</b></li>
+            <li>About 10 kt before target speed, slowly raise pitch<span class="d">Keep the airplane in trim at all times</span></li>
+            <li>Extending speedbrakes reduces maneuver margin<span class="d">In a turn, keep at least minimum maneuver speed</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3" data-comp="FPA*,PRO,SAW">
+          <p class="tag">Level-off and after</p>
+          <ul>
+            <li>Altitude set, speed set to <b>LRC or about 300 kt</b> before level-off</li>
+            <li>Retract speedbrakes <b>smoothly and slowly</b><span class="d">Avoids a momentary overspeed on capture</span></li>
+            <li>Recheck the pressurization system<span class="d">Do not remove masks if cabin altitude is above 10,000 ft</span></li>
+            <li>Gear normally UP<span class="d">If structural integrity is in doubt, gear down may give a better rate. Respect placard speeds</span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">Short airspeed excursions above VMO/MMO with the autopilot engaged are acceptable for this maneuver. Do not disconnect unless clearly unacceptable. Log any exceedance.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Source: FCTM MN3-LAD-0031 Rev 25, Maneuvers, Rapid Descent, pages 7.4 to 7.7 (footer date February 27, 2026). Autopilot with LVL CHG is recommended for airspeed and altitude protection and reduced workload. V/S is not recommended.</p>
+        <p>FCTM: when descending near VMO/MMO with the autopilot engaged, short-term airspeed increases above VMO/MMO may occur, mostly from wind and temperature changes. Acceptable for this maneuver, the autopilot should correct pitch. Do not disengage unless operation is clearly unacceptable. Any airspeed above VMO/MMO should be documented in the airplane logbook. See FCTM Chapter 8 Overspeed if VMO/MMO is exceeded.</p>
+        <p>Control Wheel Steering (CWS) may be used to reduce workload: fly the manual procedure but engage CWS instead of disengaging the autopilot.</p>
+        <p>If severe turbulent air is encountered or expected, reduce to turbulent air penetration speed.</p>
+      </div>
+    </section>
+
+    <!-- 7 THEORY: CALLOUTS AND PHRASEOLOGY -->
+    <section class="slide s7" data-stage="3" data-comp="COM*,PRO,SAW">
+      <p class="eyebrow">Stage 3 · Callouts and phraseology</p>
+      <h1>Who says what</h1>
+      <div class="px">
+        <div class="row head"><span>When</span><span>Say</span><span>To</span></div>
+        <div class="row rv h" data-step="1" data-comp="COM*"><span class="when"><b>1</b> First indication of lost cabin pressure</span><span class="say">Masks on, set 100%, establish crew communications<small>Both pilots, QRH CABIN ALTITUDE WARNING steps 1 and 2</small></span><span class="atc">Crew</span></div>
+        <div class="row rv h" data-step="2" data-comp="COM*,PRO"><span class="when"><b>2</b> Before the descent starts</span><span class="say">PA: impending rapid descent<small>PF advises the cabin. No fixed wording in OM-A, QRH or FCOM. Draft: “Cabin crew and passengers, emergency descent. Put on your oxygen mask and fasten your seat belt.” <span class="v">DRAFT · VERIFY PAH</span></small></span><span class="atc">Cabin</span></div>
+        <div class="row rv h" data-step="3" data-comp="COM*,PRO"><span class="when"><b>3</b> Start of the descent</span><span class="say">MAYDAY MAYDAY MAYDAY, [callsign], EMERGENCY DESCENT (from level) TO (level), (intentions)<small>PM tells ATC and gets the area altimeter setting. Intentions are open: REQUEST DIRECT (waypoint) is the SOP example, a heading or an offset can be stated instead <span class="v">VERIFY WORDING</span></small></span><span class="atc">ATC</span></div>
+        <div class="row rv h" data-step="4" data-comp="COM*,SAW"><span class="when"><b>4</b> Unable to contact ATC</span><span class="say">ATTENTION ALL AIRCRAFT IN THE VICINITY OF (point), EMERGENCY DESCENT IN PROGRESS FROM (level)<small>Broadcast flight ID, level, position and intention at suitable intervals, on the frequency in use and 121.5 MHz (backup 123.45)</small></span><span class="atc">All aircraft</span></div>
+        <div class="row rv h" data-step="5" data-comp="SAW*,COM"><span class="when"><b>5</b> During descent</span><span class="say">“2,000 ft to level off” · “PRELEVEL” at 1,000 ft<small>PM calls. PF: “Checked”, or adjusts vertical speed. PRELEVEL is SOP Ch. 8. The 2,000 ft call follows FCTM 7.5</small></span><span class="atc">PM → PF</span></div>
+      </div>
+      
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Row 3: SOP MN4-FLO-0025 Issue 04, 12.3.2.5 Emergency Descent: "EMERGENCY DESCENT (intentions)" and an example "MAYDAY-MAYDAY-MAYDAY, NOKAIR 123, EMERGENCY DESCENT (FROM xxxx M) TO yyyy M, REQUEST DIRECT zzzz", where xxxx is the current or assigned level, yyyy the recommended emergency descent level-off altitude and zzzz a waypoint. The text found sits on page 33-6 in the China operation chapter and uses metres. VERIFY the page and the equivalent feet wording for non-China routes.</p>
+        <p>Phraseology is in SOP chapter 12 and repeated in chapter 33 (China operation, levels in metres). Check which applies to the route flown.</p>
+        <p>Row 4 (revised): in SOP chapter 33 the sequence reads "If unable to contact ATC and rapid descent required": (a) deviation procedure, (b) establish communications with and alert nearby aircraft by broadcasting at suitable intervals flight identification, flight level, aircraft position and intention on the frequency in use and on 121.5 MHz (backup VHF inter-pilot 123.45 MHz, or 5680 kHz), (c) establish visual contact with conflicting traffic, (d) turn on all aircraft exterior lights. The "ATTENTION ALL AIRCRAFT" wording is listed under ATC Phraseology 12.3.2.5 next to it, so the broadcast is for the unable-to-contact-ATC case. Older note follows. The same section lists "ATTENTION ALL AIRCRAFT IN THE VICINITY OF (or AT) (significant point or location) EMERGENCY DESCENT IN PROGRESS FROM (level)" and a blind call on the frequency in use and on 121.5 MHz (backup: inter-pilot air-to-air 123.45 MHz). Establish visual contact with conflicting traffic and turn on all exterior lights. The preceding lines belong to the same page and the surrounding emergency descent procedure. VERIFY the context.</p>
+        <p>Row 5: FCTM 7.5, "The PM calls out 2,000 feet and 1,000 feet above the level off altitude." SOP chapter 8, Standard Callouts, Climb/Descent: at 1,000 ft before the cleared altitude PM calls "PRELEVEL" and PF answers "Checked" and/or adjusts vertical speed. So 1,000 ft above level-off is the normal PRELEVEL call. The SOP has no phrase for 2,000 ft. Wording used in this deck, chosen by the instructor: "2,000 ft to level off". It follows FCTM 7.5, which requires the call but gives no words.</p>
+        <p>Row 3, intentions: SOP 12.3.2.5 gives "EMERGENCY DESCENT (intentions)" and the example "REQUEST DIRECT zzzz", so the intention is left to the crew. A heading or an offset is allowed in principle; the phrase wording is not in the manuals reviewed. OM-A chapter 12 (distress call, p.12-31): a distress message contains, at least, the station addressed, call sign, position including altitude, heading, nature of the emergency, persons on board and endurance if relevant, and pilot intentions. Squawk: normally retain the current squawk until ATC requests otherwise; if the initial call cannot be made on the frequency in use, squawk 7700 and call on 121.5.</p>
+        <p>Row 2: QRH step 1 and FCTM 7.5 say the pilot flying advises the cabin crew, on the PA system, of the impending rapid descent. No standard wording was found in the QRH, FCOM, FCTM, SOP, OM-A or the Emergency Manual. OM-A 8.x PA guidance covers when to use the PA, and says the Captain must make the initial welcoming PA so the voice is known if a later non-normal PA is needed. OM-A Appendix 10A has sample PAs for bomb threats only. OM-A lists a Public Address Handbook (PAH) and the Cabin Crew Emergency Procedures (CAEP) in its abbreviations, but neither is in the manuals folder. The draft wording on the slide is mine and short on purpose, since the PF must keep flying. Replace it with the PAH wording, or ask the cabin crew manager what the cabin crew expect to hear.</p>
+        <p>Takeoff briefing in SOP also asks the PIC to brief observers on the use of the oxygen mask in case of emergency descent.</p>
+      </div>
+    </section>
+
+    <!-- 7b OTHER ACTIONS -->
+    <section class="slide s7o" data-stage="3" data-comp="PRO*,SAW*,COM">
+      <p class="eyebrow">Stage 3 · Also do, while descending</p>
+      <h1>More than the checklist</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1" data-comp="PRO*,SAW">
+          <p class="tag">Track and intentions</p>
+          <ul>
+            <li>Tell ATC your intention<span class="d">Direct to a waypoint, a heading, or an offset. Turn with HDG SEL if the descent needs it (FCTM)</span></li>
+            <li>Unable to contact ATC: <b>30° right, track out 20 km</b><span class="d">10 km (5 NM) right of centerline, turn left to parallel the route, descend, return when appropriate. Watch for traffic on the original route. SOP Ch. 33, China</span></li>
+            <li>Other regions: that region's contingency procedure<span class="d">OM-A RVSM contingency. <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2" data-comp="SAW*,PRO">
+          <p class="tag">Lights and traffic</p>
+          <ul>
+            <li><b>All exterior lights ON</b><span class="d">ICAO Doc 4444 15.1.4.2 d) and SOP Ch. 33. Others see you better when you leave your clearance</span></li>
+            <li>Watch for conflicting traffic<span class="d">By eye and with ACAS/TCAS. ICAO Doc 4444 15.1.4.2 e)</span></li>
+            <li>Passenger signs ON, PASS OXYGEN if uncontrollable<span class="d">Already in the memory items</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3" data-comp="COM*,PRO">
+          <p class="tag">Radio and squawk</p>
+          <ul>
+            <li>MAYDAY three times, initial call on the frequency in use<span class="d">OM-A 12, distress call</span></li>
+            <li>Squawk <b>7700</b><span class="d">ICAO Doc 4444 15.1.4.2 c), unless ATC has directed a code (Note 2 to 15.1.1.1). No call possible: call on 121.5 <span class="v">VERIFY POLICY</span></span></li>
+            <li>Declaring an emergency lets you change your assigned level<span class="d">Tell ATC at once, report on arrival. SOP Ch. 33</span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">Lights, traffic watch and 7700 follow ICAO Doc 4444 15.1.4.2. The 30° deviation is in the SOP China operation chapter. Check the rule for the route flown. <span class="v">VERIFY</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>SOP MN4-FLO-0025 Issue 04, chapter 33, pages 33-5 to 33-6: "Aircraft Requiring Rapid Descent". Pilot action: notify ATC of aircraft location and request an FL change as required. Upon declaring an emergency a pilot may exercise his right and change his assigned flight level; he shall notify ATC immediately and submit a report on arrival at the destination. "If unable to contact ATC and rapid descent required": (a) deviation procedure for level change: turn 30° right and track out 20 km (deviate right of airway centerline by 10 km or 5 NM), then turn left to track parallel to the original route, then climb or descend to the new level, and then return to the original one when appropriate. Note: when returning to the original route, be aware that there may be conflicting traffic on that route. (b) broadcast flight identification, flight level, position and intention on the frequency in use and 121.5 MHz (or backup 123.45 MHz, or 5680 kHz). (c) establish visual contact with conflicting traffic. (d) turn on all aircraft exterior lights.</p>
+        <p>Heading or offset as an alternative: the SOP text above is the only specific deviation found. It applies to the China operation chapter. OM-A 8.3.2 (RVSM contingency) says that where ATC cannot be reached the crew should follow the established contingency procedures for the region of operation and obtain a clearance as soon as possible. For oceanic and remote airspace, crews are expected to make maximum use of aircraft lighting and transmit on all appropriate frequencies, including the emergency frequency. No other offset values were found in the manuals reviewed. VERIFY for each region flown.</p>
+        <p>ICAO Doc 4444 (PANS-ATM, 16th edition text, checked online): 15.1.4.2 Action by the pilot in an emergency descent: "The pilot shall take the following steps as soon as practicable in the order appropriate for the circumstance": a) navigate as deemed appropriate by the pilot; b) advise the appropriate ATS unit of the emergency descent and, if able, intentions; c) set transponder to Code 7700 and, if applicable, select the appropriate emergency mode on ADS-B and/or ADS-C; d) turn on aircraft exterior lights (commensurate with appropriate operating limitations); e) watch for conflicting traffic both visually and by reference to ACAS (if equipped); f) when emergency descent is complete, coordinate further intentions with the appropriate ATS unit. 15.1.4.1: the ATS unit broadcasts an emergency message, issues traffic information, advises minimum flight altitude and altimeter setting. Note 2 to 15.1.1.1: if ATC has previously directed the pilot to select a specific transponder code or ADS-B emergency mode, that code or mode will normally be maintained; where ATC has not requested one, the pilot will set Mode A Code 7700. So the SOP China list (lights, traffic, broadcast) matches the ICAO sequence, and 7700 is part of it. The two ICAO texts differ in emphasis: 15.1.4.2 c) lists 7700 as a pilot step in an emergency descent, while the Note keeps an ATC-directed code. OM-A p.12-31 reads "retain the current squawk until requested by ATC". Agree with Flight Operations Training what the NOK standard is, and brief it. Check the current Doc 4444 amendment: this text is from the 16th edition and numbering may have moved.</p>
+        <p>China: the CAAC rule texts (CCAR-93TM air traffic management rules and CAAC advisory circulars) could not be opened from here, so no Chinese article number is quoted. Chinese press and CAAC-linked articles describe 7700 as set manually by the pilot, and say controllers treat it as a real emergency, but they cite no article. The company SOP Chapter 33 is the China-operation text available. Ask Flight Operations or check the CAAC rule directly before quoting a Chinese regulation to trainees. VERIFY.</p>
+        <p>OM-A chapter 12, distress call (p.12-31): retain the current squawk until requested by ATC; if the initial call cannot be made on the frequency in use, squawk 7700 and call on 121.5. A distress message contains at least the station addressed, call sign, position including altitude, heading, nature of the emergency, persons on board and endurance if relevant, and pilot intentions. It is repeated at intervals until answered.</p>
+        <p>Deviation numbers in different sources. China, SOP chapter 33 and the IFALPA briefing leaflet on aircraft requiring rapid descent: turn 30 degrees right and track out 20 km (10 km or 5 NM right of the airway centerline), turn left to parallel the route, change level, return when appropriate. ICAO oceanic contingency, PANS-ATM: Doc 4444 16th edition 15.2.2.3 a) reads "at least 45 degrees" and a 15 NM offset; the global standard effective 5 November 2020 is at least 30 degrees and a 5 NM offset (OPSGROUP summary, not read from the new Doc 4444 text); before 2006 NAT and Pacific used 90 degrees. So 90 degrees is the old ICAO figure and is not the China figure. The ICAO procedure is written for oceanic contingencies, with pressurization failure listed (15.2.1.1 a)), and the emergency descent steps are separate (15.1.4.2). The China text found does not mention loss of pressurization. VERIFY the current SOP chapter 33 and the CAAC rule text before quoting a source.</p>
+        <p>FCTM 7.5: initiate a turn, if required, using HDG SEL. Extending the speedbrakes reduces the maneuver margin, so monitor airspeed and bank angle in a turn.</p>
+      </div>
+    </section>
+
+    <!-- 7c00 WHEN ESCAPE ROUTE APPLIES -->
+    <section class="slide s7e" id="sEsc00" data-stage="3" data-comp="PSD*,KNO,PRO,SAW">
+      <p class="eyebrow">Stage 3 · Route matters</p>
+      <h1>High terrain changes the descent</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1" data-comp="PSD*,SAW">
+          <p class="tag">Ask before you descend</p>
+          <ul>
+            <li>Is there terrain above 10,000 ft on this route?<span class="d">Grid MORA above 10,000 ft</span></li>
+            <li>Is there a published escape route for this sector?<span class="d">Company SOP chapter 33, for the routes it covers</span></li>
+            <li>Which waypoint am I closest to?<span class="d">The tables start from a waypoint</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2" data-comp="PSD*,PRO,KNO">
+          <p class="tag">Yes: follow the escape route</p>
+          <ul>
+            <li>Take the level, the track and the alternate from the table<span class="d">Terrain cleared by 2,000 ft within 10 NM either side</span></li>
+            <li>Level off higher than 10,000 ft if terrain needs it<span class="d">Stay inside the passenger oxygen envelope</span></li>
+            <li>Judge it against the real event<span class="d">Weather, fuel, oxygen, damage</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3" data-comp="PRO*,SAW">
+          <p class="tag">No: the standard descent</p>
+          <ul>
+            <li>Lowest safe altitude or 10,000 ft, whichever is higher<span class="d">MEA, MORA or another terrain based altitude. PM checks it</span></li>
+            <li>Terrain still above that level? Level off higher<span class="d">Complete the descent to 10,000 ft once terrain is cleared</span></li>
+            <li>Mountain routes may have special procedures<span class="d">Company route manual</span></li>
+          </ul>
+        </section>
+      </div>
+      <div class="rule rv h" data-step="4" data-comp="PSD*,PRO"><div class="three">The rule is the same everywhere: masks first. The level and the track depend on the route.</div></div>
+      <p class="fn">Escape route tables in SOP chapter 33 cover R474 (Laos) and A581 / W144 (China). <span class="v">VERIFY CURRENT ROUTES</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Purpose: the Emergency Descent checklist says descend to the lowest safe altitude or 10,000 ft, whichever is higher (QRH NNC 0.1 step 3). On some routes that is not enough information. Where limiting terrain lies above 10,000 ft, the company publishes an Escape Route Procedure (SOP MN4-FLO-0025 Issue 04, chapter 33, page 33-7) and the crew needs to know before the event whether it exists for the sector.</p>
+        <p>Left to right: first the questions, then the two branches. With a published escape route, it gives written and graphical guidance on descent and escape strategy, with terrain cleared by at least 2,000 ft within a 10 NM corridor either side of track, and adequate terrain clearance to the specified en-route alternate. The operating crew still assesses its suitability at the time. Without one, the standard rule applies: lowest safe altitude (MEA, MORA or another altitude based on terrain clearance, navaid reception or other criteria, FCTM 7.5) or 10,000 ft, whichever is higher. SOP chapter 33 adds that the descent must not exceed the passenger oxygen envelope and that once terrain is cleared the descent is completed to 10,000 ft. FCTM 7.4: mountain routes may have special procedures in the company route manual.</p>
+        <p>The wording of the three questions is a teaching device, not from the manual. The manuals reviewed do not say how the escape route and the SOP deviation procedure combine when ATC cannot be reached. VERIFY with Flight Operations Training. Routes covered: R474 (Laos) and A581 / W144 (China), outbound and inbound, in the pages read.</p>
+        <p>Probe: you are on A581 and the cabin altitude is uncontrollable. What do you check first, and where do you find the level?</p>
+      </div>
+    </section>
+
+    <!-- 7c0 ESCAPE ROUTE CONCEPT -->
+    <section class="slide two" id="sEsc0" data-stage="3" data-comp="PSD*,KNO*,PRO">
+      <div class="left">
+        <svg id="escSvg" viewBox="0 0 900 520" role="img" aria-label="Side view of a route over high terrain. At a decision point the airplane descends to a level that clears the terrain by 2,000 feet, stays level over the mountains, then descends to 10,000 feet and continues to an alternate airport. A bracket above shows that the whole descent stays inside the 12 minute passenger oxygen envelope.">
+          <polygon points="40,490 40,420 120,400 200,360 280,270 330,235 380,270 440,320 520,380 620,420 700,440 860,460 860,490" fill="var(--panel2)" stroke="var(--line)" stroke-width="3"/>
+          <polyline points="200,310 280,220 330,185 380,220 440,270 520,330 620,370 700,390 860,410" fill="none" stroke="var(--accent)" stroke-width="3" stroke-dasharray="10 7"/>
+          <text class="lg acc" x="400" y="392">terrain + 2,000 ft</text>
+          <line x1="60" y1="300" x2="880" y2="300" stroke="var(--line)" stroke-width="2" stroke-dasharray="4 8"/>
+          <text class="lg muted" x="640" y="290">10,000 ft</text>
+          <path d="M120,100 L230,165 L420,165 L560,300 L810,300" fill="none" stroke="var(--green)" stroke-width="6" stroke-linejoin="round"/>
+          <circle cx="120" cy="100" r="11" fill="var(--accent)" stroke="var(--bg)" stroke-width="3"/>
+          <text class="lg acc" x="142" y="96">DECISION POINT</text>
+          <text class="lg green" x="240" y="152">level over terrain</text>
+          <circle cx="820" cy="300" r="9" fill="var(--green)"/>
+          <text class="lg green" x="700" y="334">to the alternate</text>
+          <line x1="120" y1="56" x2="810" y2="56" stroke="var(--weight)" stroke-width="3"/>
+          <line x1="120" y1="46" x2="120" y2="66" stroke="var(--weight)" stroke-width="3"/>
+          <line x1="810" y1="46" x2="810" y2="66" stroke="var(--weight)" stroke-width="3"/>
+          <text class="lg weight" x="180" y="40">inside the passenger oxygen envelope · 12 min</text>
+          <text class="lbl" x="60" y="512">Teaching picture, not to scale</text>
+        </svg>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Escape route concept</p>
+        <h1>Two limits, one track</h1>
+        <ul class="defs">
+          <li class="rv h" data-step="1" data-comp="KNO*,PRO"><span class="k">Problem</span><span>High terrain below, limited passenger oxygen above</span></li>
+          <li class="rv h" data-step="2" data-comp="KNO*,PSD"><span class="k">Answer</span><span>A route worked out before the flight: the level, the track and the alternate</span></li>
+          <li class="rv h" data-step="3" data-comp="KNO*"><span class="k">Margin</span><span>Terrain cleared by 2,000 ft, 10 NM either side of track</span></li>
+          <li class="rv h" data-step="4" data-comp="PSD*,PRO"><span class="k">Crew</span><span>Use it as the plan, then judge it against the real event</span></li>
+        </ul>
+        <div class="rule rv h" data-step="5" data-comp="PSD*,PRO,KNO">
+          <div class="three">Descend, but never into terrain and never beyond the oxygen.</div>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>The picture is the idea behind the Escape Route Procedure in SOP MN4-FLO-0025 Issue 04, chapter 33, page 33-7. Two limits shape the descent. Below: terrain. The SOP says the procedure ensures that any limiting terrain, where a Grid MORA is above 10,000 ft, is cleared by a minimum of 2,000 ft within a 10 NM corridor either side of the intended track. Above: oxygen. The B738 has a 12 minute chemical passenger oxygen system, and the altitude envelope (pages 33-8 to 33-9) shows the highest altitude the airplane may be flown during a depressurization and still support the passengers. The route is built from the oxygen dispensing capability, the speed of descent and the projected weights at the published decision points. It gives adequate terrain clearance to the specified en-route alternate.</p>
+        <p>Read the picture left to right. At the decision point the airplane descends to a level that clears the terrain, stays level while the terrain is high, then goes on down to 10,000 ft once it is clear, and on to the alternate. The SOP chapter 33 note says: once terrain is cleared, complete the descent to 10,000 ft. The shapes, heights and distances are for teaching, not from the charts. The charts on pages 33-12 and 33-14 are graphics and were not read.</p>
+        <p>The crew's role is the same as in the SOP text: it is the operating crew's responsibility to assess the suitability of the instructions based on the circumstances at the time of the emergency. How the escape route combines with the SOP deviation procedure (30 degrees right, track out 20 km) when ATC cannot be reached is not spelled out in the pages read. Ask Flight Operations Training. VERIFY.</p>
+        <p>Probe: where is the decision point on tonight's sector, and what level would you call for at the first decision point?</p>
+      </div>
+    </section>
+
+    <!-- 7c ESCAPE ROUTE -->
+    <section class="slide s7e" data-stage="3" data-comp="PSD*,SAW,PRO,KNO">
+      <p class="eyebrow">Stage 3 · Escape route</p>
+      <h1>Planned before you need it</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1" data-comp="KNO*,PRO">
+          <p class="tag">What it is</p>
+          <ul>
+            <li>A company procedure for a depressurization or drift down on a route with high terrain<span class="d">Written and graphical guidance on the descent and the escape strategy</span></li>
+            <li>Limiting terrain, where the Grid MORA is above 10,000 ft, is cleared by at least <b>2,000 ft</b><span class="d">Within a 10 NM corridor either side of track</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2" data-comp="KNO*,SAW">
+          <p class="tag">Built from</p>
+          <ul>
+            <li>Oxygen dispensing capability of the airplane</li>
+            <li>Speed of descent</li>
+            <li>Projected weights at the published decision points</li>
+            <li>The passenger oxygen envelope<span class="d">12 minute chemical system on the B738</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3" data-comp="PSD*,PRO">
+          <p class="tag">What the crew does</p>
+          <ul>
+            <li>Follow the published escape route where one exists<span class="d">It gives terrain clearance to the specified en-route alternate</span></li>
+            <li>The crew still judges whether it suits the situation<span class="d">Weather, fuel, oxygen, the actual event</span></li>
+            <li>Read the table for your leg: level to descend to, then the diversion airport</li>
+          </ul>
+        </section>
+      </div>
+      <div class="rule rv h" data-step="4" data-comp="PSD*,PRO"><div class="three">Know the escape route for the sector before departure. The decision at level-off is where it matters.</div></div>
+      <p class="fn">Escape route tables in SOP Ch. 33 cover R474 (Laos) and A581 / W144 (China), outbound and inbound. <span class="v">VERIFY CURRENT ROUTES</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>SOP MN4-FLO-0025 Issue 04, chapter 33, page 33-7, "Escape Route". A company published Escape Route Procedure provides written and graphical guidance on descent procedures and escape strategy ensuring that any limiting terrain located where a Grid MORA is above 10,000 ft MSL is cleared by a minimum of 2,000 ft within a 10 NM corridor either side of the intended track. Taken into consideration: oxygen dispensing capability of the aircraft, speed of descent, projected aircraft weights at the published decision points (DP) along a route. In the event of a depressurization (or drift down scenario, if applicable) in an area where a published Escape Route Procedure has been established, it ensures adequate terrain clearance at all times to the specified en-route alternate. However, it is the operating crew's responsibility to assess the suitability of the instructions based on the circumstances at the time of emergency.</p>
+        <p>Pages 33-8 to 33-9: B738 passenger oxygen requirements. 12 minute chemical passenger oxygen system. The altitude envelope shows the maximum altitude the airplane may be flown during a cabin depressurization and still support the physiological needs of the passengers. The envelope is intended to assist terrain clearance planning. Crew oxygen: protective breathing oxygen is the quantity for 15 minutes of pressurized 100% oxygen flow (Emergency setting) per flight crew member at 8,000 ft cabin altitude. For flight crew oxygen requirements see FCOM Performance Dispatch, Enroute, PD.X1.7.</p>
+        <p>Pages 33-10 to 33-14: escape procedure tables. Layout: route, from waypoint, to waypoint, then the level to descend to, then the diversion airport. Example, R474 NOHET to LAVOS: descend to FL120 toward LAVOS, at LAVOS descend FL100 / 10,000 ft, divert to VVNB (Hanoi). Primary and secondary (optional) escape airports are given on A581 / W144, for example ZPPP (Kunming), VTCC (Chiang Mai). The charts on pages 33-12 and 33-14 are graphics and were not read from the text. VERIFY the current tables and charts before the session.</p>
+        <p>Sim exercise idea: give the pilot a leg and a failure point, and ask for the level, the speed, the alternate, and who tells ATC what.</p>
+      </div>
+    </section>
+
+    <!-- 8 THEORY: OXYGEN AND TERRAIN -->
+    <section class="slide s8t" data-stage="3" data-comp="PSD*,SAW,PRO">
+      <p class="eyebrow">Stage 3 · Terrain and oxygen</p>
+      <h1>When 10,000 ft is not enough</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1" data-comp="SAW*,PRO">
+          <p class="tag">Lowest safe altitude</p>
+          <ul>
+            <li>MEA, MORA, or another altitude based on terrain clearance, navaid reception or other criteria<span class="d">PM checks it. FCTM 7.5</span></li>
+            <li>Level off at the <b>higher</b> of that altitude and 10,000 ft</li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2" data-comp="PSD*,PRO">
+          <p class="tag">Terrain above 10,000 ft</p>
+          <ul>
+            <li>Level off higher if terrain needs it<span class="d">Descent must never exceed the passenger oxygen envelope</span></li>
+            <li>Once terrain is cleared, complete the descent to 10,000 ft<span class="d">SOP chapter 33 note</span></li>
+            <li>Mountain routes may have special procedures<span class="d">Company route manual. FCTM 7.4</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3" data-comp="PSD*,KNO">
+          <p class="tag">After level-off</p>
+          <ul>
+            <li>Crew oxygen: NORMAL regulators to conserve oxygen</li>
+            <li>Masks stay on while cabin altitude is above 10,000 ft</li>
+            <li>Decide: weather, oxygen, fuel, medical condition of crew and passengers, airports<span class="d">Get a new ATC clearance. FCTM 7.7</span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">Passenger oxygen supply is sized for the envelope in the SOP. Planning rules for drift-down and emergency descent routes are in OM-A. <span class="v">VERIFY SECTION</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>SOP MN4-FLO-0025 Issue 04, chapter 33 (page 33-8): the maximum altitude envelope assumes an immediate descent to 10,000 ft or the lowest safe altitude whichever is higher, as stipulated in the Emergency Descent procedure of the QRH. If terrain requires a level-off above 10,000 ft, the required terrain clearance descent should at no time exceed the maximum altitude capability of the passenger oxygen system shown by the envelope. Once terrain is cleared, complete the descent to 10,000 ft. This note is in the China operation chapter. VERIFY whether the same rule applies elsewhere in the SOP or OM-A.</p>
+        <p>OM-A Issue 08 (one hit) mentions taking driftdown and emergency descent into consideration when choosing routes around volcanic ash. Route-specific depressurization procedures are in the route manual per FCTM 7.4.</p>
+        <p>PSD is the decision after level-off: diversion, fuel, oxygen, medical, ATC clearance.</p>
+      </div>
+    </section>
+
+    <!-- 9 REFERENCES -->
+    <section class="slide s9r" data-stage="3" data-comp="KNO*,PRO">
+      <p class="eyebrow">Stage 3 · References</p>
+      <h1>Where it is written</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1">
+          <p class="tag">Company</p>
+          <ul>
+            <li><b>SOP MN4-FLO-0025</b>, Issue 04 Rev 00<span class="d">Ch. 8 standard callouts (PRELEVEL). 12.3.2.5 phraseology. Ch. 33: rapid descent and deviation p.33-5/6, escape route p.33-7, oxygen envelope p.33-8, escape tables p.33-10 to 14 <span class="v">VERIFY PAGES</span></span></li>
+            <li><b>FTM MN3-LAD-0032</b>, Issue 08 Rev 00<span class="d">§3.6.6 Simulated cabin pressure failure / emergency descent. Oxygen, rapid decompression in the training syllabus <span class="v">VERIFY CYCLE</span></span></li>
+            <li><b>OM-A MN4-FLO-0004</b>, Issue 08 Rev 00<span class="d">Ch. 12 distress call and squawk p.12-31. Ch. 8 RVSM contingency p.8-202. Route planning with driftdown <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2">
+          <p class="tag">Boeing</p>
+          <ul>
+            <li><b>QRH MN1-FLO-0023</b>, Rev 23<span class="d">NNC 0.1 to 0.3 Emergency Descent. NNC 2.1 CABIN ALTITUDE WARNING or Rapid Depressurization</span></li>
+            <li><b>FCTM MN3-LAD-0031</b>, Rev 25<span class="d">Maneuvers, Rapid Descent, p.7.4 to 7.7</span></li>
+            <li><b>FCOM MN2-FLO-0021</b>, Rev 23<span class="d">NP.21.26 takeoff briefing, cabin altitude warning (Air Systems, Warning Systems), passenger oxygen system <span class="v">VERIFY PAGES</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3">
+          <p class="tag">Regulation and framework</p>
+          <ul>
+            <li><b>Boeing CBTA framework</b><span class="d">Nine pilot competencies, pyramid</span></li>
+            <li><b>ICAO Doc 4444 PANS-ATM</b>, 15.1.4<span class="d">Pilot actions in an emergency descent: 7700, lights, traffic. Checked in the 16th edition text <span class="v">VERIFY AMENDMENT</span></span></li>
+            <li><b>Grade slip and PPC standard</b><span class="d">OB wording and tolerances for the exercise <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">VERIFY marks items to confirm against the current manual revision. Page numbers came from text extraction and should be spot-checked on the PDF.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Show one column at a time. Manuals read from the current-manuals folder. The EM (Emergency Manual) and the OM-B/OM-C were not searched for this slide and had no hit on "emergency descent" in text extraction. The FCOM was searched for cabin altitude warning, passenger oxygen and the takeoff briefing note only. The full pressurization description was not read.</p>
+        <p>FTM §3.6.6 appears in the recurrent training table and in the list of items for the oxygen and rapid decompression/emergency descent scenario. Check which year and cycle column applies to the session.</p>
+      </div>
+    </section>
+
+    <!-- 10 SIMULATOR -->
+    <section class="slide s10" data-stage="4" data-comp="PRO*,FPA*,WLM*,COM*">
+      <p class="eyebrow">Stage 4 · How to perform in the simulator</p>
+      <h1>Four phases, one sequence</h1>
+      <div class="phases">
+        <div class="panel phase rv h" data-step="1" data-comp="WLM*,PRO,COM">
+          <div class="ph">Setup</div><h3>Before the event</h3>
+          <ul><li>Cruise at a high level, AP and A/T engaged</li><li>Brief the split: PF flies, PM handles ATC and the checklist</li><li>Instructor fails the pressurization</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="2" data-comp="PRO*,WLM">
+          <div class="ph">Exercise 1</div><h3>Warning and masks</h3>
+          <ul><li>Masks on, 100%, crew comms</li><li>MAN, outflow VALVE to CLOSE</li><li>Uncontrollable: pass signs, PASS OXYGEN</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="3" data-comp="FPA*,WLM*,COM*,PRO">
+          <div class="ph">Exercise 2</div><h3>The descent</h3>
+          <ul><li>PA, MAYDAY, QNH, 7700, exterior lights ON</li><li>MCP altitude, LVL CHG, speedbrake, MMO/VMO</li><li>Checklist items 8 on, then “2,000 ft to level off”, “PRELEVEL”</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="4" data-comp="FPA*,PRO,SAW">
+          <div class="ph">Recovered when</div><h3>Level-off</h3>
+          <ul><li>Speedbrake DOWN, smooth capture</li><li>LRC or 300 kt, stable</li><li>Regulators NORMAL, new plan, new clearance</li></ul>
+        </div>
+      </div>
+      <div class="tols">
+        <div class="tol"><span>LEVEL-OFF</span><b>LSA or 10,000 ft · HIGHER</b></div>
+        <div class="tol"><span>SPEED</span><b>MMO/VMO · NO DELAY</b></div>
+        <span class="v" style="margin:0">VERIFY TOLERANCES AGAINST PPC STANDARD</span>
+      </div>
+      <p class="pm">Debrief the first reaction before the technique. Did the pilot put the mask on before anything else?</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>No numeric tolerance for this exercise was found in the manuals reviewed. Use the PPC grade slip and the competency framework OB wording. VERIFY</p>
+        <p>Variations for a second run: autopilot unserviceable (manual entry, not assessed in this exercise); structural damage suspected (limit speed, avoid high loads, consider gear down); terrain forcing a level-off above 10,000 ft; PM incapacity.</p>
+        <p>Competency tags follow the phase on screen. Instrument scanning is assessed under SAW and WLM, not FPM.</p>
+      </div>
+    </section>
+
+    <!-- 11 ERRORS AND DEBRIEF -->
+    <section class="slide s8" data-stage="4" data-comp="PRO*,FPA,WLM,COM">
+      <div class="left">
+        <p class="eyebrow">Stage 4 · Common errors</p>
+        <h1>Read the error back</h1>
+        <div class="errs">
+          <div class="erow head"><span>What you see</span><span>Why it hurts</span><span>Fix</span></div>
+          <div class="erow rv h" data-step="1" data-comp="PRO*"><b>Start the descent before the mask is on</b><span>Hypoxia comes first. Useful time is short at altitude</span><span class="fx">Masks and 100% first</span></div>
+          <div class="erow rv h" data-step="2" data-comp="FPA*,PRO"><b>Use V/S for the descent</b><span>No speed protection, higher workload. Not recommended</span><span class="fx">LVL CHG, speedbrake, MMO/VMO</span></div>
+          <div class="erow rv h" data-step="3" data-comp="FPA*"><b>Abrupt level-off, speedbrakes snapped in</b><span>Momentary overspeed and passenger discomfort</span><span class="fx">Set LRC or 300 kt, retract slowly</span></div>
+          <div class="erow rv h" data-step="4" data-comp="WLM*,COM"><b>PF also on the radio and the checklist</b><span>Attention leaves the flight path. Overload</span><span class="fx">PF flies. PM: PA, ATC, QNH, checklist</span></div>
+          <div class="erow rv h" data-step="5" data-comp="COM*,PRO"><b>No PA, no ATC call, no altimeter setting</b><span>Cabin unprepared, traffic unaware, wrong altimeter</span><span class="fx">PF: PA. PM: ATC and QNH</span></div>
+          <div class="erow rv h" data-step="6" data-comp="PRO*,SAW"><b>Fixed 10,000 ft over high terrain</b><span>Lowest safe altitude may be higher</span><span class="fx">PM checks LSA before level-off</span></div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="debrief">
+          <h3>Debrief prompts</h3>
+          <ol>
+            <li class="rv h" data-step="7" data-comp="PRO*">What did you do first, and why that first?</li>
+            <li class="rv h" data-step="8" data-comp="FPA*">How did you fly the descent and capture the level?</li>
+            <li class="rv h" data-step="9" data-comp="WLM*,COM">Who did what, and what did you defer? What was said to the cabin and to ATC, and by whom?</li>
+          </ol>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Rows 1 to 6 are typical errors, each mapped to a step in the procedure. Ask the pilot to name the step before showing the fix. Sources: QRH NNC 2.1 (masks first), FCTM 7.5 to 7.7 (V/S not recommended, slow speedbrake retraction, LSA), QRH NNC 0.1 step 1 (PA and ATC).</p>
+        <p>These errors are expected failure modes written from the procedure, not observed data. Replace with the instructors' own debrief observations when available.</p>
+        <p>Debrief prompts are open questions. Let the pilot talk, then tie the answer to the competency grid: PRO for the sequence, FPA for the descent and capture, WLM for the task split, COM for the calls.</p>
+      </div>
+    </section>
+
+    <!-- 12 SUMMARY -->
+    <section class="slide s12" data-stage="0" data-comp="PRO*,FPA*,WLM*,COM*">
+      <p class="eyebrow">Summary</p>
+      <h1>What to take away</h1>
+      <div class="stats">
+        <div class="panel stat"><div class="num">MASK</div><div class="cap">Masks on, 100%, crew comms. Before anything else</div></div>
+        <div class="panel stat"><div class="num">LSA</div><div class="cap">Lowest safe altitude or 10,000 ft, whichever is higher</div></div>
+        <div class="panel stat"><div class="num">LVL CHG</div><div class="cap">MMO/VMO, speedbrakes. V/S is not recommended</div></div>
+        <div class="panel stat"><div class="num">PA·ATC</div><div class="cap">PF tells the cabin. PM tells ATC and gets QNH</div></div>
+      </div>
+      <p class="why rv h" data-step="1">Do the maneuver deliberately and methodically. Smooth level-off with the speedbrakes, then recheck the cabin and plan.</p>
+      <div class="remember rv h" data-step="2">Mask. Comms. Descend. Announce. Level off smoothly.</div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Close with the one sentence to remember. Then move to the simulator. Items marked VERIFY earlier in the deck should be confirmed against the manual pages, the grade slip and Flight Operations Training before the session.</p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="count" id="count"></div>
+      <div class="credit">© Capt. Supakit Punyangam · Do not copy or distribute without permission</div>
+      <div class="corner">
+        <svg class="wheel" id="wheel" viewBox="0 0 200 200" role="img" aria-label="Competency pyramid with communication and leadership arrows, assessed ones highlighted"></svg>
+        <div class="cgrid" id="cgrid" aria-label="Nine competencies grid, assessed ones highlighted"></div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div id="controls" role="toolbar" aria-label="Presentation controls">
+  <button type="button" data-act="prev" aria-label="Previous">← Prev</button>
+  <button type="button" data-act="next" aria-label="Next">Next →</button>
+  <button type="button" data-act="all" aria-pressed="false" title="Reveal everything on this slide (A)">Reveal all</button>
+  <button type="button" data-act="notes" aria-pressed="false" title="Instructor notes (N)">Notes</button>
+  <button type="button" data-act="theme" title="Light or dark (T)">Theme</button>
+  <button type="button" data-act="full" id="fullBtn" title="Fullscreen (F)">Fullscreen</button>
+</div>
+<aside id="notes" hidden aria-label="Instructor notes"></aside>
+
+<script>
+(function () {
+  var COMPS = [
+    ['KNO','Application of Knowledge'], ['FPM','Aeroplane Flight Path Management, Manual Control'], ['FPA','Aeroplane Flight Path Management, Automation'],
+    ['PRO','Application of Procedures and Compliance with Regulations'], ['WLM','Workload Management'], ['SAW','Situation Awareness and Management of Information'],
+    ['PSD','Problem Solving and Decision Making'], ['COM','Communication'], ['LTW','Leadership and Teamwork']
+  ];
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  var stage = $('#stage'), vp = $('#viewport');
+  var slides = $$('.slide');
+  var si = 0, st = 0, all = false;
+  function fit() {
+    var s = Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080);
+    stage.style.setProperty('--s', s > 0 ? s : 1);
+  }
+  function buildGrid(el) {
+    el.innerHTML = COMPS.map(function (c) {
+      return '<div class="cell" data-c="' + c[0] + '" title="' + c[1] + '"><span class="c">' + c[0] + '</span><span class="n">' + c[1] + '</span></div>';
+    }).join('');
+  }
+  function paintGrid(el, spec) {
+    var m = {};
+    (spec || '').split(',').forEach(function (x) {
+      if (!x) return;
+      m[x.replace('*', '')] = x.indexOf('*') > -1 ? 'p' : 's';
+    });
+    $$('.cell, .seg', el).forEach(function (c) {
+      c.classList.remove('p', 's');
+      var k = m[c.dataset.c];
+      if (k) c.classList.add(k);
+    });
+  }
+  function buildWheel(el) {
+    var out = '', order = ['PSD','SAW','WLM','PRO','FPA','FPM','KNO'];
+    var names = {}; COMPS.forEach(function (c) { names[c[0]] = c[1]; });
+    var top = 38, bot = 150, h = (bot - top) / order.length;
+    function wAt(y) { return 46 + 74 * (y - top) / (bot - top); }
+    order.forEach(function (code, i) {
+      var y0 = top + i * h, y1 = y0 + h, w0 = wAt(y0) / 2, w1 = wAt(y1) / 2;
+      var pts = [(100 - w0), y0, (100 + w0), y0, (100 + w1), y1, (100 - w1), y1].map(function (n) { return n.toFixed(1); });
+      var poly = pts[0] + ',' + pts[1] + ' ' + pts[2] + ',' + pts[3] + ' ' + pts[4] + ',' + pts[5] + ' ' + pts[6] + ',' + pts[7];
+      out += '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title><polygon class="sh" points="' + poly + '"/><text x="100" y="' + ((y0 + y1) / 2 + 4.2).toFixed(1) + '">' + code + '</text></g>';
+    });
+    var R = 92, C = 100;
+    function pt(d) { var a = d * Math.PI / 180; return [C + R * Math.sin(a), C - R * Math.cos(a)]; }
+    function arrow(code, d0, d1, ty) {
+      var a = pt(d0), b = pt(d1), r = d1 * Math.PI / 180;
+      var tx = Math.cos(r), tyv = Math.sin(r), nx = -tyv, ny = tx;
+      var tip = [b[0] + tx * 18, b[1] + tyv * 18], l = [b[0] + nx * 13, b[1] + ny * 13], rr = [b[0] - nx * 13, b[1] - ny * 13];
+      return '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title>' +
+        '<path class="ar" d="M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + '"/>' +
+        '<polygon class="ah" points="' + tip[0].toFixed(1) + ',' + tip[1].toFixed(1) + ' ' + l[0].toFixed(1) + ',' + l[1].toFixed(1) + ' ' + rr[0].toFixed(1) + ',' + rr[1].toFixed(1) + '"/>' +
+        '<text class="at" x="100" y="' + ty + '">' + code + '</text></g>';
+    }
+    out += arrow('COM', -60, 56, 12.6);
+    out += arrow('LTW', 120, 236, 196.4);
+    el.innerHTML = out;
+  }
+  function maxStep(sl) {
+    var m = 0;
+    $$('[data-step]', sl).forEach(function (e) { m = Math.max(m, +e.dataset.step); });
+    return m;
+  }
+  var cgrid = $('#cgrid'), bigGrid = $('#bigGrid'), notes = $('#notes'), wheel = $('#wheel');
+  buildGrid(cgrid); buildGrid(bigGrid); buildWheel(wheel);
+
+  function render() {
+    var sl = slides[si], max = maxStep(sl), eff = all ? max : st;
+    slides.forEach(function (s, i) { s.classList.toggle('on', i === si); });
+    $$('[data-step]', sl).forEach(function (e) {
+      var n = +e.dataset.step;
+      e.classList.toggle('on', n <= eff);
+      e.classList.toggle('cur', eff > 0 && n === eff);
+    });
+    var spec = sl.dataset.comp;
+    if (eff > 0) {
+      var cur = $$('[data-step]', sl).filter(function (e) { return +e.dataset.step === eff && e.dataset.comp; })[0];
+      if (cur) spec = cur.dataset.comp;
+    }
+    paintGrid(cgrid, spec);
+    paintGrid(wheel, spec);
+    if (si === 1) paintGrid(bigGrid, sl.dataset.comp);
+    $$('.stages li').forEach(function (li) { li.classList.toggle('on', li.dataset.s === sl.dataset.stage); });
+    var n = si + 1;
+    $('#count').innerHTML = '<b>' + (n < 10 ? '0' + n : n) + '</b> / ' + (slides.length < 10 ? '0' + slides.length : slides.length) + (max > 0 ? '  ·  ' + eff + '/' + max : '');
+    var nt = $('.notes', sl);
+    notes.innerHTML = nt ? nt.innerHTML : '';
+    $('[data-act="all"]').setAttribute('aria-pressed', String(all));
+    if (window.__profStop && sl.id !== 'sProf') window.__profStop();
+    (window.__gStops || []).forEach(function (f) { f(sl.id); });
+  }
+  function next() {
+    var max = maxStep(slides[si]);
+    if (!all && st < max) { st++; }
+    else if (si < slides.length - 1) { si++; st = 0; }
+    render();
+  }
+  function prev() {
+    if (!all && st > 0) { st--; }
+    else if (si > 0) { si--; st = maxStep(slides[si]); }
+    render();
+  }
+  function effTheme() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t) return t;
+    return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  function toggleTheme() {
+    var nt = effTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nt);
+    try { localStorage.setItem('edTheme', nt); } catch (e) {}
+  }
+  function toggleNotes() {
+    notes.hidden = !notes.hidden;
+    $('[data-act="notes"]').setAttribute('aria-pressed', String(!notes.hidden));
+  }
+  function toggleFull() {
+    try {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (document.documentElement.requestFullscreen) {
+        var p = document.documentElement.requestFullscreen();
+        if (p && p.catch) p.catch(function () {});
+      }
+    } catch (e) {}
+  }
+  if (!document.fullscreenEnabled) $('#fullBtn').hidden = true;
+
+  $('#controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var a = b.dataset.act;
+    if (a === 'next') next();
+    else if (a === 'prev') prev();
+    else if (a === 'all') { all = !all; render(); }
+    else if (a === 'notes') toggleNotes();
+    else if (a === 'theme') toggleTheme();
+    else if (a === 'full') toggleFull();
+    b.blur();
+  });
+  document.addEventListener('keydown', function (e) {
+    var tg = e.target, tag = tg && tg.tagName;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (tag === 'INPUT') return;
+    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); si = 0; st = 0; render(); }
+    else if (k === 'End') { e.preventDefault(); si = slides.length - 1; st = 0; render(); }
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 't' || k === 'T') toggleTheme();
+    else if (k === 'a' || k === 'A') { all = !all; render(); }
+  });
+  var tx0 = null;
+  document.addEventListener('touchstart', function (e) { tx0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (tx0 === null) return;
+    var dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+    if (Math.abs(dx) > 60 && !e.target.closest('input,button,#notes')) { if (dx < 0) next(); else prev(); }
+  }, { passive: true });
+  var idleT;
+  function wake() {
+    document.body.classList.remove('idle');
+    clearTimeout(idleT);
+    idleT = setTimeout(function () { document.body.classList.add('idle'); }, 3000);
+  }
+  ['pointermove', 'pointerdown'].forEach(function (ev) { document.addEventListener(ev, wake); });
+  try {
+    var saved = localStorage.getItem('edTheme');
+    if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+  $$('.mi li').forEach(function (li) {
+    li.addEventListener('click', function () {
+      li.classList.toggle('ok');
+      $('#miN').textContent = $$('.mi li.ok').length;
+    });
+  });
+  /* profile slider */
+  (function () {
+    var base = $('#pBase'), done = $('#pDone'), acm = $('#acm'), prog = $('#prog'), btn = $('#playBtn');
+    var L = base.getTotalLength();
+    done.style.strokeDasharray = L;
+    var PH = [
+      { to: 14.8, g: null, n: 'Cruise', t: 'Normal cruise, autopilot and autothrottle on. Drag the slider or press Play.', c: 'FPA*,PRO,KNO' },
+      { to: 36, g: 'gW', n: 'Warning and memory items', t: 'Both: masks ON 100%, crew communications, pressurization MAN, outflow VALVE to CLOSE. Uncontrollable: passenger signs, PASS OXYGEN, Emergency Descent.', c: 'PRO*,WLM*,SAW' },
+      { to: 50, g: 'gD', n: 'Emergency descent', t: 'PF: PA to cabin, MCP altitude, LVL CHG, thrust minimum, speedbrake FLIGHT DETENT, target MMO/VMO. PM: ATC call, altimeter setting.', c: 'FPA*,WLM*,COM*,PRO' },
+      { to: 68, g: 'gQ', n: 'Quiet window: do the rest', t: 'Memory items are done and the descent is stable. PM: ATC call or broadcast, squawk 7700, exterior lights ON, watch traffic. PF calls for the checklist and the PM reads the reference items (8 on). Finish before the 2,000 ft call.', c: 'WLM*,COM*,PRO*,SAW' },
+      { to: 74.3, g: 'g2', n: '2,000 ft to level off', t: 'PM calls “2,000 ft to level off”. Altitude set in the MCP window, speed set to LRC or about 300 kt before the capture.', c: 'SAW*,COM*,FPA' },
+      { to: 81, g: 'g1', n: '1,000 ft above level-off', t: 'PM calls PRELEVEL, PF answers Checked. Smoothly and slowly retract the speedbrakes to the DOWN detent.', c: 'FPA*,COM,SAW' },
+      { to: 101, g: 'gL', n: 'Level-off', t: 'Add thrust, stabilize altitude and speed. Regulators NORMAL. Recheck pressurization. New plan and a new clearance.', c: 'FPA*,PSD*,WLM' }
+    ];
+    var cur = -1;
+    function pos(v) {
+      v = Math.max(0, Math.min(100, +v));
+      var len = L * v / 100, pt = base.getPointAtLength(len), pt2 = base.getPointAtLength(Math.min(L, len + 2)), pt1 = base.getPointAtLength(Math.max(0, len - 2));
+      var ang = Math.atan2(pt2.y - pt1.y, pt2.x - pt1.x) * 180 / Math.PI;
+      acm.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ' ' + pt.y.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
+      done.style.strokeDashoffset = L - len;
+      var i = 0; while (i < PH.length - 1 && v >= PH[i].to) i++;
+      if (i !== cur) {
+        cur = i;
+        $$('.lb').forEach(function (g) { g.classList.toggle('on', g.id === PH[i].g); });
+        $('#phN').textContent = PH[i].n; $('#phT').textContent = PH[i].t;
+        paintGrid(cgrid, PH[i].c); paintGrid(wheel, PH[i].c);
+      }
+      prog.value = v;
+    }
+    var raf = 0, last = 0, playing = false;
+    function stop() { playing = false; cancelAnimationFrame(raf); btn.textContent = (+prog.value >= 100) ? 'Replay' : 'Play'; }
+    function tick(ts) {
+      if (!playing) return;
+      var dt = last ? (ts - last) : 0; last = ts;
+      var v = +prog.value + dt / 240;
+      if (v >= 100) { pos(100); stop(); return; }
+      pos(v); raf = requestAnimationFrame(tick);
+    }
+    btn.addEventListener('click', function () {
+      if (playing) { stop(); }
+      else { if (+prog.value >= 100) pos(0); playing = true; last = 0; btn.textContent = 'Pause'; raf = requestAnimationFrame(tick); }
+      btn.blur();
+    });
+    prog.addEventListener('input', function () { if (playing) stop(); pos(prog.value); btn.textContent = (+prog.value >= 100) ? 'Replay' : 'Play'; });
+    prog.addEventListener('change', function () { prog.blur(); });
+    window.__profStop = function () { if (playing) stop(); };
+    pos(0);
+  })();
+  /* cabin panels */
+  (function () {
+    var NS = 'http://www.w3.org/2000/svg';
+    var FLT = 33000;
+    function rad(a) { return a * Math.PI / 180; }
+    function pt(cx, cy, r, deg) { return [cx + r * Math.sin(rad(deg)), cy - r * Math.cos(rad(deg))]; }
+    // kf = [t sec, cabin alt ft, rate fpm, outflow valve 0 closed .. 1 open]
+    var SC = {
+      ctrl: { dur: 600, man: 310, kf: [[0,7000,0,.45],[60,7000,0,.45],[70,7100,600,.45],[300,10200,800,.45],[330,10800,1000,.45],[360,11300,600,0],[390,11500,0,0],[480,10700,-500,0],[600,8300,-600,0]],
+        notes: [[0,'Normal cruise','Cabin about 7,000 ft, rate zero, outflow valve part open, selector in AUTO.'],[70,'A leak begins','Cabin altitude drifts up. CABIN CLIMB shows a small climb. DIFF PRESS starts to fall.'],[290,'Horn at 10,000 ft','Masks on, communications. Selector to MAN.'],[345,'Valve to CLOSE','Hold the outflow VALVE switch at CLOSE until the valve gauge shows fully closed.'],[395,'Controllable','Rate back to zero, then a descent. Cabin altitude falls. DIFF PRESS rises. Continue manual control.']] },
+      unc: { dur: 700, man: 310, kf: [[0,7000,0,.45],[60,7000,0,.45],[70,7100,600,.45],[300,10200,800,.45],[330,10800,1000,.45],[360,11400,1200,0],[420,13000,1500,0],[500,18000,3800,0],[600,27000,5500,0],[650,31500,2500,0],[700,33000,0,0]],
+        notes: [[0,'Normal cruise','Cabin about 7,000 ft, rate zero, selector in AUTO.'],[70,'A leak begins','Cabin altitude drifts up. CABIN CLIMB shows a climb. DIFF PRESS falls.'],[290,'Horn at 10,000 ft','Masks on, communications. Selector to MAN, then outflow VALVE to CLOSE.'],[365,'Valve fully closed. Now look','Is the rate coming back to zero? Is cabin altitude stopping?'],[430,'Sign 3: still climbing with valve closed','CABIN CLIMB still shows a climb. Passenger signs ON, PASS OXYGEN ON, Emergency Descent.'],[600,'Sign 2: DIFF PRESS toward zero','The outer scale pointer is falling back to 0. The cabin is losing its pressure.'],[665,'Sign 1: CABIN ALT = FLT ALT','Cabin altitude has reached flight altitude. No differential pressure is left.']] },
+      slow: { dur: 600, man: 1e9, kf: [[0,7000,0,.45],[60,7000,0,.45],[70,7100,600,.45],[300,10200,800,.45],[450,12800,1100,.45],[600,15200,1200,.45]],
+        notes: [[0,'Normal cruise','Rate zero. Cabin about 7,000 ft. No crew action is shown in this animation.'],[70,'Slow leak','CABIN CLIMB shows a small climb. Cabin altitude creeping up. Easy to miss.'],[290,'Horn at 10,000 ft','Often the first clear sign. In real life: masks, communications, MAN, CLOSE.'],[500,'Still climbing slowly','Rate stays modest, but the cabin keeps rising. Masks drop at 14,000 ft.']] },
+      rapid: { dur: 180, man: 1e9, kf: [[0,7000,0,.45],[10,7000,0,.45],[12,7200,6000,.45],[40,10000,6000,.45],[80,14000,6000,.45],[120,18000,6000,.45],[150,20500,5000,.45],[180,22500,4000,.45]],
+        notes: [[0,'Normal cruise','Rate zero. Cabin about 7,000 ft.'],[12,'Rapid event','CABIN CLIMB needle goes to the stop at once. DIFF PRESS falls fast.'],[40,'Horn at 10,000 ft','Seconds after the event. Masks on at the first indication. Do not wait for the horn.'],[80,'Passenger masks drop','14,000 ft. The cabin is climbing fast: expect Emergency Descent.'],[125,'Still climbing','Thousands of fpm. No crew action is shown, so you can see the raw rise.']] }
+    };
+    function press(h) { return 14.696 * Math.pow(1 - 6.8756e-6 * Math.min(Math.max(h, 0), 45000), 5.2559); }
+    function interp(kf, t) {
+      if (t <= kf[0][0]) return kf[0].slice(1);
+      for (var i = 1; i < kf.length; i++) {
+        if (t <= kf[i][0]) {
+          var a = kf[i - 1], b = kf[i], u = (t - a[0]) / (b[0] - a[0]), o = [];
+          for (var j = 1; j < 4; j++) o.push(a[j] + (b[j] - a[j]) * u);
+          return o;
+        }
+      }
+      return kf[kf.length - 1].slice(1);
+    }
+    var IN = [[0,0],[5,69],[10,118],[15,163],[20,198],[25,231],[30,265],[35,280],[40,297],[50,322]];
+    function inAng(v) {
+      v = Math.max(0, Math.min(50, v));
+      for (var i = 1; i < IN.length; i++) if (v <= IN[i][0]) { var a = IN[i - 1], b = IN[i]; return a[1] + (b[1] - a[1]) * (v - a[0]) / (b[0] - a[0]); }
+      return IN[IN.length - 1][1];
+    }
+    function mk(tag, attrs, parent, txt) {
+      var e = document.createElementNS(NS, tag);
+      for (var k in attrs) e.setAttribute(k, attrs[k]);
+      if (txt != null) e.textContent = txt;
+      if (parent) parent.appendChild(e);
+      return e;
+    }
+    function T(p, x, y, s, size, fill, anchor, extra) {
+      var a = { x: x, y: y, 'font-size': size, fill: fill, 'text-anchor': anchor || 'middle', 'font-weight': 700, 'font-family': 'Arial, Helvetica, sans-serif' };
+      if (extra) for (var k in extra) a[k] = extra[k];
+      return mk('text', a, p, s);
+    }
+    function build(svg) {
+      var o = {};
+      // panel plates (screen coordinates match the real panel drawing, 868 x 516)
+      mk('rect', { x: 0, y: 66, width: 432, height: 450, fill: '#4B4B4B', stroke: '#222', 'stroke-width': 2 }, svg);
+      mk('rect', { x: 436, y: 0, width: 432, height: 516, fill: '#454545', stroke: '#222', 'stroke-width': 2 }, svg);
+      [[18,84],[414,84],[18,500],[414,500],[452,16],[850,16],[452,500],[850,500]].forEach(function (p) { mk('circle', { cx: p[0], cy: p[1], r: 9, fill: '#3A3A3A', stroke: '#2A2A2A', 'stroke-width': 2 }, svg); });
+      // lamps in the free strip above the left panel
+      function lamp(x, w, label) {
+        var c = mk('rect', { x: x, y: 8, width: w, height: 44, rx: 6, fill: '#2A3445', stroke: '#6B7A90', 'stroke-width': 2 }, svg);
+        var t = T(svg, x + w / 2, 37, label, 20, '#9BA9BD'); t.setAttribute('font-family', 'monospace');
+        return [c, t];
+      }
+      o.horn = lamp(2, 206, 'HORN >10,000');
+      o.pass = lamp(214, 216, 'MASKS 14,000');
+      // CABIN ALT / DIFF PRESS dial (as the real instrument: short pointer = CABIN ALT on the inner scale, long pointer = DIFF PRESS on the outer scale)
+      var cx = 168, cy = 200;
+      mk('rect', { x: 46, y: 78, width: 244, height: 244, rx: 30, fill: '#2C2C2C', stroke: '#171717', 'stroke-width': 3 }, svg);
+      mk('circle', { cx: cx, cy: cy, r: 117, fill: '#0E0E0E', stroke: '#555', 'stroke-width': 2 }, svg);
+      for (var p = 0; p <= 10; p++) {
+        for (var q = 0; q < 5; q++) {
+          var dm = p * 32 + q * 6.4;
+          if (p === 10 && q > 0) break;
+          var maj = q === 0, ao = pt(cx, cy, 102, dm), ai = pt(cx, cy, maj ? 80 : 90, dm);
+          mk('line', { x1: ao[0], y1: ao[1], x2: ai[0], y2: ai[1], stroke: '#ddd', 'stroke-width': maj ? 3 : 1.6 }, svg);
+        }
+        var tl = pt(cx, cy, 110, p * 32);
+        T(svg, tl[0], tl[1] + 5, p, 14, '#F2F2F2');
+      }
+      for (var v = 0; v <= 50; v += (v < 20 ? 1 : 5)) {
+        var dd = inAng(v), major = v % 5 === 0, a2 = pt(cx, cy, 52, dd), b2 = pt(cx, cy, major ? 41 : 46, dd);
+        mk('line', { x1: a2[0], y1: a2[1], x2: b2[0], y2: b2[1], stroke: '#ddd', 'stroke-width': major ? 2.5 : 1.5 }, svg);
+        if (major && v !== 45) { var tl2 = pt(cx, cy, 63, dd); T(svg, tl2[0], tl2[1] + 4, v, 12, '#F2F2F2'); }
+      }
+      T(svg, cx, cy - 26, 'CABIN', 14, '#F2F2F2'); T(svg, cx, cy - 12, 'ALT', 14, '#F2F2F2');
+      T(svg, cx, cy + 36, 'X 1000 FEET', 8, '#F2F2F2');
+      T(svg, 112, 108, 'DIFF PRESS PSI', 9, '#F2F2F2', 'middle', { transform: 'rotate(-18 112 108)' });
+      // fixed limit bug at 9 psi
+      var gb = mk('g', { transform: 'rotate(' + (9 * 32) + ' ' + cx + ' ' + cy + ')' }, svg);
+      mk('rect', { x: cx - 4, y: cy - 92, width: 8, height: 16, fill: '#F0A830' }, gb);
+      mk('rect', { x: cx - 7, y: cy - 96, width: 14, height: 5, fill: '#D83A2A' }, gb);
+      o.ringAlt = mk('circle', { 'class': 'ring', cx: cx, cy: cy, r: 70 }, svg);
+      o.ringDiff = mk('circle', { 'class': 'ring', cx: cx, cy: cy, r: 124 }, svg);
+      // long pointer: DIFF PRESS (outer scale)
+      o.diffP = mk('g', { transform: 'rotate(0 ' + cx + ' ' + cy + ')' }, svg);
+      mk('polygon', { points: (cx - 4) + ',' + (cy - 18) + ' ' + (cx - 4) + ',' + (cy - 56) + ' ' + (cx - 8) + ',' + (cy - 56) + ' ' + cx + ',' + (cy - 84) + ' ' + (cx + 8) + ',' + (cy - 56) + ' ' + (cx + 4) + ',' + (cy - 56) + ' ' + (cx + 4) + ',' + (cy - 18), fill: '#F2F2F2', stroke: '#111', 'stroke-width': 1 }, o.diffP);
+      // short pointer: CABIN ALT (inner scale)
+      o.altN = mk('g', { transform: 'rotate(0 ' + cx + ' ' + cy + ')' }, svg);
+      mk('polygon', { points: (cx - 5) + ',' + (cy - 18) + ' ' + (cx - 7) + ',' + (cy - 30) + ' ' + cx + ',' + (cy - 46) + ' ' + (cx + 7) + ',' + (cy - 30) + ' ' + (cx + 5) + ',' + (cy - 18), fill: '#F2F2F2', stroke: '#111', 'stroke-width': 1 }, o.altN);
+      mk('circle', { cx: cx, cy: cy, r: 19, fill: '#151515', stroke: '#555', 'stroke-width': 2 }, svg);
+      // ALT HORN CUTOUT + HIGH ALT LDG (as on the real panel)
+      mk('rect', { x: 302, y: 66, width: 82, height: 450, fill: '#444', stroke: '#2A2A2A' }, svg);
+      T(svg, 344, 128, 'ALT', 17, '#fff'); T(svg, 344, 147, 'HORN', 17, '#fff'); T(svg, 344, 166, 'CUTOUT', 17, '#fff');
+      mk('circle', { cx: 344, cy: 195, r: 20, fill: '#141414', stroke: '#777', 'stroke-width': 3 }, svg);
+      T(svg, 344, 355, 'HIGH', 16, '#fff'); T(svg, 344, 374, 'ALT LDG', 16, '#fff');
+      mk('rect', { x: 318, y: 386, width: 52, height: 28, rx: 4, fill: '#222', stroke: '#777', 'stroke-width': 2 }, svg); T(svg, 344, 406, 'ON', 16, '#ddd');
+      mk('rect', { x: 318, y: 420, width: 52, height: 26, rx: 4, fill: '#222', stroke: '#777', 'stroke-width': 2 }, svg);
+      // PRESS DIFF LIMIT label
+      mk('rect', { x: 10, y: 338, width: 90, height: 70, rx: 12, fill: '#1A1A1A' }, svg);
+      ['PRESS DIFF', 'LIMIT: TAKE-', 'OFF & LDG', '.125 PSI'].forEach(function (s, i) { T(svg, 55, 355 + i * 14, s, 11, '#fff'); });
+      // CABIN CLIMB gauge
+      var rx = 178, ry = 428;
+      mk('circle', { cx: rx, cy: ry, r: 78, fill: '#2C2C2C', stroke: '#171717', 'stroke-width': 3 }, svg);
+      mk('circle', { cx: rx, cy: ry, r: 68, fill: '#0E0E0E', stroke: '#555', 'stroke-width': 2 }, svg);
+      for (var m = -4; m <= 4; m++) {
+        var da = 270 + 45 * m, p1 = pt(rx, ry, 66, da), p2 = pt(rx, ry, 56, da), p3 = pt(rx, ry, 44, da);
+        mk('line', { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], stroke: '#ddd', 'stroke-width': 3 }, svg);
+        T(svg, p3[0], p3[1] + 6, Math.abs(m), 17, '#F2F2F2');
+      }
+      for (var mm = -4; mm < 4; mm++) {
+        var dm = 270 + 45 * mm + 22.5, q1 = pt(rx, ry, 66, dm), q2 = pt(rx, ry, 61, dm);
+        mk('line', { x1: q1[0], y1: q1[1], x2: q2[0], y2: q2[1], stroke: '#bbb', 'stroke-width': 2 }, svg);
+      }
+      T(svg, rx - 58, ry - 12, 'UP', 11, '#F2F2F2'); T(svg, rx - 58, ry + 26, 'DN', 11, '#F2F2F2');
+      T(svg, rx, ry - 22, 'CABIN CLIMB', 10, '#F2F2F2');
+      T(svg, rx, ry + 30, 'x1000 FPM', 9, '#5CC8FF');
+      o.ringRate = mk('circle', { 'class': 'ring', cx: rx, cy: ry, r: 84 }, svg);
+      o.rateN = mk('g', { transform: 'rotate(0 ' + rx + ' ' + ry + ')' }, svg);
+      mk('polygon', { points: (rx - 4) + ',' + ry + ' ' + (rx - 2) + ',' + (ry - 56) + ' ' + rx + ',' + (ry - 62) + ' ' + (rx + 2) + ',' + (ry - 56) + ' ' + (rx + 4) + ',' + ry + ' ' + (rx + 3) + ',' + (ry + 18) + ' ' + (rx - 3) + ',' + (ry + 18), fill: '#fff', stroke: '#111', 'stroke-width': 1.2 }, o.rateN);
+      mk('circle', { cx: rx, cy: ry, r: 8, fill: '#1C1C1C', stroke: '#666', 'stroke-width': 2 }, svg);
+      // ---- CABIN PRESSURIZATION PANEL ----
+      function ann(x, w, label, col, sub) {
+        var r = mk('rect', { x: x, y: 14, width: w, height: 40, rx: 5, fill: '#2A2A2A', stroke: col, 'stroke-width': 2.5 }, svg);
+        var t1 = T(svg, x + w / 2, sub ? 31 : 40, label, sub && label.length > 6 ? 12 : 14, col);
+        var t2 = null; if (sub) t2 = T(svg, x + w / 2, 47, sub, sub.length > 4 ? 12 : 14, col);
+        return [r, t1, t2, col];
+      }
+      ann(486, 74, 'AUTO', '#FFA21A', 'FAIL'); ann(566, 84, 'OFF SCHED', '#FFA21A', 'DESCENT'); ann(656, 66, 'ALTN', '#5BD27C'); o.manL = ann(738, 66, 'MANUAL', '#5BD27C');
+      T(svg, 565, 84, 'AUTO', 20, '#fff'); T(svg, 775, 84, 'MANUAL', 20, '#fff');
+      mk('rect', { x: 482, y: 98, width: 186, height: 58, rx: 8, fill: '#0A0A0A', stroke: '#222', 'stroke-width': 2 }, svg);
+      T(svg, 575, 140, '33000', 42, '#F2F2F2', 'middle', { 'font-family': 'monospace' });
+      T(svg, 575, 178, 'FLT ALT', 19, '#fff');
+      mk('circle', { cx: 575, cy: 214, r: 24, fill: '#8C8C8C', stroke: '#555', 'stroke-width': 3 }, svg);
+      mk('rect', { x: 482, y: 268, width: 186, height: 46, rx: 8, fill: '#0A0A0A', stroke: '#222', 'stroke-width': 2 }, svg);
+      var lt = T(svg, 640, 302, '', 36, '#F2F2F2', 'end', { 'font-family': 'monospace' }); lt.innerHTML = '<tspan fill="#3A3A3A">88</tspan>750';
+      T(svg, 575, 336, 'LAND ALT', 19, '#fff');
+      mk('circle', { cx: 577, cy: 374, r: 24, fill: '#8C8C8C', stroke: '#555', 'stroke-width': 3 }, svg);
+      mk('line', { x1: 678, y1: 66, x2: 678, y2: 440, stroke: '#fff', 'stroke-width': 3 }, svg);
+      mk('line', { x1: 678, y1: 290, x2: 866, y2: 290, stroke: '#fff', 'stroke-width': 3 }, svg);
+      // outflow VALVE gauge
+      var vx = 745, vy = 156;
+      mk('circle', { cx: vx, cy: vy, r: 44, fill: '#2A2A2A', stroke: '#111', 'stroke-width': 3 }, svg);
+      mk('circle', { cx: vx, cy: vy, r: 38, fill: '#0A0A0A', stroke: '#666', 'stroke-width': 2 }, svg);
+      [-70, -35, 0, 35, 70].forEach(function (d) { var a = pt(vx, vy, 38, d), b = pt(vx, vy, 31, d); mk('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: '#ddd', 'stroke-width': 2 }, svg); });
+      o.valveN = mk('g', { transform: 'rotate(0 ' + vx + ' ' + vy + ')' }, svg);
+      mk('polygon', { points: (vx - 3) + ',' + vy + ' ' + vx + ',' + (vy - 34) + ' ' + (vx + 3) + ',' + vy, fill: '#fff' }, o.valveN);
+      mk('circle', { cx: vx, cy: vy, r: 5, fill: '#333' }, svg);
+      [['V', 150], ['A', 168], ['L', 186], ['V', 204], ['E', 222]].forEach(function (c) { T(svg, 832, c[1], c[0], 19, '#fff'); });
+      // CLOSE / OPEN switch
+      o.closeT = T(svg, 712, 248, 'CLOSE', 19, '#fff', 'middle', { transform: 'rotate(-90 712 248)' });
+      T(svg, 792, 248, 'OPEN', 19, '#fff', 'middle', { transform: 'rotate(90 792 248)' });
+      o.sw = mk('circle', { cx: 752, cy: 248, r: 17, fill: '#8A1D1D', stroke: '#ddd', 'stroke-width': 4 }, svg);
+      // mode selector
+      T(svg, 752, 312, 'ALTN', 18, '#fff'); T(svg, 708, 336, 'AUTO', 18, '#fff'); T(svg, 778, 336, 'MAN', 18, '#fff');
+      mk('circle', { cx: 745, cy: 398, r: 40, fill: '#3A3A3A' }, svg);
+      o.sel = mk('g', { transform: 'rotate(-35 745 398)' }, svg);
+      mk('circle', { cx: 745, cy: 398, r: 30, fill: '#9A9A9A', stroke: '#666', 'stroke-width': 3 }, o.sel);
+      mk('polygon', { points: '737,398 753,398 750,356 740,356', fill: '#F2F2F2', stroke: '#555', 'stroke-width': 2 }, o.sel);
+      // schedule table
+      mk('rect', { x: 462, y: 456, width: 376, height: 52, fill: '#0A0A0A', stroke: '#222', 'stroke-width': 2 }, svg);
+      ['CAB ALT', 'LAND ALT', '2000', '4000', '6000', '8000'].forEach(function (s, i) { T(svg, [494, 556, 614, 672, 730, 790][i], 476, s, 12, '#fff'); });
+      ['FLT ALT', '<FL160', 'FL220', 'FL260', 'FL320', 'FL410'].forEach(function (s, i) { T(svg, [494, 574, 640, 698, 760, 822][i], 498, s, 12, '#fff'); });
+      mk('line', { x1: 470, y1: 485, x2: 832, y2: 485, stroke: '#fff', 'stroke-width': 2 }, svg);
+      return o;
+    }
+    function setLamp(l, on) { l[0].setAttribute('fill', on ? '#FF8F66' : '#2A3445'); l[0].setAttribute('stroke', on ? '#FFD0BF' : '#6B7A90'); l[1].setAttribute('fill', on ? '#13171F' : '#9BA9BD'); }
+    function setAnn(a, on) { a[0].setAttribute('fill', on ? a[3] : '#2A2A2A'); a[1].setAttribute('fill', on ? '#0E1A12' : a[3]); if (a[2]) a[2].setAttribute('fill', on ? '#0E1A12' : a[3]); }
+    function fmt(t) { var m = Math.floor(t / 60), s = Math.round(t % 60); if (s === 60) { m++; s = 0; } return m + ':' + (s < 10 ? '0' + s : s); }
+    function num(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+    $$('.gsl').forEach(function (sl) {
+      var svg = $('.gp', sl), o = build(svg), tm = $('.tm', sl), btn = $('.pl', sl), tv = $('.tmv', sl);
+      var scBtns = $$('.pre button', sl), cur = sl.dataset.first, cn = -1, sid = sl.id;
+      var rA = $('.ra', sl), rD = $('.rdf', sl), rR = $('.rr', sl), rV = $('.rv2', sl), sigs = $$('.sig', sl);
+      function draw(u) {
+        var sc = SC[cur], t = sc.dur * u / 100, st = interp(sc.kf, t);
+        var alt = Math.min(st[0], FLT), rate = st[1], valve = st[2];
+        var diff = Math.max(0, press(alt) - press(FLT));
+        if (alt >= FLT - 30) diff = 0;
+        o.altN.setAttribute('transform', 'rotate(' + inAng(alt / 1000).toFixed(1) + ' 168 200)');
+        o.diffP.setAttribute('transform', 'rotate(' + (Math.min(diff, 10) * 32).toFixed(1) + ' 168 200)');
+        o.rateN.setAttribute('transform', 'rotate(' + (270 + 45 * Math.max(-4, Math.min(4, rate / 1000))).toFixed(1) + ' 178 428)');
+        o.valveN.setAttribute('transform', 'rotate(' + (-70 + 130 * valve).toFixed(1) + ' 745 156)');
+        var man = t >= sc.man;
+        o.sel.setAttribute('transform', 'rotate(' + (man ? 35 : -35) + ' 745 398)');
+        setAnn(o.manL, man);
+        var v2 = interp(sc.kf, t + 3)[2], closing = man && v2 < valve - 0.002;
+        o.sw.setAttribute('fill', closing ? '#FF3B2F' : '#8A1D1D');
+        o.closeT.setAttribute('fill', closing ? '#FFC72C' : '#fff');
+        setLamp(o.horn, alt > 10000); setLamp(o.pass, alt >= 14000);
+        var sAlt = alt >= FLT - 2000, sDiff = diff <= 0.3 && t > 0, sRate = rate >= 300 && valve <= 0.05;
+        o.ringAlt.classList.toggle('on', sAlt); o.ringDiff.classList.toggle('on', sDiff); o.ringRate.classList.toggle('on', sRate);
+        sigs.forEach(function (s) { var k = s.dataset.sig; s.classList.toggle('lit', k === 'alt' ? sAlt : k === 'diff' ? sDiff : sRate); });
+        rA.textContent = num(Math.round(alt / 100) * 100); rD.textContent = diff.toFixed(1);
+        rR.textContent = (rate >= 0 ? '+' : '') + num(Math.round(rate / 50) * 50);
+        rV.textContent = valve <= 0.02 ? 'CLOSED' : Math.round(valve * 100) + '%';
+        tv.textContent = fmt(t);
+        var i = 0; while (i < sc.notes.length - 1 && t >= sc.notes[i + 1][0]) i++;
+        if (cn !== i || sl.__sc !== cur) { cn = i; sl.__sc = cur; $('.phn', sl).textContent = sc.notes[i][1]; $('.pht', sl).textContent = sc.notes[i][2]; }
+        tm.value = u;
+      }
+      var raf = 0, last = 0, playing = false;
+      function stop() { playing = false; cancelAnimationFrame(raf); btn.textContent = (+tm.value >= 100) ? 'Replay' : 'Play'; }
+      function tick(ts) {
+        if (!playing) return;
+        var dt = last ? ts - last : 0; last = ts;
+        var u = +tm.value + dt / (SC[cur].dur > 200 ? 200 : 90);
+        if (u >= 100) { draw(100); stop(); return; }
+        draw(u); raf = requestAnimationFrame(tick);
+      }
+      btn.addEventListener('click', function () {
+        if (playing) stop();
+        else { if (+tm.value >= 100) draw(0); playing = true; last = 0; btn.textContent = 'Pause'; raf = requestAnimationFrame(tick); }
+        btn.blur();
+      });
+      tm.addEventListener('input', function () { if (playing) stop(); draw(+tm.value); btn.textContent = (+tm.value >= 100) ? 'Replay' : 'Play'; });
+      tm.addEventListener('change', function () { tm.blur(); });
+      scBtns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          cur = b.dataset.sc; stop(); scBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+          cn = -1; draw(0); b.blur();
+        });
+      });
+      (window.__gStops = window.__gStops || []).push(function (id) { if (id !== sid && playing) stop(); });
+      draw(0);
+    });
+  })();
+  /* TUC slider (FAA AC 61-107 averages) */
+  (function () {
+    var sl = $('#sTuc'); if (!sl) return;
+    // [FL, normal lo s, normal hi s, normal label, rapid lo s, rapid hi s, rapid label]
+    var R = [[180,1200,1800,'20 to 30 min',600,900,'10 to 15 min'],[220,600,600,'10 min',300,300,'5 min'],[250,180,300,'3 to 5 min',90,210,'1.5 to 3.5 min'],[280,150,180,'2.5 to 3 min',75,90,'1.25 to 1.5 min'],[300,60,120,'1 to 2 min',30,60,'30 to 60 s'],[350,30,60,'30 to 60 s',15,30,'15 to 30 s'],[400,15,20,'15 to 20 s',7,10,'7 to 10 s'],[430,9,12,'9 to 12 s',5,6,'5 to 6 s'],[500,8,10,'8 to 10 s',5,5,'5 s']];
+    var vs = $('.vs', sl), fl = $('.tfl', sl), rl = $('.tr .tv', sl), nl = $('.tn .tv', sl), br = $('.tr .tb i', sl), bn = $('.tn .tb i', sl), labs = $$('.vlab li', sl);
+    var L0 = Math.log(4), L1 = Math.log(2000);
+    function px(v) { return 100 * (Math.log(v) - L0) / (L1 - L0); }
+    function bar(el, lo, hi) { var a = px(lo), b = px(hi); el.style.left = a + '%'; el.style.width = Math.max(b - a, 1.6) + '%'; }
+    function upd() {
+      var i = +vs.value, r = R[i];
+      fl.textContent = 'FL' + r[0]; rl.textContent = r[6]; nl.textContent = r[3];
+      bar(br, r[4], r[5]); bar(bn, r[1], r[2]);
+      labs.forEach(function (li) { li.classList.toggle('on', +li.dataset.i === i); });
+    }
+    vs.addEventListener('input', upd);
+    vs.addEventListener('change', function () { vs.blur(); });
+    upd();
+  })();
+  window.addEventListener('resize', fit);
+  fit(); render(); wake();
+})();
+</script>
+</body>
+</html>

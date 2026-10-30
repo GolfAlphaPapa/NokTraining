@@ -1,0 +1,914 @@
+<title>Stall Recovery Briefing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="author" content="Capt. Supakit Punyangam">
+<meta name="copyright" content="© Capt. Supakit Punyangam">
+<!-- © Capt. Supakit Punyangam. Stall recovery mini briefing (DRAFT). Do not copy or distribute without permission. -->
+<link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: a fixed 1920x1080 stage scaled to the screen. The top band tracks the four CBTA stages,
+   and the footer carries the slide count, a small credit line and the 9-competency grid and pyramid on every slide. */
+:root {
+  --bg: #0D1521; --panel: #152033; --panel2: #1D2C45; --line: #2E3F5C;
+  --fg: #EDF1F7; --muted: #9BA9BD;
+  --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #FFC72C; --accent-soft: rgba(255, 199, 44, 0.16);
+  --lift: #6DB7FF; --weight: #FF8F66;
+  --f-body: 'B612', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --f-mono: 'B612 Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --f-disp: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F2F5F9; --panel: #FFFFFF; --panel2: #E6ECF4; --line: #C5D0DF;
+    --fg: #111B2B; --muted: #53617A;
+    --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #7A5200; --accent-soft: rgba(255, 199, 44, 0.35);
+    --lift: #0B5FC0; --weight: #BF3B0B; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F2F5F9; --panel: #FFFFFF; --panel2: #E6ECF4; --line: #C5D0DF;
+  --fg: #111B2B; --muted: #53617A;
+  --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #7A5200; --accent-soft: rgba(255, 199, 44, 0.35);
+  --lift: #0B5FC0; --weight: #BF3B0B; color-scheme: light;
+}
+html { height: 100%; box-sizing: border-box; }
+body { height: 100%; box-sizing: border-box; margin: 0; overflow: hidden;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--bg); color: var(--fg); font-family: var(--f-body); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+body.idle { cursor: none; }
+#viewport { position: relative; width: 100%; height: 100%; overflow: hidden; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; margin: -540px 0 0 -960px;
+  transform: scale(var(--s, 1)); transform-origin: 50% 50%; }
+
+.top { position: absolute; left: 96px; right: 96px; top: 36px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand, .topic { font: 700 20px/1 var(--f-mono); letter-spacing: 0.16em; color: var(--muted); white-space: nowrap; }
+.stages { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.stages li { display: flex; gap: 10px; align-items: baseline; font: 400 20px/1 var(--f-mono); padding: 12px 18px; border: 1.5px solid var(--line); border-radius: 4px; color: var(--muted); }
+.stages li b { font-weight: 700; }
+.stages li.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.foot { position: absolute; left: 96px; right: 96px; bottom: 30px; height: 174px; display: flex; align-items: flex-end; justify-content: space-between; }
+.count { font: 400 22px/1 var(--f-mono); color: var(--muted); }
+.count b { color: var(--fg); font-weight: 700; }
+.credit { position: absolute; left: 0; bottom: 40px; font: 400 17px/1 var(--f-mono); letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; opacity: 0.85; user-select: none; }
+.draft { position: absolute; left: 0; bottom: 78px; font: 700 17px/1 var(--f-mono); letter-spacing: 0.12em; color: var(--accent-text); }
+
+.corner { display: flex; align-items: flex-end; gap: 24px; }
+.cgrid { display: grid; grid-template-columns: repeat(3, 54px); grid-auto-rows: 54px; gap: 6px; }
+.wheel { display: block; width: 174px; height: 174px; }
+.seg .sh { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; transition: fill 0.25s, stroke 0.25s; }
+.seg .ar { fill: none; stroke: var(--line); stroke-width: 14; transition: stroke 0.25s; }
+.seg .ah { fill: var(--line); transition: fill 0.25s; }
+.seg text { font: 700 12.5px var(--f-mono); fill: var(--muted); text-anchor: middle; }
+.seg text.at { font-size: 10.5px; letter-spacing: 0.04em; }
+.seg.p .sh { fill: var(--accent); stroke: var(--accent); } .seg.p .ar { stroke: var(--accent); } .seg.p .ah { fill: var(--accent); } .seg.p text { fill: var(--accent-ink); }
+.seg.s .sh { fill: var(--accent-soft); stroke: var(--accent); } .seg.s .ar { stroke: var(--accent); stroke-opacity: 0.45; } .seg.s .ah { fill: var(--accent); fill-opacity: 0.45; } .seg.s text { fill: var(--accent-text); }
+.cell { display: grid; place-items: center; align-content: center; border: 1.5px solid var(--line); border-radius: 3px; color: var(--muted); transition: background 0.25s, color 0.25s, border-color 0.25s; }
+.cell .c { font: 700 16px/1 var(--f-mono); } .cell .n { display: none; }
+.cell.p { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cell.s { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.cgrid.big { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 172px; gap: 10px; }
+.cgrid.big .cell { padding: 10px 12px; gap: 8px; text-align: left; justify-items: start; }
+.cgrid.big .cell .c { font-size: 24px; }
+.cgrid.big .cell .n { display: block; font: 400 17px/1.25 var(--f-body); }
+
+.slide { position: absolute; left: 96px; right: 96px; top: 128px; height: 742px; display: none; }
+.slide.on { display: block; }
+.eyebrow { margin: 0 0 16px; font: 700 22px/1 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-text); }
+h1 { margin: 0; font: 700 76px/1 var(--f-disp); letter-spacing: 0.005em; text-wrap: balance; }
+h3 { margin: 0 0 14px; font: 700 26px/1.2 var(--f-body); }
+.hint { margin: 14px 0 0; font-size: 26px; color: var(--muted); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 24px 28px; }
+.v { display: inline-block; margin-left: 8px; padding: 3px 8px; border: 1.5px solid var(--accent); border-radius: 3px; font: 700 15px/1 var(--f-mono); color: var(--accent-text); letter-spacing: 0.06em; vertical-align: 2px; white-space: nowrap; }
+
+.rv { opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; }
+.rv.h { transform: translateY(14px); }
+.rv.on { opacity: 1; } .rv.h.on { transform: none; }
+.focus .rv.on:not(.cur) { opacity: 0.5; }
+.notes { display: none; }
+@media (prefers-reduced-motion: reduce) { .rv, .cell { transition: none; } .rv.h { transform: none; } }
+
+.s1 h1 { font-size: 230px; line-height: 0.9; text-transform: uppercase; letter-spacing: 0.01em; }
+.s1 .sub { margin: 18px 0 0; font-size: 38px; color: var(--muted); }
+.s1 .by { margin: 14px 0 0; font: 700 24px/1.2 var(--f-mono); letter-spacing: 0.08em; color: var(--accent-text); }
+.roadmap { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.roadmap .panel { padding: 22px 26px; }
+.roadmap .num { font: 700 44px/1 var(--f-mono); color: var(--accent-text); }
+.roadmap .t { margin: 12px 0 6px; font: 700 30px/1.15 var(--f-body); }
+.roadmap .d { font-size: 22px; line-height: 1.35; color: var(--muted); }
+
+.s2 .wrap { display: grid; grid-template-columns: 1fr 640px; gap: 56px; margin-top: 28px; }
+.comp-list { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.comp { display: grid; grid-template-columns: 120px 1fr; gap: 24px; align-items: center; padding: 14px 24px; }
+.chip { display: grid; place-items: center; height: 64px; border: 1.5px solid var(--accent); border-radius: 4px; font: 700 28px/1 var(--f-mono); color: var(--accent-text); background: var(--accent-soft); }
+.chip.p { background: var(--accent); color: var(--accent-ink); }
+.comp .nm { font: 700 27px/1.2 var(--f-body); }
+.comp .ob { margin-top: 5px; font-size: 22px; line-height: 1.3; color: var(--muted); }
+.outcome { margin-top: 4px; padding: 18px 28px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 27px/1.3 var(--f-body); }
+
+.qs { display: grid; gap: 12px; margin-top: 20px; }
+.q { display: grid; grid-template-columns: 210px 1fr 130px; gap: 28px; align-items: center; padding: 15px 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.q .lv { font: 700 20px/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.q p { margin: 0; font-size: 32px; line-height: 1.22; }
+.q .chip { height: 52px; font-size: 22px; }
+
+.s4.on, .s5.on { display: grid; grid-template-columns: 900px 1fr; gap: 64px; }
+.s4 .left, .s4 .right, .s5 .left, .s5 .right { min-width: 0; }
+#clSvg, #vsSvg { display: block; width: 900px; height: 663px; }
+.ax { stroke: var(--line); stroke-width: 2; }
+.grid-l { stroke: var(--line); stroke-width: 1; stroke-dasharray: 3 9; }
+.curve { fill: none; stroke: var(--lift); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.zone { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.warnl { stroke: var(--accent-text); stroke-width: 3; stroke-dasharray: 8 8; }
+.drop { stroke: var(--fg); stroke-width: 3; stroke-dasharray: 6 6; }
+.dot { fill: var(--fg); stroke: var(--bg); stroke-width: 3; }
+.lbl { font: 700 26px var(--f-mono); fill: var(--fg); }
+.lbl.lift { fill: var(--lift); } .lbl.weight { fill: var(--weight); } .lbl.muted { fill: var(--muted); } .lbl.acc { fill: var(--accent-text); }
+.lg { font: 700 20px var(--f-mono); }
+.lg.lift { fill: var(--lift); } .lg.weight { fill: var(--weight); } .lg.muted { fill: var(--muted); } .lg.acc { fill: var(--accent-text); }
+.st { font: 700 54px var(--f-disp); letter-spacing: 0.05em; }
+.st.ok { fill: var(--lift); } .st.bad { fill: var(--weight); } .st.warn { fill: var(--accent-text); }
+.bar-n { fill: var(--panel2); stroke: var(--line); stroke-width: 2; }
+.bar-h { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.bank-ctl { display: flex; align-items: center; gap: 16px; margin-top: 6px; }
+.bank-ctl label { min-width: 96px; font: 700 20px/1 var(--f-mono); color: var(--muted); letter-spacing: 0.1em; }
+.bank-ctl input[type="range"] { flex: 1; min-width: 0; accent-color: var(--accent); height: 28px; }
+.pre { display: flex; gap: 8px; flex-wrap: wrap; }
+.pre button { font: 700 20px/1 var(--f-mono); padding: 11px 14px; color: var(--fg); background: var(--panel); border: 1.5px solid var(--line); border-radius: 4px; cursor: pointer; }
+.pre button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.readout { display: grid; grid-template-columns: auto 1fr; gap: 6px 32px; align-items: center; margin-top: 18px; padding: 16px 28px; }
+.readout .n { grid-row: span 2; font: 700 104px/0.95 var(--f-disp); color: var(--lift); }
+.readout .n small { font-size: 44px; margin-left: 6px; color: var(--muted); }
+.readout .kv { font-size: 26px; line-height: 1.3; }
+.readout .kv b { font-family: var(--f-mono); }
+.bars { grid-column: 1 / -1; display: grid; grid-template-columns: 90px 1fr 70px; gap: 6px 14px; align-items: center; font: 400 18px/1 var(--f-mono); color: var(--muted); margin-top: 4px; }
+.track { height: 14px; background: var(--panel2); border-radius: 2px; overflow: hidden; }
+.fill { height: 100%; background: var(--lift); transition: width 0.2s; }
+.chain { list-style: none; margin: 14px 0 0; padding: 0; }
+.chain li { display: grid; grid-template-columns: 52px 1fr; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 27px; line-height: 1.2; }
+.chain li .k { font: 700 22px/1 var(--f-mono); color: var(--accent-text); }
+.chain li:last-child { border-bottom: 0; }
+.rule { margin-top: 20px; padding: 22px 28px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; }
+.rule .three { font: 700 30px/1.3 var(--f-body); }
+.defs { list-style: none; margin: 18px 0 0; padding: 0; }
+.defs li { display: grid; grid-template-columns: 250px 1fr; align-items: center; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 27px; line-height: 1.2; }
+.defs li:last-child { border-bottom: 0; }
+.defs .k { font: 700 50px/1 var(--f-disp); color: var(--accent-text); }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+.cmp .panel { padding: 16px 20px; }
+.cmp .big { font: 700 28px/1.15 var(--f-body); margin-bottom: 6px; }
+.cmp .small { font-size: 23px; line-height: 1.3; color: var(--muted); }
+
+.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 26px; }
+.col { min-width: 0; }
+.col .tag { margin: 0 0 14px; font: 700 22px/1 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-text); }
+.col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.col li { padding-bottom: 14px; border-bottom: 1px solid var(--line); font-size: 26px; line-height: 1.3; }
+.col li:last-child { border-bottom: 0; }
+.col li b { font-family: var(--f-mono); font-size: 22px; letter-spacing: 0.04em; color: var(--accent-text); display: block; margin-bottom: 3px; }
+.col li .d { display: block; margin-top: 6px; color: var(--muted); font-size: 23px; }
+.fn { position: absolute; left: 0; right: 0; bottom: 0; font-size: 22px; color: var(--muted); }
+.contrast { margin-top: 18px; padding: 16px 28px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 44px/1.1 var(--f-disp); letter-spacing: 0.01em; }
+
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 26px; }
+.phase { min-width: 0; }
+.phase .ph { font: 700 20px/1 var(--f-mono); letter-spacing: 0.12em; color: var(--accent-text); text-transform: uppercase; }
+.phase h3 { margin: 10px 0 14px; font-size: 34px; }
+.phase ul { margin: 0; padding-left: 24px; display: grid; gap: 10px; font-size: 25px; line-height: 1.3; }
+.tols { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 22px; }
+.tol { display: flex; align-items: baseline; gap: 12px; padding: 14px 24px; background: var(--accent); color: var(--accent-ink); border-radius: 4px; }
+.tol span { font: 700 20px/1 var(--f-mono); letter-spacing: 0.1em; }
+.tol b { font: 700 36px/1 var(--f-disp); }
+.pm { margin-top: 18px; font-size: 26px; color: var(--muted); }
+
+.scn .wrap { display: grid; grid-template-columns: 640px 1fr; gap: 48px; margin-top: 26px; }
+.ask { padding: 28px 32px; border: 2px solid var(--accent); background: var(--panel); border-radius: 6px; }
+.ask .tg { font: 700 22px/1 var(--f-mono); letter-spacing: 0.14em; color: var(--accent-text); margin-bottom: 16px; }
+.ask p { margin: 0; font-size: 36px; line-height: 1.28; }
+.ans { padding: 18px 30px; }
+.ans .tg { font: 700 22px/1 var(--f-mono); letter-spacing: 0.14em; color: var(--accent-text); margin-bottom: 8px; }
+.ans ol { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+.ans li { display: grid; grid-template-columns: 52px 1fr; gap: 6px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.25; }
+.ans li::before { counter-increment: s; content: counter(s); font: 700 24px/1.3 var(--f-mono); color: var(--accent-text); }
+.ans li:last-child { border-bottom: 0; }
+.watch { margin-top: 18px; padding: 18px 28px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 28px/1.3 var(--f-body); }
+.watch small { display: block; margin-top: 6px; font: 400 21px/1.3 var(--f-body); }
+
+.s8.on { display: grid; grid-template-columns: 1140px 1fr; gap: 56px; }
+.s8 .left, .s8 .right { min-width: 0; }
+.errs { display: grid; gap: 10px; margin-top: 22px; }
+.erow { display: grid; grid-template-columns: 310px 340px 1fr; gap: 20px; padding: 13px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 23px; line-height: 1.3; }
+.erow.head { background: transparent; border-color: transparent; padding: 0 20px; font: 700 18px/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.erow .fx { color: var(--accent-text); font-weight: 700; }
+.debrief { margin-top: 22px; padding: 28px; background: var(--panel); border: 1px solid var(--accent); border-radius: 6px; }
+.debrief ol { margin: 0; padding-left: 36px; display: grid; gap: 22px; font-size: 28px; line-height: 1.3; }
+.debrief ol li::marker { font: 700 28px var(--f-mono); color: var(--accent-text); }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr 1fr 1.5fr; gap: 20px; margin-top: 28px; }
+.stat { padding: 20px 26px; }
+.stat .num { font: 700 110px/0.95 var(--f-disp); color: var(--lift); white-space: nowrap; }
+.stat .num.tol3 { font-size: 56px; line-height: 1.05; }
+.stat .cap { margin-top: 10px; font-size: 23px; line-height: 1.3; color: var(--muted); }
+.why { margin-top: 26px; font-size: 34px; line-height: 1.35; max-width: 1500px; }
+.remember { margin-top: 22px; padding: 24px 32px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 44px/1.2 var(--f-disp); letter-spacing: 0.01em; }
+
+#controls { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(12px, env(safe-area-inset-bottom, 0px)); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 6px; max-width: calc(100% - 32px); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; z-index: 20; transition: opacity 0.3s; }
+body.idle #controls { opacity: 0; pointer-events: none; }
+#controls button { font: 700 14px/1 var(--f-mono); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; cursor: pointer; }
+#controls button:hover { border-color: var(--accent); }
+#controls button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 44vh; overflow: auto; z-index: 15; background: var(--panel); border-top: 2px solid var(--accent); font: 400 17px/1.5 var(--f-body); color: var(--fg);
+  padding: 16px max(24px, env(safe-area-inset-right, 0px)) 72px max(24px, env(safe-area-inset-left, 0px)); }
+#notes h4 { margin: 0 0 6px; font: 700 14px/1 var(--f-mono); letter-spacing: 0.14em; color: var(--accent-text); text-transform: uppercase; }
+#notes p { margin: 0 0 8px; max-width: 110ch; }
+</style>
+
+<div id="viewport">
+  <div id="stage">
+    <header class="top">
+      <div class="brand">NOK AIR · TRAINING</div>
+      <ol class="stages" aria-label="CBTA stages">
+        <li data-s="1"><b>1</b> Competencies</li>
+        <li data-s="2"><b>2</b> Questions</li>
+        <li data-s="3"><b>3</b> Knowledge</li>
+        <li data-s="4"><b>4</b> Simulator</li>
+      </ol>
+      <div class="topic">STALL RECOVERY · B737-800</div>
+    </header>
+
+    <!-- 1 TITLE -->
+    <section class="slide s1" data-stage="0" data-comp="">
+      <p class="eyebrow">Competency-based training · mini briefing · draft</p>
+      <h1>Stall Recovery</h1>
+      <p class="sub">Clean · Full configuration · After takeoff · Boeing 737-800 · Full flight simulator</p>
+      <p class="by">Prepared by Capt. Supakit Punyangam</p>
+      <div class="roadmap">
+        <div class="panel"><div class="num">1</div><div class="t">Competencies</div><div class="d">What we will assess</div></div>
+        <div class="panel"><div class="num">2</div><div class="t">Questions</div><div class="d">What you already know</div></div>
+        <div class="panel"><div class="num">3</div><div class="t">Knowledge</div><div class="d">Why a wing stalls, and where it is written</div></div>
+        <div class="panel"><div class="num">4</div><div class="t">Simulator</div><div class="d">How to recover in each scenario</div></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>About 15 minutes. Controls: arrow keys or page keys to step, N notes (keep notes off the projector), F fullscreen, A reveal everything on a slide, T light or dark.</p>
+        <p>DRAFT. Aerodynamics first, then a short recovery section for each of the three scenarios. Every recovery section follows the same pattern: ask, let the pilot answer, then reveal. Items tagged VERIFY come from general knowledge and must be checked against the current 737 QRH, FCTM, FCOM and company FTM before the session.</p>
+        <p>The grid and pyramid in the bottom-right corner are the Boeing nine-competency map. On each slide the assessed competencies are highlighted: solid for primary, outlined for secondary.</p>
+      </div>
+    </section>
+
+    <!-- 2 COMPETENCIES -->
+    <section class="slide s2" data-stage="1" data-comp="FPM*,PRO*,KNO,PSD">
+      <p class="eyebrow">Stage 1 · Assessment competencies</p>
+      <h1>What we are assessing</h1>
+      <div class="wrap">
+        <div class="comp-list">
+          <div class="panel comp"><div class="chip p">FPM</div><div><div class="nm">Aeroplane Flight Path Management, Manual Control</div><div class="ob">Lowers the angle of attack first, keeps wings level, and recovers the flight path with smooth, proportionate inputs.</div></div></div>
+          <div class="panel comp"><div class="chip p">PRO</div><div><div class="nm">Application of Procedures and Compliance with Regulations</div><div class="ob">Disconnects the automation and follows the QRH recovery in the correct order, without skipping or reordering steps.</div></div></div>
+          <div class="panel comp"><div class="chip">KNO</div><div><div class="nm">Application of Knowledge</div><div class="ob">Explains why a stall is an angle of attack event and why each recovery input works.</div></div></div>
+          <div class="panel comp"><div class="chip">PSD</div><div><div class="nm">Problem Solving and Decision Making</div><div class="ob">Recognises the cue, commits to recovery without hesitation, and adapts to the scenario and altitude margin.</div></div></div>
+          <div class="outcome">Outcome: the pilot recovers from each stall scenario in the correct sequence and explains why.</div>
+        </div>
+        <div class="cgrid big" id="bigGrid" aria-label="Boeing nine competencies"></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>FPM and PRO are the primary competencies (solid). KNO and PSD are secondary. Read the outcome line aloud so the pilot knows what "good" looks like before any question is asked.</p>
+        <p>Competency tags follow the framework: instrument scanning during recovery is SAW or WLM, not FPM. If the pilot needs a fifth, add SAW for recognising and monitoring.</p>
+        <p>Observable behaviors are examples. Replace them with the exact OB wording from the current grade slip and competency framework.</p>
+      </div>
+    </section>
+
+    <!-- 3 QUESTIONS -->
+    <section class="slide s3 focus" data-stage="2" data-comp="KNO*,PRO,FPM,PSD">
+      <p class="eyebrow">Stage 2 · Assessment questions</p>
+      <h1>What do you already know?</h1>
+      <p class="hint">Think first. Answer aloud before the next question appears.</p>
+      <div class="qs">
+        <div class="q rv h" data-step="1" data-comp="KNO*"><span class="lv">Recall</span><p>What causes an aerodynamic stall: airspeed, pitch attitude, or something else?</p><span class="chip">KNO</span></div>
+        <div class="q rv h" data-step="2" data-comp="KNO*"><span class="lv">Understand</span><p>Can the wing stall at any airspeed, any attitude, any altitude? Why?</p><span class="chip">KNO</span></div>
+        <div class="q rv h" data-step="3" data-comp="KNO*,FPM"><span class="lv">Understand</span><p>Why does the stall speed go up in a steep turn or a pull-up?</p><span class="chip">KNO</span></div>
+        <div class="q rv h" data-step="4" data-comp="PRO*,FPM"><span class="lv">Apply</span><p>The stick shaker activates. What is your first action, and why?</p><span class="chip">PRO</span></div>
+        <div class="q rv h" data-step="5" data-comp="PSD*,KNO"><span class="lv">Analyze</span><p>Clean, full configuration, after takeoff: what changes in your recovery, and what stays the same?</p><span class="chip">PSD</span></div>
+      </div>
+      <div class="notes">
+        <h4>Expected answers and probes</h4>
+        <p><b>Q1 (KNO).</b> Exceeding the critical angle of attack. Airflow separates from the upper surface and lift falls. Not airspeed alone, and not pitch attitude. Probe: what is the difference between pitch attitude and angle of attack?</p>
+        <p><b>Q2 (KNO).</b> Yes. The wing stalls whenever the critical angle of attack is reached, at any airspeed, attitude or altitude, for example in a steep pull-up or a steep turn. Probe: can you give an example where speed is high and you still stall?</p>
+        <p><b>Q3 (KNO).</b> Load factor increases the lift required. At a given speed more lift means more angle of attack, so the critical angle is reached at a higher speed. Stall speed rises by the square root of the load factor: about +19% at 45° bank, +41% at 60°.</p>
+        <p><b>Q4 (PRO, FPM).</b> Reduce the angle of attack: disconnect the automation and apply nose-down elevator until the stall warning stops. Probe: why not add thrust only? VERIFY the exact first items against the QRH approach-to-stall and stall recovery checklists.</p>
+        <p><b>Q5 (PSD, KNO).</b> Same principle in all three: reduce the angle of attack first. What changes is altitude margin, drag, thrust demand and startle risk. After takeoff has the smallest margin.</p>
+        <p>Pause after each question. Do not advance until the pilot has committed to an answer.</p>
+      </div>
+    </section>
+
+    <!-- 4 THEORY: LIFT AND ANGLE OF ATTACK -->
+    <section class="slide s4" data-stage="3" data-comp="KNO*,FPM">
+      <div class="left">
+        <svg id="clSvg" viewBox="0 0 760 560" role="img" aria-label="Lift coefficient against angle of attack. Lift rises with angle of attack to a peak at the critical angle, then falls as the airflow separates.">
+          <rect class="zone" x="496" y="90" width="208" height="380"/>
+          <line class="grid-l" x1="80" y1="300" x2="704" y2="300"/>
+          <line class="grid-l" x1="80" y1="190" x2="704" y2="190"/>
+          <line class="ax" x1="80" y1="470" x2="720" y2="470"/>
+          <line class="ax" x1="80" y1="80" x2="80" y2="470"/>
+          <line class="warnl" x1="444" y1="90" x2="444" y2="470"/>
+          <text class="lg acc" x="436" y="116" text-anchor="end">Stall warning</text>
+          <text class="lg weight" x="600" y="116" text-anchor="middle">Stalled</text>
+          <text class="lg acc" x="496" y="494" text-anchor="middle">Critical α</text>
+          <text class="lbl muted" x="400" y="534" text-anchor="middle" style="font-size:22px">ANGLE OF ATTACK  α</text>
+          <text class="lbl muted" x="24" y="70" style="font-size:22px">LIFT</text>
+          <path id="clPath" class="curve" d=""/>
+          <line id="pv" class="drop" x1="80" y1="470" x2="80" y2="470"/>
+          <circle id="pt" class="dot" cx="80" cy="470" r="13"/>
+          <text id="stTxt" class="st ok" x="100" y="66">ATTACHED</text>
+        </svg>
+        <div class="bank-ctl">
+          <label for="alpha">AOA</label>
+          <input id="alpha" type="range" min="0" max="24" step="0.5" value="6" aria-label="Angle of attack in degrees">
+          <div class="pre" role="group" aria-label="Angle of attack presets">
+            <button type="button" data-a="4">Low</button>
+            <button type="button" data-a="12">High</button>
+            <button type="button" data-a="16">Critical</button>
+            <button type="button" data-a="20">Stalled</button>
+          </div>
+        </div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Theoretical knowledge</p>
+        <h1>Why a wing stalls</h1>
+        <div class="panel readout">
+          <div class="n"><span id="aOut">6</span><small>° α</small></div>
+          <div class="kv">Lift <b id="liftOut">33%</b> of maximum</div>
+          <div class="kv">Flow <b id="flowOut">attached</b></div>
+          <div class="bars">
+            <span>Lift</span><div class="track"><div class="fill" id="barNow" style="width:33%"></div></div><span id="barVal">33%</span>
+          </div>
+        </div>
+        <ol class="chain">
+          <li class="rv" data-step="1"><span class="k">1</span><span>Lift comes from angle of attack</span></li>
+          <li class="rv" data-step="2"><span class="k">2</span><span>More angle of attack, more lift, up to a limit</span></li>
+          <li class="rv" data-step="3"><span class="k">3</span><span>Past the critical angle the flow separates</span></li>
+          <li class="rv" data-step="4"><span class="k">4</span><span>Lift falls and drag rises</span></li>
+          <li class="rv" data-step="5"><span class="k">5</span><span>Only one fix: reduce the angle of attack</span></li>
+        </ol>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask first: "What happens to lift if I keep increasing angle of attack?" Let the pilot answer, then drag the slider. Use the presets or the slider (Up and Down keys change the angle by 2° on this slide).</p>
+        <p>Point at the peak: that is the critical angle of attack. Beyond it lift falls even though angle of attack is still increasing. The dashed line before the peak is the stall warning, which activates before the critical angle. This curve is a teaching shape, not a measured 737 curve.</p>
+        <p>Link to Q1 and Q2: the critical angle is about the wing, not the speed. Reveal the chain one line at a time and ask "and then what?" before each step. Step 5 sets up the recovery: nothing else fixes a stall except getting the angle of attack back below critical.</p>
+      </div>
+    </section>
+
+    <!-- 5 THEORY: STALL SPEED AND LOAD FACTOR -->
+    <section class="slide s5" data-stage="3" data-comp="KNO*,FPM">
+      <div class="left">
+        <p class="eyebrow">Stage 3 · Stall speed is not fixed</p>
+        <h1>Same wing, higher stall speed</h1>
+        <svg id="vsSvg" viewBox="0 0 760 560" role="img" aria-label="Bar chart of stall speed multiplier against bank angle in a level turn: 1.00 at 0 degrees, 1.07 at 30, 1.19 at 45, 1.41 at 60.">
+          <line class="ax" x1="40" y1="450" x2="730" y2="450"/>
+          <line class="grid-l" x1="40" y1="280" x2="730" y2="280"/>
+          <text class="lg muted" x="730" y="270" text-anchor="end">×1.00 level flight</text>
+          <rect class="bar-n" x="80" y="280" width="120" height="170"/>
+          <rect class="bar-n" x="240" y="268" width="120" height="182"/>
+          <rect class="bar-h" x="400" y="248" width="120" height="202"/>
+          <rect class="bar-h" x="560" y="210" width="120" height="240"/>
+          <text class="lbl" x="140" y="268" text-anchor="middle">×1.00</text>
+          <text class="lbl" x="300" y="256" text-anchor="middle">×1.07</text>
+          <text class="lbl acc" x="460" y="236" text-anchor="middle">×1.19</text>
+          <text class="lbl acc" x="620" y="198" text-anchor="middle">×1.41</text>
+          <text class="lbl muted" x="140" y="486" text-anchor="middle">0°</text>
+          <text class="lbl muted" x="300" y="486" text-anchor="middle">30°</text>
+          <text class="lbl muted" x="460" y="486" text-anchor="middle">45°</text>
+          <text class="lbl muted" x="620" y="486" text-anchor="middle">60°</text>
+          <text class="lg muted" x="140" y="516" text-anchor="middle">1.00 G</text>
+          <text class="lg muted" x="300" y="516" text-anchor="middle">1.15 G</text>
+          <text class="lg muted" x="460" y="516" text-anchor="middle">1.41 G</text>
+          <text class="lg muted" x="620" y="516" text-anchor="middle">2.00 G</text>
+          <text class="lg muted" x="40" y="548">Bank in a level turn, and the load factor it creates</text>
+        </svg>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Speed is only a symptom</p>
+        <h1>A stall is an angle of attack event</h1>
+        <ul class="defs">
+          <li class="rv h" data-step="1" data-comp="KNO*"><span class="k">ANY SPEED</span><span>Steep turn or pull-up, you stall faster</span></li>
+          <li class="rv h" data-step="2" data-comp="KNO*"><span class="k">ANY ATTITUDE</span><span>Nose low can stall too</span></li>
+          <li class="rv h" data-step="3" data-comp="KNO*"><span class="k">ANY ALTITUDE</span><span>Same wing, same critical angle</span></li>
+        </ul>
+        <div class="cmp rv h" data-step="4" data-comp="KNO*,FPM">
+          <div class="panel"><div class="big">Raises stall speed</div><div class="small">Weight, load factor (bank or pull), ice or contamination</div></div>
+          <div class="panel"><div class="big">Lowers stall speed</div><div class="small">Flaps extended, but the critical angle is lower with flaps <span class="v">VERIFY</span></div></div>
+        </div>
+        <div class="rule rv h" data-step="5" data-comp="KNO*,FPM">
+          <div class="three">Watch the angle of attack, not only the airspeed.</div>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask first: "Does the aircraft always stall at the same speed?" Let them answer, then show the bars. Stall speed multiplier is the square root of the load factor: 1.00, 1.07, 1.19, 1.41 at 0°, 30°, 45°, 60° bank in a level turn.</p>
+        <p>Make the point visually: the wing did not change, the load on it did. Link back to Q2 and Q3, then reveal the three lines and ask for an example of each.</p>
+        <p>The flap statement is a teaching simplification from general knowledge: flaps lower the stall speed but the critical angle of attack is lower with flaps extended. Check the wording against the FCTM or FCOM before quoting it.</p>
+      </div>
+    </section>
+
+    <!-- 6 THEORY: THREE SCENARIOS -->
+    <section class="slide s6" data-stage="3" data-comp="KNO*,PSD,FPM">
+      <p class="eyebrow">Stage 3 · Three scenarios</p>
+      <h1>Same principle, different margins</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1" data-comp="KNO*,PSD">
+          <p class="tag">Clean</p>
+          <ul>
+            <li><b>CONFIG</b>Flaps and gear up</li>
+            <li><b>ENERGY</b>Higher speed and altitude, thrust builds slowly</li>
+            <li><b>MARGIN</b>Most altitude to recover</li>
+            <li><b>HAZARD</b>Over-pushing into overspeed, or pulling too early</li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2" data-comp="KNO*,PSD">
+          <p class="tag">Full configuration</p>
+          <ul>
+            <li><b>CONFIG</b>Landing flaps, gear down</li>
+            <li><b>ENERGY</b>High drag, low speed, thrust needed early</li>
+            <li><b>MARGIN</b>Low altitude on approach</li>
+            <li><b>HAZARD</b>Losing altitude close to the ground</li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3" data-comp="KNO*,PSD">
+          <p class="tag">After takeoff</p>
+          <ul>
+            <li><b>CONFIG</b>Takeoff flaps, gear retracting or up</li>
+            <li><b>ENERGY</b>High thrust, strong pitch-up tendency</li>
+            <li><b>MARGIN</b>Smallest altitude margin</li>
+            <li><b>HAZARD</b>Startle, and pulling to keep climbing</li>
+          </ul>
+        </section>
+      </div>
+      <div class="contrast rv h" data-step="4" data-comp="KNO*,FPM">Different margins. Same first move: reduce the angle of attack.</div>
+      <p class="fn">Scenario descriptions are from general knowledge. Confirm against the FCTM and the company FTM scenario definitions. <span class="v">VERIFY</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask first: "Which of these three gives you the least room for error, and why?" Let the pilot answer, then reveal the columns one at a time. Expected: after takeoff, because of low altitude and the high thrust pitch-up tendency.</p>
+        <p>The point of the slide is the last bar: the margins change, the principle does not. This links back to Q5.</p>
+        <p>Column details are teaching summaries, not Boeing wording. Verify configuration definitions (flap settings, gear state, thrust) in the FTM scenario descriptions before presenting.</p>
+      </div>
+    </section>
+
+    <!-- 7 REFERENCES -->
+    <section class="slide s6" data-stage="3" data-comp="KNO*,PRO">
+      <p class="eyebrow">Stage 3 · References</p>
+      <h1>Where it is written</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1">
+          <p class="tag">Company</p>
+          <ul>
+            <li><b>FTM MN3-LAD-0032</b>Issue 08 Rev 00<span class="d">Stall maneuvers and PPC standards <span class="v">VERIFY SECTION</span></span></li>
+            <li><b>HB3-LAD-0154</b>Issue 02 Rev 04<span class="d">Recurrent training handbook and grade slip <span class="v">VERIFY ITEM</span></span></li>
+            <li><b>QRH MN1-FLO-0023</b>Rev 23<span class="d">Maneuvers: approach to stall and stall recovery <span class="v">VERIFY PAGE</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2">
+          <p class="tag">Regulation and industry</p>
+          <ul>
+            <li><b>ICAO Doc 10011</b><span class="d">Manual on Aeroplane UPRT: stall definitions</span></li>
+            <li><b>EASA ORO.FC.220 / 230 + GM3</b><span class="d">Stall prevention and recovery training</span></li>
+            <li><b>FAA AC 120-109A</b><span class="d">Stall prevention and recovery training <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3">
+          <p class="tag">Boeing</p>
+          <ul>
+            <li><b>737 QRH, Maneuvers</b><span class="d">Approach to stall recovery and stall recovery; use the checklist wording <span class="v">VERIFY</span></span></li>
+            <li><b>737 FCTM, Maneuvers</b><span class="d">Technique and recommended inputs <span class="v">VERIFY SECTION</span></span></li>
+            <li><b>737-800 FCOM</b><span class="d">Stall warning system, speed tape <span class="v">VERIFY</span></span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">VERIFY marks items to confirm against the current manual revision. Document codes come from earlier project briefings. Section and page numbers for stall are not confirmed.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Show one column at a time. Replace each VERIFY tag with the real section once checked against the manuals in 02 Current Manuals. The memory items and recovery wording on the next slides must use the actual QRH wording, not the simplified action summaries in this draft.</p>
+        <p>Open question for Training Standards: confirm how stall recovery is graded in RFT and PPC, and which scenarios are mandatory.</p>
+      </div>
+    </section>
+
+    <!-- 8 SIMULATOR: OVERVIEW -->
+    <section class="slide s7" data-stage="4" data-comp="FPM*,PRO*,SAW,PSD">
+      <p class="eyebrow">Stage 4 · How to perform in the simulator</p>
+      <h1>Four phases, one sequence</h1>
+      <div class="phases">
+        <div class="panel phase rv h" data-step="1" data-comp="PRO*,SAW">
+          <div class="ph">Setup</div><h3>Before the entry</h3>
+          <ul><li>Safe altitude and area</li><li>Instructor sets the scenario: clean, full configuration or after takeoff</li><li>PF flies; PM monitors</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="2" data-comp="FPM*,SAW">
+          <div class="ph">Entry</div><h3>Approach to stall</h3>
+          <ul><li>Manual flight, slow deceleration or increasing load</li><li>Entry rate per FTM <span class="v">VERIFY</span></li><li>Watch for the first cue</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="3" data-comp="PRO*,FPM*,PSD">
+          <div class="ph">Recovery</div><h3>Recognise and recover</h3>
+          <ul><li>Announce the cue</li><li>Disconnect automation</li><li>Reduce the angle of attack first</li><li>QRH checklist sequence</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="4" data-comp="FPM*,SAW">
+          <div class="ph">Recovered when</div><h3>Check</h3>
+          <ul><li>Stall warning has stopped</li><li>Wings level, flight path stable</li><li>No secondary stall, minimum altitude loss</li></ul>
+        </div>
+      </div>
+      <div class="tols">
+        <div class="tol"><span>WARNING</span><b>STOPPED</b></div>
+        <div class="tol"><span>WINGS</span><b>LEVEL</b></div>
+        <div class="tol"><span>SECOND STALL</span><b>NONE</b></div>
+        <span class="v" style="margin:0">VERIFY AGAINST PPC STANDARD</span>
+      </div>
+      <p class="pm">PM monitors and calls altitude, speed and flight path during the recovery.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Demonstrate or talk through the sequence in the simulator right after this slide. Stay within the simulator's validated envelope for stall training and confirm the device and instructor qualification requirements in the FTM. VERIFY</p>
+        <p>Entry rates, recovery standards and tolerances in this draft come from general knowledge. Check them against the FCTM, the FTM and the PPC grading standard before presenting.</p>
+        <p>Competency tags follow the phase on screen. Instrument scanning is assessed under SAW and WLM, not under FPM.</p>
+      </div>
+    </section>
+
+    <!-- 9 SCENARIO: CLEAN -->
+    <section class="slide scn" data-stage="4" data-comp="FPM*,PRO*,KNO">
+      <p class="eyebrow">Stage 4 · Scenario 1 · Clean</p>
+      <h1>Flaps up, gear up</h1>
+      <div class="wrap">
+        <div class="ask rv h" data-step="1" data-comp="KNO*,PSD">
+          <div class="tg">ASK FIRST</div>
+          <p>Clean, level flight, speed decaying. The stick shaker activates. What do you do first, and why?</p>
+        </div>
+        <div class="panel ans">
+          <div class="tg">THEN REVEAL</div>
+          <ol>
+            <li class="rv h" data-step="2" data-comp="SAW*,PRO">Recognise the cue and announce it</li>
+            <li class="rv h" data-step="3" data-comp="PRO*,FPM">Disconnect autopilot and autothrottle</li>
+            <li class="rv h" data-step="4" data-comp="FPM*,KNO">Nose-down elevator until the stall warning stops</li>
+            <li class="rv h" data-step="5" data-comp="FPM*,PRO">Wings level, thrust as needed, speedbrakes retracted</li>
+            <li class="rv h" data-step="6" data-comp="FPM*,SAW">Return to the flight path smoothly, no secondary stall</li>
+          </ol>
+        </div>
+      </div>
+      <div class="watch rv h" data-step="7" data-comp="KNO*,PSD">Watch for: pulling too early, or pushing into overspeed. Most altitude to recover, so lower the angle first.<small>Action summary for the draft. Use the actual QRH wording in the final briefing. <span class="v">VERIFY</span></small></div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask the question and wait. Expected: reduce the angle of attack, because only a lower angle of attack restores lift. Then reveal the recovery steps one at a time and ask the pilot to name the step before each appears.</p>
+        <p>Clean has the most altitude to recover, so there is no reason to rush the pull-out. Probe: what happens if you pull back as soon as the shaker stops?</p>
+        <p>Sequence and wording follow the general approach-to-stall template. Confirm the QRH items, order and thrust instruction before presenting. VERIFY</p>
+      </div>
+    </section>
+
+    <!-- 10 SCENARIO: FULL CONFIG -->
+    <section class="slide scn" data-stage="4" data-comp="FPM*,PRO*,PSD">
+      <p class="eyebrow">Stage 4 · Scenario 2 · Full configuration</p>
+      <h1>Landing flaps, gear down</h1>
+      <div class="wrap">
+        <div class="ask rv h" data-step="1" data-comp="KNO*,PSD">
+          <div class="tg">ASK FIRST</div>
+          <p>On approach, landing flaps and gear down, low altitude. The shaker activates. How far do you lower the nose, and how long?</p>
+        </div>
+        <div class="panel ans">
+          <div class="tg">THEN REVEAL</div>
+          <ol>
+            <li class="rv h" data-step="2" data-comp="SAW*,PRO">Recognise the cue and announce it</li>
+            <li class="rv h" data-step="3" data-comp="PRO*,FPM">Disconnect autopilot and autothrottle</li>
+            <li class="rv h" data-step="4" data-comp="FPM*,KNO">Nose-down only until the stall warning stops</li>
+            <li class="rv h" data-step="5" data-comp="FPM*,PRO">Wings level and thrust as needed, early</li>
+            <li class="rv h" data-step="6" data-comp="FPM*,PSD">Stabilise the flight path, then decide on the approach</li>
+          </ol>
+        </div>
+      </div>
+      <div class="watch rv h" data-step="7" data-comp="PSD*,KNO">Watch for: over-pushing and losing altitude close to the ground. Reduce the angle only as much as needed.<small>Configuration changes during recovery per QRH and FCTM. <span class="v">VERIFY</span></small></div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask the question and wait. Expected: only until the warning stops. A bigger push than needed wastes altitude you do not have, but not pushing enough keeps the wing stalled.</p>
+        <p>High drag with gear and flaps out means thrust is needed earlier. Probe: how does a decision to continue or go around fit after the recovery? That is the PSD link.</p>
+        <p>Do not state flap or gear actions during the recovery from memory. Confirm in the QRH and FCTM before presenting. VERIFY</p>
+      </div>
+    </section>
+
+    <!-- 11 SCENARIO: AFTER TAKEOFF -->
+    <section class="slide scn" data-stage="4" data-comp="FPM*,PRO*,PSD,SAW">
+      <p class="eyebrow">Stage 4 · Scenario 3 · After takeoff</p>
+      <h1>Takeoff flaps, gear up</h1>
+      <div class="wrap">
+        <div class="ask rv h" data-step="1" data-comp="KNO*,PSD">
+          <div class="tg">ASK FIRST</div>
+          <p>Just after takeoff, high thrust, low altitude, shaker. Why is this the hardest recovery to do well?</p>
+        </div>
+        <div class="panel ans">
+          <div class="tg">THEN REVEAL</div>
+          <ol>
+            <li class="rv h" data-step="2" data-comp="SAW*,PRO">Recognise the cue and announce it</li>
+            <li class="rv h" data-step="3" data-comp="PRO*,FPM">Disconnect automation if engaged</li>
+            <li class="rv h" data-step="4" data-comp="FPM*,KNO">Nose-down elevator until the stall warning stops</li>
+            <li class="rv h" data-step="5" data-comp="FPM*,PRO">Wings level, thrust as the QRH directs</li>
+            <li class="rv h" data-step="6" data-comp="FPM*,SAW">Stabilise the climb; PM calls altitude and speed</li>
+          </ol>
+        </div>
+      </div>
+      <div class="watch rv h" data-step="7" data-comp="PSD*,SAW">Watch for: startle, then pulling to keep climbing. Smallest margin, so reduce the angle first, then stabilise.<small>Engine failure variations and thrust instruction per QRH and FTM. <span class="v">VERIFY</span></small></div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask the question and wait. Expected: lowest altitude margin, high thrust gives a strong pitch-up tendency, and the startle response is to pull. All three make the correct input feel wrong.</p>
+        <p>Debrief the first reaction before the technique. Probe: what did your hands do before your head caught up?</p>
+        <p>If the scenario includes an engine failure, add the asymmetric thrust and rudder considerations from the FTM and QRH, not from this draft. VERIFY</p>
+      </div>
+    </section>
+
+    <!-- 12 ERRORS AND DEBRIEF -->
+    <section class="slide s8" data-stage="4" data-comp="FPM*,KNO,PSD,SAW">
+      <div class="left">
+        <p class="eyebrow">Stage 4 · Common errors</p>
+        <h1>Read the error back</h1>
+        <div class="errs">
+          <div class="erow head"><span>What you see</span><span>Where it breaks</span><span>Fix</span></div>
+          <div class="erow rv h" data-step="1" data-comp="FPM*,KNO"><b>Pulling back to stop the altitude loss</b><span>The angle of attack stays above critical</span><span class="fx">Lower the angle first, then recover the flight path</span></div>
+          <div class="erow rv h" data-step="2" data-comp="PRO*,FPM"><b>Thrust only, nose not lowered</b><span>Thrust alone does not reduce the angle quickly</span><span class="fx">Nose-down input and thrust, per the QRH</span></div>
+          <div class="erow rv h" data-step="3" data-comp="FPM*,KNO"><b>Over-push into high speed</b><span>Too much reduction, altitude and speed run away</span><span class="fx">Reduce the angle until the warning stops, then smooth</span></div>
+          <div class="erow rv h" data-step="4" data-comp="FPM*,KNO"><b>Secondary stall on the pull-out</b><span>Pitch up too early, angle exceeds critical again</span><span class="fx">Smooth, progressive pitch; watch the warning</span></div>
+          <div class="erow rv h" data-step="5" data-comp="SAW*,PSD"><b>Fixed on altitude, no calls</b><span>Scan stops; no one is monitoring the angle</span><span class="fx">Keep the scan moving; PM calls altitude and speed</span></div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="debrief">
+          <h3>Debrief prompts</h3>
+          <ol>
+            <li class="rv h" data-step="6" data-comp="SAW*">What did you notice first, and what was your first reaction?</li>
+            <li class="rv h" data-step="7" data-comp="KNO*">Why did lowering the angle of attack work?</li>
+            <li class="rv h" data-step="8" data-comp="FPM*">What would you change next time?</li>
+          </ol>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Rows 1 to 5 are typical errors and each maps back to the recovery steps. Ask the pilot to name the step that was missed before you show the fix. Row 1 is the one to stress: the instinct is to protect altitude by pulling, and that keeps the wing stalled.</p>
+        <p>Debrief prompts are open questions. Let the pilot talk and then tie the answer to the competency grid: SAW for what was noticed, KNO for the why, FPM for the control inputs.</p>
+      </div>
+    </section>
+
+    <!-- 13 SUMMARY -->
+    <section class="slide s9" data-stage="0" data-comp="FPM*,PRO*,KNO,PSD">
+      <p class="eyebrow">Summary</p>
+      <h1>What to take away</h1>
+      <div class="stats">
+        <div class="panel stat"><div class="num">AOA</div><div class="cap">What causes a stall: the critical angle of attack</div></div>
+        <div class="panel stat"><div class="num">√n</div><div class="cap">Stall speed rises with the square root of load factor</div></div>
+        <div class="panel stat"><div class="num">×1.41</div><div class="cap">Stall speed at 60° bank in a level turn</div></div>
+        <div class="panel stat"><div class="num tol3">CLEAN · FULL CONFIG<br>AFTER TAKEOFF</div><div class="cap">Three scenarios, one principle</div></div>
+      </div>
+      <p class="why rv h" data-step="1">The margins change by scenario. Altitude, drag and startle risk differ, but only a lower angle of attack ends a stall.</p>
+      <div class="remember rv h" data-step="2">Lower the angle of attack first. Then recover the flight path.</div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Close with the one sentence to remember. Then move to the simulator. Items marked VERIFY earlier in the deck should be confirmed against the 737 QRH, FCTM, FCOM and the company FTM before the session.</p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="count" id="count"></div>
+      <div class="draft">DRAFT · VERIFY AGAINST MANUALS</div>
+      <div class="credit">© Capt. Supakit Punyangam · Do not copy or distribute without permission</div>
+      <div class="corner">
+        <svg class="wheel" id="wheel" viewBox="0 0 200 200" role="img" aria-label="Competency pyramid with communication and leadership arrows, assessed ones highlighted"></svg>
+        <div class="cgrid" id="cgrid" aria-label="Nine competencies grid, assessed ones highlighted"></div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div id="controls" role="toolbar" aria-label="Presentation controls">
+  <button type="button" data-act="prev" aria-label="Previous">← Prev</button>
+  <button type="button" data-act="next" aria-label="Next">Next →</button>
+  <button type="button" data-act="all" aria-pressed="false" title="Reveal everything on this slide (A)">Reveal all</button>
+  <button type="button" data-act="notes" aria-pressed="false" title="Instructor notes (N)">Notes</button>
+  <button type="button" data-act="theme" title="Light or dark (T)">Theme</button>
+  <button type="button" data-act="full" id="fullBtn" title="Fullscreen (F)">Fullscreen</button>
+</div>
+<aside id="notes" hidden aria-label="Instructor notes"></aside>
+
+<script>
+(function () {
+  var COMPS = [
+    ['KNO', 'Application of Knowledge'], ['FPM', 'Aeroplane Flight Path Management, Manual Control'], ['FPA', 'Aeroplane Flight Path Management, Automation'],
+    ['PRO', 'Application of Procedures and Compliance with Regulations'], ['WLM', 'Workload Management'], ['SAW', 'Situation Awareness and Management of Information'],
+    ['PSD', 'Problem Solving and Decision Making'], ['COM', 'Communication'], ['LTW', 'Leadership and Teamwork']
+  ];
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+
+  var stage = $('#stage'), vp = $('#viewport');
+  var slides = $$('.slide');
+  var si = 0, st = 0, all = false;
+
+  function fit() {
+    var s = Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080);
+    stage.style.setProperty('--s', s > 0 ? s : 1);
+  }
+
+  function buildGrid(el) {
+    el.innerHTML = COMPS.map(function (c) {
+      return '<div class="cell" data-c="' + c[0] + '" title="' + c[1] + '"><span class="c">' + c[0] + '</span><span class="n">' + c[1] + '</span></div>';
+    }).join('');
+  }
+  function paintGrid(el, spec) {
+    var m = {};
+    (spec || '').split(',').forEach(function (x) {
+      if (!x) return;
+      m[x.replace('*', '')] = x.indexOf('*') > -1 ? 'p' : 's';
+    });
+    $$('.cell, .seg', el).forEach(function (c) {
+      c.classList.remove('p', 's');
+      var k = m[c.dataset.c];
+      if (k) c.classList.add(k);
+    });
+  }
+  function buildWheel(el) {
+    var out = '', order = ['PSD', 'SAW', 'WLM', 'PRO', 'FPA', 'FPM', 'KNO'];
+    var names = {}; COMPS.forEach(function (c) { names[c[0]] = c[1]; });
+    var top = 38, bot = 150, h = (bot - top) / order.length;
+    function wAt(y) { return 46 + 74 * (y - top) / (bot - top); }
+    order.forEach(function (code, i) {
+      var y0 = top + i * h, y1 = y0 + h, w0 = wAt(y0) / 2, w1 = wAt(y1) / 2;
+      var pts = [(100 - w0), y0, (100 + w0), y0, (100 + w1), y1, (100 - w1), y1].map(function (n) { return n.toFixed(1); });
+      var poly = pts[0] + ',' + pts[1] + ' ' + pts[2] + ',' + pts[3] + ' ' + pts[4] + ',' + pts[5] + ' ' + pts[6] + ',' + pts[7];
+      out += '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title><polygon class="sh" points="' + poly + '"/><text x="100" y="' + ((y0 + y1) / 2 + 4.2).toFixed(1) + '">' + code + '</text></g>';
+    });
+    var R = 92, C = 100;
+    function pt(d) { var a = d * Math.PI / 180; return [C + R * Math.sin(a), C - R * Math.cos(a)]; }
+    function arrow(code, d0, d1, ty) {
+      var a = pt(d0), b = pt(d1), r = d1 * Math.PI / 180;
+      var tx = Math.cos(r), tyv = Math.sin(r), nx = -tyv, ny = tx;
+      var tip = [b[0] + tx * 18, b[1] + tyv * 18], l = [b[0] + nx * 13, b[1] + ny * 13], rr = [b[0] - nx * 13, b[1] - ny * 13];
+      return '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title>' +
+        '<path class="ar" d="M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + '"/>' +
+        '<polygon class="ah" points="' + tip[0].toFixed(1) + ',' + tip[1].toFixed(1) + ' ' + l[0].toFixed(1) + ',' + l[1].toFixed(1) + ' ' + rr[0].toFixed(1) + ',' + rr[1].toFixed(1) + '"/>' +
+        '<text class="at" x="100" y="' + ty + '">' + code + '</text></g>';
+    }
+    out += arrow('COM', -60, 56, 12.6);
+    out += arrow('LTW', 120, 236, 196.4);
+    el.innerHTML = out;
+  }
+  function maxStep(sl) {
+    var m = 0;
+    $$('[data-step]', sl).forEach(function (e) { m = Math.max(m, +e.dataset.step); });
+    return m;
+  }
+
+  var cgrid = $('#cgrid'), bigGrid = $('#bigGrid'), notes = $('#notes');
+  var wheel = $('#wheel');
+  buildGrid(cgrid); buildGrid(bigGrid); buildWheel(wheel);
+
+  function render() {
+    var sl = slides[si], max = maxStep(sl), eff = all ? max : st;
+    slides.forEach(function (s, i) { s.classList.toggle('on', i === si); });
+    $$('[data-step]', sl).forEach(function (e) {
+      var n = +e.dataset.step;
+      e.classList.toggle('on', n <= eff);
+      e.classList.toggle('cur', eff > 0 && n === eff);
+    });
+    var spec = sl.dataset.comp;
+    if (eff > 0) {
+      var cur = $$('[data-step]', sl).filter(function (e) { return +e.dataset.step === eff && e.dataset.comp; })[0];
+      if (cur) spec = cur.dataset.comp;
+    }
+    paintGrid(cgrid, spec);
+    paintGrid(wheel, spec);
+    if (si === 1) paintGrid(bigGrid, sl.dataset.comp);
+    $$('.stages li').forEach(function (li) { li.classList.toggle('on', li.dataset.s === sl.dataset.stage); });
+    var n = si + 1;
+    $('#count').innerHTML = '<b>' + (n < 10 ? '0' + n : n) + '</b> / ' + (slides.length < 10 ? '0' + slides.length : slides.length) + (max > 0 ? '  ·  ' + eff + '/' + max : '');
+    var nt = $('.notes', sl);
+    notes.innerHTML = nt ? nt.innerHTML : '';
+    $('[data-act="all"]').setAttribute('aria-pressed', String(all));
+  }
+  function next() {
+    var max = maxStep(slides[si]);
+    if (!all && st < max) { st++; }
+    else if (si < slides.length - 1) { si++; st = 0; }
+    render();
+  }
+  function prev() {
+    if (!all && st > 0) { st--; }
+    else if (si > 0) { si--; st = maxStep(slides[si]); }
+    render();
+  }
+
+  /* slide 4: lift against angle of attack (teaching shape, not a measured curve) */
+  var X0 = 80, PX = 26, Y0 = 470, PY = 230, ACRIT = 16, AWARN = 14, CLMAX = 1.55;
+  function CL(a) {
+    if (a <= 13) return 0.11 * a;
+    if (a <= 16) { var t = (a - 16) / 3; return 1.43 + 0.12 * (1 - t * t); }
+    return CLMAX - 0.012 * (a - 16) * (a - 16);
+  }
+  var pathD = '';
+  for (var a0 = 0; a0 <= 24; a0 += 0.5) {
+    pathD += (a0 === 0 ? 'M' : 'L') + (X0 + a0 * PX).toFixed(1) + ' ' + (Y0 - CL(a0) * PY).toFixed(1) + ' ';
+  }
+  $('#clPath').setAttribute('d', pathD);
+  var aEl = $('#alpha');
+  function drawAoa(a) {
+    a = Math.max(0, Math.min(24, +a));
+    var x = X0 + a * PX, c = CL(a), y = Y0 - c * PY;
+    $('#pt').setAttribute('cx', x.toFixed(1)); $('#pt').setAttribute('cy', y.toFixed(1));
+    var pv = $('#pv'); pv.setAttribute('x1', x.toFixed(1)); pv.setAttribute('x2', x.toFixed(1)); pv.setAttribute('y1', y.toFixed(1)); pv.setAttribute('y2', Y0);
+    var pct = Math.max(0, Math.round(c / CLMAX * 100));
+    var state = a >= ACRIT ? 'STALLED' : (a >= AWARN ? 'WARNING' : 'ATTACHED');
+    var cls = a >= ACRIT ? 'bad' : (a >= AWARN ? 'warn' : 'ok');
+    var tx = $('#stTxt'); tx.textContent = state; tx.setAttribute('class', 'st ' + cls);
+    $('#aOut').textContent = (Math.round(a * 2) / 2).toString();
+    $('#liftOut').textContent = pct + '%';
+    $('#flowOut').textContent = a >= ACRIT ? 'separated' : (a >= AWARN ? 'near separation' : 'attached');
+    $('#barNow').style.width = Math.min(100, pct) + '%';
+    $('#barVal').textContent = pct + '%';
+    aEl.value = a;
+    $$('.s4 .pre button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.a === a)); });
+  }
+  aEl.addEventListener('input', function () { drawAoa(aEl.value); });
+  aEl.addEventListener('change', function () { aEl.blur(); });
+  $$('.s4 .pre button').forEach(function (b) {
+    b.addEventListener('click', function () { drawAoa(b.dataset.a); b.blur(); });
+  });
+
+  /* controls */
+  function effTheme() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t) return t;
+    return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  function toggleTheme() {
+    var nt = effTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nt);
+    try { localStorage.setItem('stallTheme', nt); } catch (e) {}
+  }
+  function toggleNotes() {
+    notes.hidden = !notes.hidden;
+    $('[data-act="notes"]').setAttribute('aria-pressed', String(!notes.hidden));
+  }
+  function toggleFull() {
+    try {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (document.documentElement.requestFullscreen) {
+        var p = document.documentElement.requestFullscreen();
+        if (p && p.catch) p.catch(function () {});
+      }
+    } catch (e) {}
+  }
+  if (!document.fullscreenEnabled) $('#fullBtn').hidden = true;
+
+  $('#controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var a = b.dataset.act;
+    if (a === 'next') next();
+    else if (a === 'prev') prev();
+    else if (a === 'all') { all = !all; render(); }
+    else if (a === 'notes') toggleNotes();
+    else if (a === 'theme') toggleTheme();
+    else if (a === 'full') toggleFull();
+    b.blur();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var tg = e.target, tag = tg && tg.tagName;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (tag === 'INPUT') return;
+    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); si = 0; st = 0; render(); }
+    else if (k === 'End') { e.preventDefault(); si = slides.length - 1; st = 0; render(); }
+    else if (k === 'ArrowUp' && si === 3) { e.preventDefault(); drawAoa(+aEl.value + 2); }
+    else if (k === 'ArrowDown' && si === 3) { e.preventDefault(); drawAoa(+aEl.value - 2); }
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 't' || k === 'T') toggleTheme();
+    else if (k === 'a' || k === 'A') { all = !all; render(); }
+  });
+
+  var tx0 = null;
+  document.addEventListener('touchstart', function (e) { tx0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (tx0 === null) return;
+    var dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+    if (Math.abs(dx) > 60 && !e.target.closest('input,button,#notes')) { if (dx < 0) next(); else prev(); }
+  }, { passive: true });
+
+  var idleT;
+  function wake() {
+    document.body.classList.remove('idle');
+    clearTimeout(idleT);
+    idleT = setTimeout(function () { document.body.classList.add('idle'); }, 3000);
+  }
+  ['pointermove', 'pointerdown'].forEach(function (ev) { document.addEventListener(ev, wake); });
+
+  try {
+    var saved = localStorage.getItem('stallTheme');
+    if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+
+  window.addEventListener('resize', fit);
+  fit(); drawAoa(6); render(); wake();
+})();
+</script>

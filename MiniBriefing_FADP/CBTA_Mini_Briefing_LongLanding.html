@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Long Landing Prevention Briefing</title>
+<meta name="author" content="Capt. Supakit Punyangam">
+<meta name="copyright" content="© Capt. Supakit Punyangam">
+<!-- © Capt. Supakit Punyangam. Long landing prevention mini briefing. Do not copy or distribute without permission. -->
+<link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D1521; --panel: #152033; --panel2: #1D2C45; --line: #2E3F5C; --fg: #EDF1F7; --muted: #9BA9BD;
+  --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #FFC72C; --accent-soft: rgba(255,199,44,0.16);
+  --lift: #6DB7FF; --weight: #FF8F66; --ok: #5FD38D; --bad: #FF5A5A;
+  --f-body: 'B612', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --f-mono: 'B612 Mono', ui-monospace, Menlo, Consolas, monospace;
+  --f-disp: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --bg:#F2F5F9; --panel:#FFFFFF; --panel2:#E6ECF4; --line:#C5D0DF; --fg:#111B2B; --muted:#53617A;
+    --accent-text:#7A5200; --accent-soft:rgba(255,199,44,0.35); --lift:#0B5FC0; --weight:#BF3B0B; --ok:#17803F; --bad:#C0262D; color-scheme:light; }
+}
+:root[data-theme="light"] { --bg:#F2F5F9; --panel:#FFFFFF; --panel2:#E6ECF4; --line:#C5D0DF; --fg:#111B2B; --muted:#53617A;
+  --accent-text:#7A5200; --accent-soft:rgba(255,199,44,0.35); --lift:#0B5FC0; --weight:#BF3B0B; --ok:#17803F; --bad:#C0262D; color-scheme:light; }
+html { height:100%; box-sizing:border-box; }
+body { height:100%; box-sizing:border-box; margin:0; overflow:hidden; padding:0 16px; background:var(--bg); color:var(--fg); font-family:var(--f-body); }
+:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+body.idle { cursor:none; }
+#viewport { position:relative; width:100%; height:100%; overflow:hidden; }
+#stage { position:absolute; left:50%; top:50%; width:1920px; height:1080px; margin:-540px 0 0 -960px; transform:scale(var(--s,1)); transform-origin:50% 50%; }
+
+.top { position:absolute; left:96px; right:96px; top:36px; height:60px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.brand, .topic { font:700 20px/1 var(--f-mono); letter-spacing:.16em; color:var(--muted); white-space:nowrap; }
+.stages { display:flex; gap:10px; list-style:none; margin:0; padding:0; }
+.stages li { display:flex; gap:10px; align-items:baseline; font:400 20px/1 var(--f-mono); padding:12px 18px; border:1.5px solid var(--line); border-radius:4px; color:var(--muted); }
+.stages li b { font-weight:700; }
+.stages li.on { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+
+.foot { position:absolute; left:96px; right:96px; bottom:30px; height:174px; display:flex; align-items:flex-end; justify-content:space-between; }
+.credit { position:absolute; left:0; bottom:40px; font:400 17px/1 var(--f-mono); letter-spacing:.06em; color:var(--muted); white-space:nowrap; opacity:.85; user-select:none; }
+.count { font:400 22px/1 var(--f-mono); color:var(--muted); } .count b { color:var(--fg); }
+.corner { display:flex; align-items:flex-end; gap:24px; }
+.cgrid { display:grid; grid-template-columns:repeat(3,54px); grid-auto-rows:54px; gap:6px; }
+.wheel { display:block; width:174px; height:174px; }
+.seg .sh { fill:var(--panel); stroke:var(--line); stroke-width:1.5; transition:fill .25s, stroke .25s; }
+.seg .ar { fill:none; stroke:var(--line); stroke-width:14; transition:stroke .25s; }
+.seg .ah { fill:var(--line); transition:fill .25s; }
+.seg text { font:700 12.5px var(--f-mono); fill:var(--muted); text-anchor:middle; }
+.seg text.at { font-size:10.5px; letter-spacing:.04em; }
+.seg.p .sh { fill:var(--accent); stroke:var(--accent); } .seg.p .ar { stroke:var(--accent); } .seg.p .ah { fill:var(--accent); } .seg.p text { fill:var(--accent-ink); }
+.seg.s .sh { fill:var(--accent-soft); stroke:var(--accent); } .seg.s .ar { stroke:var(--accent); stroke-opacity:.45; } .seg.s .ah { fill:var(--accent); fill-opacity:.45; } .seg.s text { fill:var(--accent-text); }
+.cell { display:grid; place-items:center; align-content:center; border:1.5px solid var(--line); border-radius:3px; color:var(--muted); transition:background .25s, color .25s, border-color .25s; }
+.cell .c { font:700 16px/1 var(--f-mono); } .cell .n { display:none; }
+.cell.p { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+.cell.s { background:var(--accent-soft); border-color:var(--accent); color:var(--accent-text); }
+.cgrid.big { grid-template-columns:repeat(3,1fr); grid-auto-rows:172px; gap:10px; }
+.cgrid.big .cell { padding:10px 12px; gap:8px; text-align:left; justify-items:start; }
+.cgrid.big .cell .c { font-size:24px; }
+.cgrid.big .cell .n { display:block; font:400 17px/1.25 var(--f-body); }
+
+.slide { position:absolute; left:96px; right:96px; top:120px; height:750px; display:none; }
+.slide.on { display:block; }
+.eyebrow { margin:0 0 14px; font:700 22px/1 var(--f-mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent-text); }
+h1 { margin:0; font:700 64px/1 var(--f-disp); letter-spacing:.005em; text-wrap:balance; }
+h3 { margin:0 0 12px; font:700 26px/1.2 var(--f-body); }
+.hint { margin:14px 0 0; font-size:26px; color:var(--muted); }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:22px 26px; }
+.v { display:inline-block; margin-left:8px; padding:3px 8px; border:1.5px solid var(--accent); border-radius:3px; font:700 15px/1 var(--f-mono); color:var(--accent-text); letter-spacing:.06em; vertical-align:2px; white-space:nowrap; }
+.src { font:400 17px/1.3 var(--f-mono); color:var(--muted); }
+.rv { opacity:0; transition:opacity .35s ease, transform .35s ease; } .rv.h { transform:translateY(14px); }
+.rv.on { opacity:1; } .rv.h.on { transform:none; }
+.focus .rv.on:not(.cur) { opacity:.5; }
+.notes { display:none; }
+@media (prefers-reduced-motion: reduce) { .rv, .cell { transition:none; } .rv.h { transform:none; } }
+
+/* 1 title */
+.s1 h1 { font-size:200px; line-height:.9; text-transform:uppercase; }
+.s1 .sub { margin:18px 0 0; font-size:40px; color:var(--muted); }
+.s1 .by { margin:14px 0 0; font:700 24px/1.2 var(--f-mono); letter-spacing:.08em; color:var(--accent-text); }
+.roadmap { position:absolute; left:0; right:0; bottom:0; display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+.roadmap .num { font:700 44px/1 var(--f-mono); color:var(--accent-text); }
+.roadmap .t { margin:12px 0 6px; font:700 30px/1.15 var(--f-body); }
+.roadmap .d { font-size:22px; line-height:1.35; color:var(--muted); }
+
+/* 2 comps */
+.s2 .wrap { display:grid; grid-template-columns:1fr 640px; gap:56px; margin-top:24px; }
+.comp-list { display:grid; gap:10px; align-content:start; min-width:0; }
+.comp { display:grid; grid-template-columns:110px 1fr; gap:22px; align-items:center; padding:11px 22px; }
+.chip { display:grid; place-items:center; height:56px; border:1.5px solid var(--accent); border-radius:4px; font:700 26px/1 var(--f-mono); color:var(--accent-text); background:var(--accent-soft); }
+.comp .chip { height:48px; font-size:24px; } .chip.p { background:var(--accent); color:var(--accent-ink); }
+.comp .nm { font:700 25px/1.2 var(--f-body); } .comp .ob { margin-top:3px; font-size:21px; line-height:1.3; color:var(--muted); }
+.outcome { margin-top:2px; padding:14px 24px; background:var(--accent); color:var(--accent-ink); border-radius:6px; font:700 24px/1.3 var(--f-body); }
+
+/* 3 questions */
+.qs { display:grid; gap:16px; margin-top:24px; }
+.q { display:grid; grid-template-columns:190px 1fr 120px; gap:26px; align-items:center; padding:20px 28px; background:var(--panel); border:1px solid var(--line); border-radius:6px; }
+.q .lv { font:700 20px/1 var(--f-mono); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.q p { margin:0; font-size:34px; line-height:1.22; }
+.q .chip { height:50px; font-size:22px; }
+.q.cur { border-color:var(--accent); }
+
+/* 4 data */
+.s4.on { display:grid; grid-template-columns:1fr 780px; gap:40px; }
+.s4 .left, .s4 .right { min-width:0; }
+.fd { display:grid; gap:8px; margin-top:12px; }
+.fdh { display:grid; grid-template-columns:44px 1fr 300px 80px; gap:14px; font:700 16px/1 var(--f-mono); letter-spacing:.12em; color:var(--muted); text-transform:uppercase; padding:0 14px; }
+.fr { display:grid; grid-template-columns:44px 1fr 300px 80px; gap:14px; align-items:center; padding:8px 14px; background:var(--panel); border:1px solid var(--line); border-radius:6px; font-size:24px; }
+.fr .n { font:700 20px/1 var(--f-mono); color:var(--muted); }
+.fr .tr { height:22px; background:var(--panel2); border-radius:3px; position:relative; }
+.fr .bar { position:absolute; left:0; top:0; bottom:0; border-radius:3px; background:var(--bad); }
+.fr .val { font:700 26px/1 var(--f-mono); text-align:right; }
+.fr.hot { border-color:var(--bad); background:rgba(255,90,90,.12); } .fr.hot .val { color:var(--bad); }
+.fr.rel { border-color:var(--accent); }
+.fr small { display:block; font:400 15px/1.2 var(--f-mono); color:var(--muted); margin-top:2px; }
+.big-n { padding:14px 26px; display:grid; grid-template-columns:auto 1fr; gap:6px 24px; align-items:center; }
+.big-n .n { grid-row:span 2; font:700 110px/.9 var(--f-disp); color:var(--bad); }
+.big-n .t { font-size:26px; line-height:1.25; }
+.big-n .s { font-size:21px; color:var(--muted); line-height:1.3; }
+.ex { width:100%; border-collapse:collapse; margin-top:6px; font-size:20px; line-height:1.2; }
+.ex th { text-align:left; font:700 15px/1 var(--f-mono); letter-spacing:.1em; color:var(--muted); padding:0 8px 8px 0; text-transform:uppercase; }
+.ex td { padding:7px 8px 7px 0; border-top:1px solid var(--line); vertical-align:top; }
+.ex td:nth-child(2) { font:700 17px/1.25 var(--f-mono); }
+.rk { font:700 15px/1 var(--f-mono); padding:4px 7px; border-radius:3px; white-space:nowrap; }
+.rk.hi { background:var(--weight); color:#111; } .rk.md { background:var(--accent); color:var(--accent-ink); } .rk.cr { background:var(--bad); color:#111; }
+.dsrc { margin-top:12px; font:400 17px/1.35 var(--f-mono); color:var(--muted); }
+
+/* 5 TDZ */
+#rwSvg { display:block; width:1728px; height:300px; margin-top:6px; }
+.tz1 { fill:var(--ok); fill-opacity:.30; } .tz2 { fill:var(--bad); fill-opacity:.28; }
+.rwy { fill:var(--panel2); stroke:var(--line); stroke-width:2; }
+.rl { font:700 26px var(--f-mono); fill:var(--fg); text-anchor:middle; } .rl.m { font-weight:400; font-size:21px; fill:var(--muted); }
+.cmp { display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:20px; margin-top:12px; }
+.cmp .panel { min-width:0; } .cmp h3 { font-size:24px; }
+.cmp .big { font:700 56px/1 var(--f-disp); margin:0 0 6px; } .cmp p { margin:0; font-size:22px; line-height:1.3; color:var(--muted); }
+.cmp .co { border-color:var(--accent); background:var(--accent-soft); } .cmp .co p { color:var(--fg); }
+
+/* 6 cost */
+.s6.on { display:grid; grid-template-columns:860px 1fr; gap:56px; }
+.s6 .left, .s6 .right { min-width:0; }
+#bdSvg { display:block; width:860px; height:250px; margin-top:6px; }
+.ctl { display:grid; grid-template-columns:230px 1fr 140px; gap:14px; align-items:center; padding:10px 20px; margin-top:8px; }
+.ctl label { font:700 19px/1.15 var(--f-mono); letter-spacing:.06em; color:var(--muted); }
+.ctl input[type=range] { width:100%; accent-color:var(--accent); height:26px; }
+.ctl output { font:700 28px/1 var(--f-mono); text-align:right; } .ctl output small { font-size:16px; color:var(--muted); font-weight:400; }
+.tot { margin-top:10px; display:grid; grid-template-columns:auto 1fr; gap:4px 24px; align-items:center; padding:12px 24px; }
+.tot .n { grid-row:span 2; font:700 84px/.95 var(--f-disp); color:var(--weight); } .tot .n small { font-size:34px; color:var(--muted); }
+.tot .kv { font-size:23px; line-height:1.3; }
+.brow { display:grid; grid-template-columns:300px 1fr 200px; gap:12px; align-items:center; font-size:22px; line-height:1.2; margin-bottom:13px; }
+.brow .tr { height:24px; background:var(--panel2); border-radius:3px; position:relative; }
+.brow .bar { position:absolute; left:0; top:3px; bottom:3px; background:var(--weight); border-radius:2px; }
+.brow .val { font:700 21px/1.1 var(--f-mono); text-align:right; }
+.cnote { margin-top:14px; font-size:20px; line-height:1.4; color:var(--muted); }
+
+/* 7 prevent and decide */
+.cols { display:grid; grid-template-columns:1.1fr 1fr 1fr; gap:20px; margin-top:18px; }
+.cols .panel { min-width:0; } .cols h3 { font-size:28px; }
+.cols ul { margin:0; padding:0; list-style:none; font-size:24px; line-height:1.3; }
+.cols li { padding:6px 0 6px 20px; position:relative; }
+.cols li::before { content:""; position:absolute; left:0; top:17px; width:8px; height:8px; background:var(--accent-text); }
+.cols .why { margin:12px 0 0; font-size:21px; line-height:1.3; color:var(--muted); }
+.callbox { margin-top:10px; padding:10px 14px; background:var(--accent-soft); border:1.5px solid var(--accent); border-radius:6px; font:700 21px/1.35 var(--f-mono); }
+.rule { margin-top:18px; padding:20px 30px; background:var(--accent); color:var(--accent-ink); border-radius:6px; font:700 42px/1.2 var(--f-disp); }
+
+/* 8 sim */
+.phases { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:18px; }
+.phase { min-width:0; padding:20px 22px; }
+.phase .ph { font:700 18px/1 var(--f-mono); letter-spacing:.12em; color:var(--accent-text); text-transform:uppercase; }
+.phase h3 { margin:8px 0 10px; font-size:34px; }
+.phase ul { margin:0; padding-left:22px; display:grid; gap:8px; font-size:23px; line-height:1.28; }
+.scen { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:18px; }
+.sc { padding:16px 22px; border-left:5px solid var(--accent); }
+.sc .t { font:700 28px/1.1 var(--f-disp); } .sc .c { margin-top:4px; font:700 19px/1.2 var(--f-mono); color:var(--accent-text); } .sc .f { margin-top:6px; font-size:21px; line-height:1.3; color:var(--muted); }
+.pm { margin-top:16px; font-size:26px; color:var(--muted); } .pm b { color:var(--fg); }
+
+#controls { position:fixed; left:50%; transform:translateX(-50%); bottom:12px; display:flex; flex-wrap:wrap; justify-content:center; gap:6px; padding:6px; max-width:calc(100% - 32px); background:var(--panel); border:1px solid var(--line); border-radius:6px; z-index:20; transition:opacity .3s; }
+body.idle #controls { opacity:0; pointer-events:none; }
+#controls button { font:700 14px/1 var(--f-mono); color:var(--fg); background:transparent; border:1px solid var(--line); border-radius:4px; padding:10px 12px; cursor:pointer; }
+#controls button:hover { border-color:var(--accent); } #controls button[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+#notes { position:fixed; left:0; right:0; bottom:0; max-height:44vh; overflow:auto; z-index:15; background:var(--panel); border-top:2px solid var(--accent); font:400 17px/1.5 var(--f-body); color:var(--fg); padding:16px 24px 72px; }
+#notes h4 { margin:0 0 6px; font:700 14px/1 var(--f-mono); letter-spacing:.14em; color:var(--accent-text); text-transform:uppercase; }
+#notes p { margin:0 0 8px; max-width:110ch; }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="stage">
+  <header class="top">
+    <div class="brand">NOK AIR · TRAINING</div>
+    <ol class="stages" aria-label="CBTA stages">
+      <li data-s="1"><b>1</b> Competencies</li><li data-s="2"><b>2</b> Questions</li><li data-s="3"><b>3</b> Knowledge</li><li data-s="4"><b>4</b> Simulator</li>
+    </ol>
+    <div class="topic">LONG LANDING · B737-800</div>
+  </header>
+
+  <!-- 1 TITLE -->
+  <section class="slide s1" data-stage="0" data-comp="">
+    <p class="eyebrow">Competency-based training · mini briefing</p>
+    <h1>Long Landing<br>Prevention</h1>
+    <p class="sub">Pre-simulator briefing · Boeing 737-800 · RFT / PPC</p>
+    <p class="by">Prepared by Capt. Supakit Punyangam</p>
+    <div class="roadmap">
+      <div class="panel"><div class="num">1</div><div class="t">Competencies</div><div class="d">What we will assess</div></div>
+      <div class="panel"><div class="num">2</div><div class="t">Questions</div><div class="d">Tell it back first</div></div>
+      <div class="panel"><div class="num">3</div><div class="t">Knowledge</div><div class="d">FDAP data, zone, cost, decision</div></div>
+      <div class="panel"><div class="num">4</div><div class="t">Simulator</div><div class="d">How to fly it</div></div>
+    </div>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>Short briefing, about 10 minutes. Keys: arrows to step, N notes (off the projector), A reveal all, J jump to simulator, T theme, F fullscreen.</p>
+      <p>Sources: FDAP data and SSQ Bulletin 012/2026 as shown in RFT3 section of "RFT4 Year2 TCAR" (slides 14 to 21, revised Rev02, 08 Apr 2026). FCTM 737 NG Chapter 6 (27 Feb 2026). SOP B737-800 Issue 04 Rev 00 chapter 20. OM-A Issue 08 Rev 00 chapter 8.</p>
+    </div>
+  </section>
+
+  <!-- 2 COMPETENCIES -->
+  <section class="slide s2" data-stage="1" data-comp="FPM*,SAW*,PSD*,PRO,KNO">
+    <p class="eyebrow">Stage 1 · Assessment competencies</p>
+    <h1>What we are assessing</h1>
+    <div class="wrap">
+      <div class="comp-list">
+        <div class="panel comp"><div class="chip p">FPM</div><div><div class="nm">Aeroplane Flight Path Management, Manual Control</div><div class="ob">Controls speed, path and flare so the airplane touches down at the aim point, not floating past it.</div></div></div>
+        <div class="panel comp"><div class="chip p">SAW</div><div><div class="nm">Situation Awareness and Management of Information</div><div class="ob">Monitors speed, path, height over the threshold and runway remaining.</div></div></div>
+        <div class="panel comp"><div class="chip p">PSD</div><div><div class="nm">Problem Solving and Decision Making</div><div class="ob">Goes around when the approach is unstable or the touchdown zone will be missed.</div></div></div>
+        <div class="panel comp"><div class="chip">PRO</div><div><div class="nm">Application of Procedures and Compliance with Regulations</div><div class="ob">Stabilised criteria, call-outs and the landing roll sequence.</div></div></div>
+        <div class="panel comp"><div class="chip">KNO</div><div><div class="nm">Application of Knowledge</div><div class="ob">Explains what a long touchdown costs in runway.</div></div></div>
+        <div class="outcome">Outcome: stabilised by the gate, touchdown inside the zone, or a go-around, without delay.</div>
+      </div>
+      <div class="cgrid big" id="bigGrid" aria-label="Boeing nine competencies"></div>
+    </div>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>Three primary (FPM, SAW, PSD), two supporting (PRO, KNO). Replace the observable behaviours with the exact wording on the current grade slip. Instrument scanning is tagged SAW, not FPM.</p>
+    </div>
+  </section>
+
+  <!-- 3 QUESTIONS -->
+  <section class="slide s3 focus" data-stage="2" data-comp="PSD*,FPM,SAW,KNO">
+    <p class="eyebrow">Stage 2 · Assessment questions</p>
+    <h1>Long landing: your call</h1>
+    <p class="hint">Think first. Answer aloud before the next question appears.</p>
+    <div class="qs">
+      <div class="q rv h" data-step="1" data-comp="KNO*,SAW"><span class="lv">Recall</span><p>Where is the touchdown zone, and what must you do if you will not touch down in it?</p><span class="chip">KNO</span></div>
+      <div class="q rv h" data-step="2" data-comp="PRO*,SAW"><span class="lv">Recall</span><p>What are the approach stabilisation criteria, and who calls them?</p><span class="chip">PRO</span></div>
+      <div class="q rv h" data-step="3" data-comp="FPM*,KNO"><span class="lv">Understand</span><p>Why does being 50 ft too high at the threshold, or floating 3 seconds, matter?</p><span class="chip">FPM</span></div>
+      <div class="q rv h" data-step="4" data-comp="PSD*,SAW,PRO"><span class="lv">Decide</span><p>You are floating, the aim point is behind you, the zone is ending. What do you do?</p><span class="chip">PSD</span></div>
+    </div>
+    <div class="notes">
+      <h4>Expected answers and probes</h4>
+      <p><b>Q1.</b> First 900 m from the threshold (SSQ Bulletin 012/2026). Will not touch down within it: execute an immediate go-around and do not try to salvage the landing. Probe: FCTM and RFT3 give other zone figures, see slide 5 <span class="v">VERIFY</span>.</p>
+      <p><b>Q2.</b> SOP 20.3: stabilised by 1,000 ft AFE in IMC or 500 ft AFE in VMC. Correct flight path, small changes only, approach speed (+10 to -5 kt acceptable if trending to approach speed), correct landing configuration, sink rate no greater than 1,000 fpm, appropriate power, briefings and checklists done. PM calls "STABILIZED" or "NON STABILIZED"; PF answers "CHECKED, CONTINUE" or "CHECKED, GO-AROUND".</p>
+      <p><b>Q3.</b> FCTM 6.35 to 6.36: 100 ft instead of 50 ft over the threshold on a 3° path adds about 950 ft. A 3 second float after the flare adds 515 to 775 ft. Deceleration on the runway is about three times that in the air.</p>
+      <p><b>Q4.</b> Go-around. Do not hold it off or float (FCTM 6.8). Link to PSD and to PM assertiveness.</p>
+    </div>
+  </section>
+
+  <!-- 4 FDAP DATA -->
+  <section class="slide s4" data-stage="3" data-comp="KNO*,SAW,PSD">
+    <div class="left">
+      <p class="eyebrow">Stage 3 · Our FDAP data</p>
+      <h1>Long touchdown is our #1</h1>
+      <div class="fdh" style="margin-top:16px"><span></span><span>Event, B738 fleet</span><span>High severity count</span><span></span></div>
+      <div class="fd" id="fd"></div>
+      <p class="dsrc">Source: FDAP Top 10 Risk Matrix Summary, sorted by High severity count. Period 1 Jan to 1 Apr 2026. Highlighted: landing-related events.</p>
+    </div>
+    <div class="right">
+      <div class="panel big-n rv h" data-step="1">
+        <div class="n">270</div>
+        <div class="t"><b>High-severity long touchdowns</b></div>
+        <div class="s">plus 727 medium and 1,813 low: 2,810 events in the period</div>
+      </div>
+      <div class="panel rv h" data-step="2" style="margin-top:12px;padding:16px 22px">
+        <h3 style="font-size:22px;margin-bottom:4px">FDM exceedance trends · SSQ 012/2026 · all increasing</h3>
+        <table class="ex">
+          <tr><th>Parameter</th><th>Criteria</th><th>Risk</th></tr>
+          <tr><td>Approach speed</td><td>&gt; +10 kt above Vapp</td><td><span class="rk hi">HIGH</span></td></tr>
+          <tr><td>Descent rate below 1,000 ft</td><td>&gt; 1,000 fpm</td><td><span class="rk hi">HIGH</span></td></tr>
+          <tr><td>V/S at touchdown</td><td>&gt; 360 fpm</td><td><span class="rk md">MED</span></td></tr>
+          <tr><td>Landing beyond zone</td><td>&gt; 900 m from threshold</td><td><span class="rk cr">CRITICAL</span></td></tr>
+          <tr><td>Unstabilised approach</td><td>below 1,000 ft IMC / 500 ft VMC</td><td><span class="rk cr">CRITICAL</span></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>Counts are copied from the FDAP dashboard slide in the RFT3 section (RFT4 deck slide 15), period 1 Jan to 1 Apr 2026. Long Touchdown: 270 high, 727 medium, 1,813 low. Landing-related high counts also shown: Pitch Rate High at Landing 156, Pitch Low at Touchdown 70, Late Reverser Use at Landing 58, Height Low at Threshold 56, High Vertical Speed at Touchdown 49. Ranks 3 to 5 (path low) are approach events and are shown for context. The dashboard names are shortened on screen in the source; the full event names were not visible.</p>
+      <p>Exceedance table: SSQ Bulletin 012/2026 (FDAP Bulletin 012/2026), effective 16 Apr 2026, section 2. The bulletin states that the trend is significant and increasing and that immediate corrective action is required.</p>
+      <p>Ask the pilot: which of these five was behind your last long touchdown? Most long landings start above the runway as an energy or path problem, not in the flare.</p>
+    </div>
+  </section>
+
+  <!-- 5 TDZ -->
+  <section class="slide s5" data-stage="3" data-comp="KNO*,PSD*,SAW">
+    <p class="eyebrow">Stage 3 · The zone</p>
+    <h1>900 m or go around</h1>
+    <svg id="rwSvg" viewBox="0 0 1728 300" role="img" aria-label="Runway from above: green touchdown zone for the first 900 metres, then red long landing zone beyond 900 metres">
+      <rect class="rwy" x="20" y="90" width="1688" height="120"/>
+      <rect class="tz1" x="20" y="90" width="560" height="120"/>
+      <rect class="tz2" x="580" y="90" width="1128" height="120"/>
+      <g fill="var(--fg)" opacity=".85">
+        <rect x="28" y="100" width="10" height="16"/><rect x="28" y="124" width="10" height="16"/><rect x="28" y="160" width="10" height="16"/><rect x="28" y="184" width="10" height="16"/>
+        <rect x="180" y="104" width="90" height="22"/><rect x="180" y="174" width="90" height="22"/>
+      </g>
+      <line x1="40" y1="150" x2="1690" y2="150" stroke="var(--fg)" stroke-width="3" stroke-dasharray="40 30" opacity=".5"/>
+      <line x1="580" y1="70" x2="580" y2="230" stroke="var(--accent)" stroke-width="5"/>
+      <text class="rl" x="300" y="64" style="fill:var(--ok)">TOUCHDOWN ZONE: TARGET</text>
+      <text class="rl" x="1144" y="64" style="fill:var(--bad)">LONG LANDING ZONE: OVERRUN RISK</text>
+      <text class="rl m" x="25" y="258" style="text-anchor:start">THRESHOLD</text>
+      <text class="rl m" x="225" y="258">AIMING POINT</text>
+      <text class="rl" x="580" y="258" style="fill:var(--accent-text)">900 m</text>
+    </svg>
+    <div class="cmp">
+      <div class="panel co rv h" data-step="1"><h3>Company limit</h3><p class="big">900 m</p><p>If the aircraft will not touch down within the first 900 m, execute an immediate go-around. Do not attempt to salvage the landing. <span class="src">SSQ 012/2026</span></p></div>
+      <div class="panel rv h" data-step="2"><h3>Boeing FCTM</h3><p class="big">3,000 ft</p><p>or the first third of the runway, whichever is less. <span class="v">VERIFY</span></p></div>
+      <div class="panel rv h" data-step="3"><h3>RFT3 key rule</h3><p class="big">1,000 ft</p><p>Aim to touch down within 1,000 ft of the threshold. <span class="v">VERIFY</span></p></div>
+    </div>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>The company document is SSQ Bulletin 012/2026, section 3: the touchdown zone is the first 900 m measured from the threshold. Touchdown beyond it significantly and rapidly reduces available stopping distance. The bulletin warning: if the aircraft will not touch down within the touchdown zone, an immediate go-around must be executed.</p>
+      <p><b>Three figures exist and do not agree.</b> The 900 m is the company limit and the one assessed in the simulator. The FCTM approach chapter describes a normal landing in the touchdown zone as the first 3,000 ft or first third of the runway, whichever is less. The RFT3 key rule slide says aim to touch down within 1,000 ft. The 1,000 ft is an aim, 900 m is the limit. Confirm with Training Standards how the grade slip words it.</p>
+      <p>The aiming point is shown without a distance because the figure depends on the runway marking. Read it from the chart for the runway used.</p>
+      <p>This is the go-around decision in flight. A go-around after touchdown is a separate procedure and is not covered here.</p>
+    </div>
+  </section>
+
+  <!-- 6 COST -->
+  <section class="slide s6" data-stage="3" data-comp="KNO*,FPM*,SAW">
+    <div class="left">
+      <p class="eyebrow">Stage 3 · How it builds up</p>
+      <h1>Height and float eat runway</h1>
+      <svg id="bdSvg" viewBox="0 0 860 250" role="img" aria-label="Runway distance used: added distance from height over the threshold and from floating, compared with the 900 metre zone length">
+        <rect x="20" y="40" width="820" height="46" class="rwy"/>
+        <rect id="zoneBar" x="20" y="40" width="0" height="46" class="tz1"/>
+        <text class="rl m" x="20" y="28" style="text-anchor:start">Added distance beyond the normal touchdown point</text>
+        <rect id="hBar" x="20" y="120" width="0" height="46" fill="var(--lift)" fill-opacity=".55"/>
+        <rect id="fBar" x="20" y="120" width="0" height="46" fill="var(--weight)" fill-opacity=".6"/>
+        <line id="zLine" x1="0" y1="30" x2="0" y2="176" stroke="var(--accent)" stroke-width="4" stroke-dasharray="8 6"/>
+        <text id="zTxt" class="rl m" x="0" y="106" style="fill:var(--accent-text);text-anchor:end">900 m zone</text>
+        <text id="hTxt" class="rl m" x="20" y="196" style="text-anchor:start;fill:var(--lift)">height</text>
+        <text id="fTxt" class="rl m" x="20" y="226" style="text-anchor:start;fill:var(--weight)">float</text>
+      </svg>
+      <div class="panel ctl"><label for="iH">HEIGHT OVER THRESHOLD</label><input id="iH" type="range" min="50" max="150" step="5" value="100"><output id="oH"></output></div>
+      <div class="panel ctl"><label for="iF">FLOAT AFTER FLARE</label><input id="iF" type="range" min="0" max="5" step="0.5" value="3"><output id="oF"></output></div>
+      <div class="panel ctl"><label for="iS">GROUND SPEED</label><input id="iS" type="range" min="110" max="160" step="5" value="140"><output id="oS"></output></div>
+      <div class="panel tot"><div class="n"><span id="tN">0</span><small> ft</small></div><div class="kv">Added runway used, <b id="tM">0</b> m</div><div class="kv" id="tZ"></div></div>
+    </div>
+    <div class="right">
+      <p class="eyebrow">What the FCTM says it costs</p>
+      <div id="costs"></div>
+      <p class="cnote">FCTM typical increase in dry-runway landing distance, sea level, standard day, flaps 40, maximum effort stop. Ranges reflect weight and variants. For training discussion only. Deceleration on the runway is about three times greater than in the air.</p>
+    </div>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>Calculator geometry: on a 3° path, each extra foot of height over the threshold is about 19 ft of runway (1 ÷ tan 3°), so 50 ft extra is about 950 ft, which matches the FCTM figure. Float distance is time times ground speed (1 kt is 1.688 ft per second), so 3 seconds at 140 kt is about 710 ft, inside the FCTM range of 515 to 775 ft. The values show distance added to the normal touchdown point; the real touchdown point also depends on the aim point and runway marking. Training discussion tool, not a performance tool.</p>
+      <p>Bars on the right: FCTM 6.36. Float 3 s after flare 515 to 775 ft (bar at the upper value shown). High over threshold 100 ft: 950 ft. Speedbrakes not extended 420 to 825 ft. No speedbrakes and no reversers 640 to 1,165 ft. Half brake pressure 600 to 1,530 ft. High approach speed +10 kt 170 to 310 ft. Bars use the upper end of each range, printed as a range.</p>
+      <p>FCTM 6.35: actual stopping distance for a maximum effort stop is about 60% of the dry runway field length dispatch requirement. Floating uses a large portion of the available runway.</p>
+    </div>
+  </section>
+
+  <!-- 7 PREVENT AND DECIDE -->
+  <section class="slide s7" data-stage="3" data-comp="PRO*,PSD*,FPM,SAW">
+    <p class="eyebrow">Stage 3 · Prevent and decide</p>
+    <h1>Stable, fly it on, or go around</h1>
+    <div class="cols">
+      <div class="panel rv h" data-step="1" data-comp="PRO*,SAW">
+        <h3>Stabilised by 1,000 ft IMC / 500 ft VMC</h3>
+        <ul><li>Correct flight path, small changes only</li><li>Approach speed: +10 to −5 kt, trending to speed</li><li>Landing configuration</li><li>Sink rate 1,000 fpm or less</li><li>Briefings and checklists done</li></ul>
+        <div class="callbox">PM: “STABILIZED” or “NON STABILIZED”<br>PF: “CHECKED, CONTINUE” or “CHECKED, GO-AROUND”</div>
+        <p class="why">SOP 20.3</p>
+      </div>
+      <div class="panel rv h" data-step="2" data-comp="FPM*,KNO">
+        <h3>Flare and touchdown</h3>
+        <ul><li>Do not float or hold it off</li><li>Fly it onto the runway at the touchdown point and speed</li><li>No trim in the flare</li><li>Touchdown at no less than VREF −5 kt</li><li>Thrust to idle at main gear touchdown</li></ul>
+        <p class="why">FCTM 6.7, 6.8 and landing roll</p>
+      </div>
+      <div class="panel rv h" data-step="3" data-comp="PSD*,SAW">
+        <h3>Decide</h3>
+        <ul><li>Will not touch down in the 900 m zone: go around now</li><li>Do not salvage the landing</li><li>PM speaks up early and clearly</li></ul>
+        <p class="why">SSQ 012/2026 · RFT3: “Go-around is safe”</p>
+      </div>
+    </div>
+    <div class="rule rv h" data-step="4" data-comp="PRO*,PSD*">Not stable, go around. Not in the zone, go around. Then stop with everything.</div>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>Stabilised criteria and call-outs are the SOP 20.3 text and the SOP call-out table. The SOP also lists ILS tolerances (within one dot of the glideslope and localizer) and special rules for specific approach types; see the SOP. OM-A 8.1.3.10 holds the company stabilised approach criteria and OM-A states the landing shall be executed within the touchdown zone.</p>
+      <p>Technique, not procedure: FCTM Chapter 6 flare text (6.7 and 6.8): fly the airplane onto the runway at the desired touchdown point and airspeed, no trim in the flare, a prolonged flare increases pitch 2° to 3° and raises tail strike risk. Autothrottle disconnected: maintain reference speed plus wind additive until the flare; the additive may be bled off before touchdown, plan to maintain gust correction until touchdown, touchdown no less than VREF −5 kt. All approach speed additives count in the landing distance.</p>
+      <p>Landing roll (FCTM Landing Roll, index 6.33): avoid touching down with thrust above idle; after main gear touchdown initiate the landing roll procedure and fly the nose wheels smoothly onto the runway without delay; if the speedbrakes do not extend automatically, move the lever to UP without delay. FCTM 6.35: deploy the speedbrake lever and activate reverse thrust with as little delay as possible, because they are most effective at high speed; speedbrakes fully deployed with maximum reverse and maximum manual antiskid braking give the minimum stopping distance. The PF/PM duties and call-outs are in the SOP landing chapter and the FCOM <span class="v">VERIFY SECTION</span>.</p>
+      <p>RFT3 takeaways: unstable approach, float or high energy, and delayed go-around are the main causes; the risks are reduced stopping margin and runway excursion.</p>
+    </div>
+  </section>
+
+  <!-- 8 SIMULATOR -->
+  <section class="slide s8" data-stage="4" data-comp="FPM*,SAW*,PSD*,PRO">
+    <p class="eyebrow">Stage 4 · How to perform in the simulator</p>
+    <h1>Four phases, one decision</h1>
+    <div class="phases">
+      <div class="panel phase rv h" data-step="1" data-comp="SAW*,PRO"><div class="ph">Approach</div><h3>Get stable</h3><ul><li>Brief the touchdown zone and aim point</li><li>Speed, path, configuration by the gate</li><li>PM calls the gate</li></ul></div>
+      <div class="panel phase rv h" data-step="2" data-comp="FPM*,SAW"><div class="ph">Threshold</div><h3>Cross it right</h3><ul><li>Correct height, no excess speed</li><li>Bleed off the additive</li><li>Watch the aim point</li></ul></div>
+      <div class="panel phase rv h" data-step="3" data-comp="FPM*,PSD"><div class="ph">Flare</div><h3>Land or go</h3><ul><li>Fly it on, do not float</li><li>No trim in the flare</li><li>Zone lost: go around</li></ul></div>
+      <div class="panel phase rv h" data-step="4" data-comp="PRO*,FPM"><div class="ph">Rollout</div><h3>Stop with everything</h3><ul><li>Spoilers, reverse, brakes</li><li>No delay</li><li>Directional control</li></ul></div>
+    </div>
+    <div class="scen">
+      <div class="panel sc rv h" data-step="5" data-comp="KNO*,SAW"><div class="t">Tail-wind trap</div><div class="c">10 kt tailwind</div><div class="f">Ground speed against airspeed: landing performance</div></div>
+      <div class="panel sc rv h" data-step="6" data-comp="PRO*,PSD"><div class="t">High-energy entry</div><div class="c">+15 kt at the threshold</div><div class="f">Enforce “NON STABILIZED” and the go-around</div></div>
+      <div class="panel sc rv h" data-step="7" data-comp="SAW*,FPM"><div class="t">Black hole</div><div class="c">Night, low visibility</div><div class="f">The height illusion: still touch down in the zone</div></div>
+    </div>
+    <p class="pm rv h" data-step="8" data-comp="PSD*,PRO*,SAW"><b>Debrief:</b> Where did the energy come from? What did you see at the gate? When did you decide?</p>
+    <div class="notes">
+      <h4>Instructor notes</h4>
+      <p>Scenarios are the three simulator scenarios for the IP in the RFT3 long landing section (RFT4 deck slide 21). They are INSTRUCTOR OPTIONS, not company procedures. The exact setup values (weight, runway, weather limits) are not in the source; choose them to suit the device and the pilot.</p>
+      <p>Watch for: speed above the target at the gate and no call; continuing when non-stabilised; float and holding off; touchdown past 900 m with no go-around; speedbrake or reverse late after touchdown; PM silent.</p>
+      <p>After the exercise note the competencies observed against the grade slip: FPM for flare and touchdown, SAW for gate and zone monitoring, PSD for the go-around decision.</p>
+      <p>Stage 3 references: FCTM Chapter 6 (6.7, 6.8, 6.33, 6.35, 6.36); SOP 20.3 and call-out tables; OM-A 8.1.3.10; SSQ Bulletin 012/2026; FDAP dashboard 1 Jan to 1 Apr 2026.</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <div class="count" id="count"></div>
+    <div class="credit">© Capt. Supakit Punyangam · Do not copy or distribute without permission</div>
+    <div class="corner">
+      <svg class="wheel" id="wheel" viewBox="0 0 200 200" role="img" aria-label="Competency pyramid, assessed ones highlighted"></svg>
+      <div class="cgrid" id="cgrid" aria-label="Nine competencies grid, assessed ones highlighted"></div>
+    </div>
+  </footer>
+</div>
+</div>
+
+<div id="controls" role="toolbar" aria-label="Presentation controls">
+  <button type="button" data-act="prev">← Prev</button>
+  <button type="button" data-act="next">Next →</button>
+  <button type="button" data-act="all" aria-pressed="false" title="Reveal everything (A)">Reveal all</button>
+  <button type="button" data-act="jump" title="Simulator stage (J)">To simulator</button>
+  <button type="button" data-act="notes" aria-pressed="false" title="Notes (N)">Notes</button>
+  <button type="button" data-act="theme" title="Theme (T)">Theme</button>
+  <button type="button" data-act="full" id="fullBtn" title="Fullscreen (F)">Fullscreen</button>
+</div>
+<aside id="notes" hidden aria-label="Instructor notes"></aside>
+<script>
+(function () {
+  var COMPS = [['KNO','Application of Knowledge'],['FPM','Aeroplane Flight Path Management, Manual Control'],['FPA','Aeroplane Flight Path Management, Automation'],
+    ['PRO','Application of Procedures and Compliance with Regulations'],['WLM','Workload Management'],['SAW','Situation Awareness and Management of Information'],
+    ['PSD','Problem Solving and Decision Making'],['COM','Communication'],['LTW','Leadership and Teamwork']];
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  var stage = $('#stage'), vp = $('#viewport'), slides = $$('.slide'), si = 0, st = 0, all = false;
+  function fit() { var s = Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080); stage.style.setProperty('--s', s > 0 ? s : 1); }
+  function buildGrid(el) { el.innerHTML = COMPS.map(function (c) { return '<div class="cell" data-c="' + c[0] + '" title="' + c[1] + '"><span class="c">' + c[0] + '</span><span class="n">' + c[1] + '</span></div>'; }).join(''); }
+  function paintGrid(el, spec) {
+    var m = {}; (spec || '').split(',').forEach(function (x) { if (x) m[x.replace('*', '')] = x.indexOf('*') > -1 ? 'p' : 's'; });
+    $$('.cell, .seg', el).forEach(function (c) { c.classList.remove('p', 's'); var k = m[c.dataset.c]; if (k) c.classList.add(k); });
+  }
+  function buildWheel(el) {
+    var out = '', order = ['PSD','SAW','WLM','PRO','FPA','FPM','KNO'], names = {}; COMPS.forEach(function (c) { names[c[0]] = c[1]; });
+    var top = 38, bot = 150, h = (bot - top) / order.length;
+    function wAt(y) { return 46 + 74 * (y - top) / (bot - top); }
+    order.forEach(function (code, i) {
+      var y0 = top + i * h, y1 = y0 + h, w0 = wAt(y0) / 2, w1 = wAt(y1) / 2;
+      var poly = (100 - w0).toFixed(1) + ',' + y0 + ' ' + (100 + w0).toFixed(1) + ',' + y0 + ' ' + (100 + w1).toFixed(1) + ',' + y1 + ' ' + (100 - w1).toFixed(1) + ',' + y1;
+      out += '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title><polygon class="sh" points="' + poly + '"/><text x="100" y="' + ((y0 + y1) / 2 + 4.2).toFixed(1) + '">' + code + '</text></g>';
+    });
+    var R = 92, C = 100;
+    function pt(d) { var a = d * Math.PI / 180; return [C + R * Math.sin(a), C - R * Math.cos(a)]; }
+    function arrow(code, d0, d1, ty) {
+      var a = pt(d0), b = pt(d1), r = d1 * Math.PI / 180, tx = Math.cos(r), tyv = Math.sin(r), nx = -tyv, ny = tx;
+      var tip = [b[0] + tx * 18, b[1] + tyv * 18], l = [b[0] + nx * 13, b[1] + ny * 13], rr = [b[0] - nx * 13, b[1] - ny * 13];
+      return '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title><path class="ar" d="M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + '"/><polygon class="ah" points="' + tip[0].toFixed(1) + ',' + tip[1].toFixed(1) + ' ' + l[0].toFixed(1) + ',' + l[1].toFixed(1) + ' ' + rr[0].toFixed(1) + ',' + rr[1].toFixed(1) + '"/><text class="at" x="100" y="' + ty + '">' + code + '</text></g>';
+    }
+    out += arrow('COM', -60, 56, 12.6); out += arrow('LTW', 120, 236, 196.4);
+    el.innerHTML = out;
+  }
+
+  /* FDAP Top 10 risk matrix, high severity count, 1 Jan to 1 Apr 2026 */
+  var FD = [
+    ['Long Touchdown', 270, 'hot'], ['Pitch Rate High at Landing', 156, 'rel'], ['Path Low at Low ALT AFE', 129, ''], ['Path Low at MED ALT AFE', 108, ''],
+    ['Continuously Low during Final', 102, ''], ['Pitch Low at Touchdown', 70, 'rel'], ['Pitch Low at Lift Off', 60, ''], ['Late Reverser Use at Landing', 58, 'rel'],
+    ['Height Low at Threshold', 56, 'rel'], ['High Vertical Speed at Touchdown', 49, 'rel']
+  ];
+  $('#fd').innerHTML = FD.map(function (r, i) {
+    return '<div class="fr ' + r[2] + '"><span class="n">' + (i + 1) + '</span><span>' + r[0] + '</span><span class="tr"><span class="bar" style="width:' + (r[1] / 270 * 100).toFixed(1) + '%"></span></span><span class="val">' + r[1] + '</span></div>';
+  }).join('');
+
+  /* FCTM 6.36 costs, ft (upper end drives the bar) */
+  var COST = [['Float 3 s after flare', '515–775', 775], ['High over threshold (100 ft)', '950', 950], ['High approach speed +10 kt', '170–310', 310],
+    ['Speedbrakes not extended', '420–825', 825], ['No speedbrakes, no reversers', '640–1,165', 1165], ['Half brake pressure', '600–1,530', 1530]];
+  $('#costs').innerHTML = COST.map(function (c, i) {
+    return '<div class="brow rv h" data-step="' + (i < 3 ? 1 : 2) + '" data-comp="KNO*,FPM"><span>' + c[0] + '</span><span class="tr"><span class="bar" style="width:' + (c[2] / 1530 * 100).toFixed(1) + '%"></span></span><span class="val">+' + c[1] + ' ft</span></div>';
+  }).join('');
+
+  /* calculator */
+  var iH = $('#iH'), iF = $('#iF'), iS = $('#iS');
+  function calc() {
+    var h = +iH.value, f = +iF.value, gs = +iS.value;
+    var hd = (h - 50) / Math.tan(3 * Math.PI / 180), fd = f * gs * 1.688, tot = hd + fd, zone = 900 / 0.3048;
+    $('#oH').innerHTML = h + '<small> ft</small>'; $('#oF').innerHTML = f.toFixed(1) + '<small> s</small>'; $('#oS').innerHTML = gs + '<small> kt</small>';
+    $('#tN').textContent = Math.round(tot).toLocaleString('en-US'); $('#tM').textContent = Math.round(tot * 0.3048);
+    var k = 820 / Math.max(zone * 1.2, tot * 1.05, 1);
+    var x0 = 20;
+    $('#zoneBar').setAttribute('width', (zone * k).toFixed(1));
+    $('#hBar').setAttribute('width', Math.max(0, hd * k).toFixed(1));
+    $('#fBar').setAttribute('x', (x0 + hd * k).toFixed(1)); $('#fBar').setAttribute('width', Math.max(0, fd * k).toFixed(1));
+    $('#zLine').setAttribute('x1', (x0 + zone * k).toFixed(1)); $('#zLine').setAttribute('x2', (x0 + zone * k).toFixed(1));
+    $('#zTxt').setAttribute('x', (x0 + zone * k - 8).toFixed(1));
+    $('#hTxt').textContent = 'height: ' + Math.round(hd) + ' ft'; $('#fTxt').textContent = 'float: ' + Math.round(fd) + ' ft';
+    
+    var pct = Math.round(tot / zone * 100);
+    $('#tZ').textContent = pct + '% of the 900 m (' + Math.round(zone).toLocaleString('en-US') + ' ft) zone length used before touchdown, on top of the normal point';
+  }
+  [iH, iF, iS].forEach(function (el) { el.addEventListener('input', calc); el.addEventListener('change', function () { el.blur(); }); });
+
+  var cgrid = $('#cgrid'), bigGrid = $('#bigGrid'), notes = $('#notes'), wheel = $('#wheel');
+  buildGrid(cgrid); buildGrid(bigGrid); buildWheel(wheel);
+  function maxStep(sl) { var m = 0; $$('[data-step]', sl).forEach(function (e) { m = Math.max(m, +e.dataset.step); }); return m; }
+  function render() {
+    var sl = slides[si], max = maxStep(sl), eff = all ? max : st;
+    slides.forEach(function (s, i) { s.classList.toggle('on', i === si); });
+    $$('[data-step]', sl).forEach(function (e) { var n = +e.dataset.step; e.classList.toggle('on', n <= eff); e.classList.toggle('cur', eff > 0 && n === eff); });
+    var spec = sl.dataset.comp;
+    if (eff > 0) { var cur = $$('[data-step]', sl).filter(function (e) { return +e.dataset.step === eff && e.dataset.comp; })[0]; if (cur) spec = cur.dataset.comp; }
+    paintGrid(cgrid, spec); paintGrid(wheel, spec);
+    if (sl.classList.contains('s2')) paintGrid(bigGrid, sl.dataset.comp);
+    $$('.stages li').forEach(function (li) { li.classList.toggle('on', li.dataset.s === sl.dataset.stage); });
+    var n = si + 1;
+    $('#count').innerHTML = '<b>0' + n + '</b> / 0' + slides.length + (max > 0 ? '  ·  ' + eff + '/' + max : '');
+    var nt = $('.notes', sl); notes.innerHTML = nt ? nt.innerHTML : '';
+    $('[data-act="all"]').setAttribute('aria-pressed', String(all));
+  }
+  function next() { var max = maxStep(slides[si]); if (!all && st < max) st++; else if (si < slides.length - 1) { si++; st = 0; } render(); }
+  function prev() { if (!all && st > 0) st--; else if (si > 0) { si--; st = maxStep(slides[si]); } render(); }
+  function jumpSim() { for (var i = 0; i < slides.length; i++) if (slides[i].dataset.stage === '4') { si = i; st = 0; render(); return; } }
+  function effTheme() { var t = document.documentElement.getAttribute('data-theme'); if (t) return t; return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; }
+  function toggleTheme() { var nt = effTheme() === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', nt); try { localStorage.setItem('llTheme', nt); } catch (e) {} }
+  function toggleNotes() { notes.hidden = !notes.hidden; $('[data-act="notes"]').setAttribute('aria-pressed', String(!notes.hidden)); }
+  function toggleFull() { try { if (document.fullscreenElement) document.exitFullscreen(); else { var p = document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(function () {}); } } catch (e) {} }
+  if (!document.fullscreenEnabled) $('#fullBtn').hidden = true;
+  $('#controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return; var a = b.dataset.act;
+    if (a === 'next') next(); else if (a === 'prev') prev(); else if (a === 'all') { all = !all; render(); }
+    else if (a === 'jump') jumpSim(); else if (a === 'notes') toggleNotes(); else if (a === 'theme') toggleTheme(); else if (a === 'full') toggleFull();
+    b.blur();
+  });
+  document.addEventListener('keydown', function (e) {
+    var tag = e.target && e.target.tagName;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); si = 0; st = 0; render(); }
+    else if (k === 'End') { e.preventDefault(); si = slides.length - 1; st = 0; render(); }
+    else if (k === 'n' || k === 'N') toggleNotes(); else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 't' || k === 'T') toggleTheme(); else if (k === 'a' || k === 'A') { all = !all; render(); } else if (k === 'j' || k === 'J') jumpSim();
+  });
+  var tx0 = null;
+  document.addEventListener('touchstart', function (e) { tx0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) { if (tx0 === null) return; var dx = e.changedTouches[0].clientX - tx0; tx0 = null; if (Math.abs(dx) > 60 && !e.target.closest('input,button,#notes')) { if (dx < 0) next(); else prev(); } }, { passive: true });
+  var idleT; function wake() { document.body.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(function () { document.body.classList.add('idle'); }, 3000); }
+  ['pointermove', 'pointerdown'].forEach(function (ev) { document.addEventListener(ev, wake); });
+  try { var sv = localStorage.getItem('llTheme'); if (sv === 'light' || sv === 'dark') document.documentElement.setAttribute('data-theme', sv); } catch (e) {}
+  window.addEventListener('resize', fit);
+  fit(); calc(); render(); wake();
+})();
+</script>
+</body>
+</html>

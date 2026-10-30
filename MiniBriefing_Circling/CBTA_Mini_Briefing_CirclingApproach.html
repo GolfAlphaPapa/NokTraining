@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circling Approach Briefing</title>
+<meta name="author" content="Capt. Supakit Punyangam">
+<meta name="copyright" content="© Capt. Supakit Punyangam">
+<!-- © Capt. Supakit Punyangam. Circling approach mini briefing. Do not copy or distribute without permission. -->
+<link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D1521; --panel: #152033; --panel2: #1D2C45; --line: #2E3F5C;
+  --fg: #EDF1F7; --muted: #9BA9BD;
+  --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #FFC72C; --accent-soft: rgba(255, 199, 44, 0.16);
+  --lift: #6DB7FF; --weight: #FF8F66;
+  --f-body: 'B612', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --f-mono: 'B612 Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --f-disp: 'Barlow Condensed', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #F2F5F9; --panel: #FFFFFF; --panel2: #E6ECF4; --line: #C5D0DF;
+    --fg: #111B2B; --muted: #53617A;
+    --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #7A5200; --accent-soft: rgba(255, 199, 44, 0.35);
+    --lift: #0B5FC0; --weight: #BF3B0B;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #F2F5F9; --panel: #FFFFFF; --panel2: #E6ECF4; --line: #C5D0DF;
+  --fg: #111B2B; --muted: #53617A;
+  --accent: #FFC72C; --accent-ink: #13171F; --accent-text: #7A5200; --accent-soft: rgba(255, 199, 44, 0.35);
+  --lift: #0B5FC0; --weight: #BF3B0B;
+  color-scheme: light;
+}
+html { height: 100%; box-sizing: border-box; }
+body {
+  height: 100%; box-sizing: border-box; margin: 0; overflow: hidden;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: var(--bg); color: var(--fg); font-family: var(--f-body);
+}
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+body.idle { cursor: none; }
+#viewport { position: relative; width: 100%; height: 100%; overflow: hidden; }
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; margin: -540px 0 0 -960px; transform: scale(var(--s, 1)); transform-origin: 50% 50%; }
+
+/* header */
+.top { position: absolute; left: 96px; right: 96px; top: 36px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand, .topic { font: 700 20px/1 var(--f-mono); letter-spacing: 0.16em; color: var(--muted); white-space: nowrap; }
+.stages { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.stages li { display: flex; gap: 10px; align-items: baseline; font: 400 20px/1 var(--f-mono); padding: 12px 18px; border: 1.5px solid var(--line); border-radius: 4px; color: var(--muted); }
+.stages li b { font-weight: 700; }
+.stages li.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+/* footer */
+.foot { position: absolute; left: 96px; right: 96px; bottom: 30px; height: 174px; display: flex; align-items: flex-end; justify-content: space-between; }
+.credit { position: absolute; left: 0; bottom: 40px; font: 400 17px/1 var(--f-mono); letter-spacing: 0.06em; color: var(--muted); white-space: nowrap; opacity: 0.85; user-select: none; }
+.count { font: 400 22px/1 var(--f-mono); color: var(--muted); }
+.count b { color: var(--fg); font-weight: 700; }
+.s1 .by { margin: 14px 0 0; font: 700 24px/1.2 var(--f-mono); letter-spacing: 0.08em; color: var(--accent-text); }
+
+/* competency grid + picture */
+.corner { display: flex; align-items: flex-end; gap: 24px; }
+.cgrid { display: grid; grid-template-columns: repeat(3, 54px); grid-auto-rows: 54px; gap: 6px; }
+.wheel { display: block; width: 174px; height: 174px; }
+.seg .sh { fill: var(--panel); stroke: var(--line); stroke-width: 1.5; transition: fill 0.25s, stroke 0.25s; }
+.seg .ar { fill: none; stroke: var(--line); stroke-width: 14; transition: stroke 0.25s; }
+.seg .ah { fill: var(--line); transition: fill 0.25s; }
+.seg text { font: 700 12.5px var(--f-mono); fill: var(--muted); text-anchor: middle; }
+.seg text.at { font-size: 10.5px; letter-spacing: 0.04em; }
+.seg.p .sh { fill: var(--accent); stroke: var(--accent); }
+.seg.p .ar { stroke: var(--accent); }
+.seg.p .ah { fill: var(--accent); }
+.seg.p text { fill: var(--accent-ink); }
+.seg.s .sh { fill: var(--accent-soft); stroke: var(--accent); }
+.seg.s .ar { stroke: var(--accent); stroke-opacity: 0.45; }
+.seg.s .ah { fill: var(--accent); fill-opacity: 0.45; }
+.seg.s text { fill: var(--accent-text); }
+.cell { display: grid; place-items: center; align-content: center; border: 1.5px solid var(--line); border-radius: 3px; color: var(--muted); transition: background 0.25s, color 0.25s, border-color 0.25s; }
+.cell .c { font: 700 16px/1 var(--f-mono); }
+.cell .n { display: none; }
+.cell.p { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cell.s { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.cgrid.big { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 160px; gap: 10px; }
+.cgrid.big .cell { padding: 10px 12px; gap: 8px; text-align: left; justify-items: start; }
+.cgrid.big .cell .c { font-size: 24px; }
+.cgrid.big .cell .n { display: block; font: 400 17px/1.25 var(--f-body); }
+
+/* slide frame */
+.slide { position: absolute; left: 96px; right: 96px; top: 128px; height: 742px; display: none; }
+.slide.on { display: block; }
+.eyebrow { margin: 0 0 16px; font: 700 22px/1 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-text); }
+h1 { margin: 0; font: 700 76px/1 var(--f-disp); letter-spacing: 0.005em; text-wrap: balance; }
+h3 { margin: 0 0 14px; font: 700 26px/1.2 var(--f-body); }
+.hint { margin: 14px 0 0; font-size: 26px; color: var(--muted); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 24px 28px; }
+.v { display: inline-block; margin-left: 8px; padding: 3px 8px; border: 1.5px solid var(--accent); border-radius: 3px; font: 700 15px/1 var(--f-mono); color: var(--accent-text); letter-spacing: 0.06em; vertical-align: 2px; white-space: nowrap; }
+
+/* reveal */
+.rv { opacity: 0; transition: opacity 0.35s ease, transform 0.35s ease; }
+.rv.h { transform: translateY(14px); }
+.rv.on { opacity: 1; }
+.rv.h.on { transform: none; }
+.focus .rv.on:not(.cur) { opacity: 0.5; }
+.notes { display: none; }
+@media (prefers-reduced-motion: reduce) { .rv, .cell { transition: none; } .rv.h { transform: none; } }
+
+/* slide 1 */
+.s1 h1 { font-size: 220px; line-height: 0.9; text-transform: uppercase; letter-spacing: 0.01em; }
+.s1 .sub { margin: 18px 0 0; font-size: 40px; color: var(--muted); }
+.roadmap { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.roadmap .panel { padding: 22px 26px; }
+.roadmap .num { font: 700 44px/1 var(--f-mono); color: var(--accent-text); }
+.roadmap .t { margin: 12px 0 6px; font: 700 30px/1.15 var(--f-body); }
+.roadmap .d { font-size: 22px; line-height: 1.35; color: var(--muted); }
+
+/* slide 2 */
+.s2 .wrap { display: grid; grid-template-columns: 1fr 640px; gap: 56px; margin-top: 24px; }
+.comp-list { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.comp { display: grid; grid-template-columns: 110px 1fr; gap: 22px; align-items: center; padding: 14px 22px; }
+.chip { display: grid; place-items: center; height: 56px; border: 1.5px solid var(--accent); border-radius: 4px; font: 700 26px/1 var(--f-mono); color: var(--accent-text); background: var(--accent-soft); }
+.chip.p { background: var(--accent); color: var(--accent-ink); }
+.comp .nm { font: 700 25px/1.2 var(--f-body); }
+.comp .ob { margin-top: 4px; font-size: 21px; line-height: 1.3; color: var(--muted); }
+.outcome { margin-top: 2px; padding: 16px 24px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 25px/1.3 var(--f-body); }
+
+/* slide 3 */
+.qs { display: grid; gap: 14px; margin-top: 22px; }
+.q { display: grid; grid-template-columns: 210px 1fr 130px; gap: 28px; align-items: center; padding: 18px 28px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+.q .lv { font: 700 20px/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.q p { margin: 0; font-size: 34px; line-height: 1.25; }
+.q .chip { height: 52px; font-size: 22px; }
+
+/* slide 4 */
+.s4.on { display: grid; grid-template-columns: 790px 1fr; gap: 64px; }
+.s4 .left, .s4 .right { min-width: 0; }
+#areaSvg { display: block; width: 790px; height: 582px; }
+.rwy { fill: var(--fg); }
+.rwyl { font: 700 20px var(--f-mono); fill: var(--bg); }
+.area { fill: var(--accent-soft); stroke: var(--accent-text); stroke-width: 3; transition: d 0.3s; }
+.rline { stroke: var(--accent-text); stroke-width: 3; stroke-dasharray: 8 6; }
+.thr { fill: var(--accent-text); }
+.lbl { font: 700 26px var(--f-mono); }
+.lbl.acc { fill: var(--accent-text); } .lbl.muted { fill: var(--muted); } .lbl.big { font-size: 40px; fill: var(--fg); }
+.scalebar { stroke: var(--muted); stroke-width: 4; }
+.pre { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.pre button { font: 700 18px/1 var(--f-mono); padding: 12px 10px; color: var(--fg); background: var(--panel); border: 1.5px solid var(--line); border-radius: 4px; cursor: pointer; }
+.pre button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.readout { display: grid; grid-template-columns: auto 1fr; gap: 6px 32px; align-items: center; margin-top: 14px; padding: 16px 28px; }
+.readout .n { grid-row: span 2; font: 700 96px/0.95 var(--f-disp); color: var(--lift); }
+.readout .n small { font-size: 40px; margin-left: 6px; color: var(--muted); }
+.readout .kv { font-size: 25px; line-height: 1.3; }
+.readout .kv b { font-family: var(--f-mono); }
+.bars { grid-column: 1 / -1; display: grid; grid-template-columns: 80px 1fr 70px; gap: 6px 14px; align-items: center; font: 400 18px/1 var(--f-mono); color: var(--muted); margin-top: 4px; }
+.track { height: 14px; background: var(--panel2); border-radius: 2px; overflow: hidden; }
+.fill { height: 100%; transition: width 0.25s; }
+.fill.a { background: var(--muted); } .fill.b { background: var(--lift); }
+.chain { list-style: none; margin: 12px 0 0; padding: 0; }
+.chain li { display: grid; grid-template-columns: 52px 1fr; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 26px; line-height: 1.2; }
+.chain li .k { font: 700 22px/1 var(--f-mono); color: var(--accent-text); }
+.chain li:last-child { border-bottom: 0; }
+.chain li:last-child span:last-child { font-weight: 700; }
+
+/* slide 5 */
+.s5.on { display: grid; grid-template-columns: 820px 1fr; gap: 64px; }
+.s5 .left, .s5 .right { min-width: 0; }
+.tbl { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 30px; }
+.tbl th { font: 700 19px/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0 16px 12px; }
+.tbl td { padding: 16px; border-top: 1px solid var(--line); }
+.tbl td:first-child { font: 700 34px/1 var(--f-mono); color: var(--accent-text); }
+.tbl td.num { font: 700 38px/1 var(--f-disp); }
+.tbl-note { margin: 16px 0 0; font-size: 22px; line-height: 1.35; color: var(--muted); }
+.gates { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 22px; }
+.gate { padding: 16px 22px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; }
+.gate b { display: block; font: 700 54px/1 var(--f-disp); }
+.gate span { font-size: 22px; line-height: 1.3; }
+.fsf { margin-top: 18px; font-size: 24px; line-height: 1.35; color: var(--muted); }
+.fsf b { color: var(--fg); }
+
+/* slide 6 */
+.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 26px; }
+.col { min-width: 0; }
+.col .tag { margin: 0 0 14px; font: 700 22px/1 var(--f-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-text); }
+.col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.col li { padding-bottom: 16px; border-bottom: 1px solid var(--line); font-size: 28px; line-height: 1.3; }
+.col li:last-child { border-bottom: 0; }
+.col li b { font-family: var(--f-mono); font-size: 25px; }
+.col li .d { display: block; margin-top: 6px; color: var(--muted); font-size: 24px; }
+.fn { position: absolute; left: 0; right: 0; bottom: 0; font-size: 22px; color: var(--muted); }
+
+/* slide 7 */
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 22px; }
+.phase { min-width: 0; padding: 20px 22px; }
+.phase .ph { font: 700 19px/1 var(--f-mono); letter-spacing: 0.12em; color: var(--accent-text); text-transform: uppercase; }
+.phase h3 { margin: 8px 0 12px; font-size: 32px; }
+.phase ul { margin: 0; padding-left: 24px; display: grid; gap: 8px; font-size: 23px; line-height: 1.28; }
+.tols { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-top: 18px; }
+.tol { display: flex; align-items: baseline; gap: 12px; padding: 12px 22px; background: var(--accent); color: var(--accent-ink); border-radius: 4px; }
+.tol span { font: 700 19px/1 var(--f-mono); letter-spacing: 0.1em; }
+.tol b { font: 700 38px/1 var(--f-disp); }
+.pm { margin-top: 14px; font-size: 24px; line-height: 1.35; color: var(--muted); }
+.pm b { color: var(--fg); }
+
+/* slide 8 */
+.s8.on { display: grid; grid-template-columns: 1fr 640px; gap: 64px; }
+.s8 .left, .s8 .right { min-width: 0; }
+.mcp { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 10px; }
+.mcp li { display: grid; grid-template-columns: 56px 220px 1fr; gap: 18px; align-items: center; padding: 12px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 24px; line-height: 1.28; }
+.mcp .k { font: 700 28px/1 var(--f-mono); color: var(--accent-text); }
+.mcp .w { font: 700 21px/1.2 var(--f-mono); letter-spacing: 0.04em; }
+.mcp .w small { display: block; margin-top: 4px; font: 400 17px/1.2 var(--f-body); color: var(--muted); letter-spacing: 0; }
+.donts { margin-top: 20px; padding: 22px 26px; border: 2px solid var(--weight); border-radius: 6px; background: var(--panel); }
+.donts h3 { color: var(--weight); }
+.donts ul { margin: 0; padding-left: 26px; display: grid; gap: 14px; font-size: 25px; line-height: 1.3; }
+.donts li b { font-family: var(--f-mono); font-size: 22px; }
+.fma { margin-top: 20px; padding: 18px 24px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 25px/1.3 var(--f-body); }
+
+/* slide 9 */
+.pats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+.pat { min-width: 0; padding: 18px 20px; }
+.pat svg { display: block; width: 100%; height: auto; }
+.pat h3 { margin: 10px 0 8px; font-size: 27px; }
+.pat .pc { font-size: 21px; line-height: 1.3; }
+.pat .pc b { font-family: var(--f-mono); font-size: 18px; letter-spacing: 0.06em; }
+.pat .pro b { color: var(--lift); } .pat .con b { color: var(--weight); }
+.pat .pc p { margin: 4px 0 0; }
+.pr { fill: var(--fg); } .prl { font: 700 15px var(--f-mono); fill: var(--bg); }
+.trk { fill: none; stroke: var(--accent-text); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+.trk2 { fill: none; stroke: var(--line); stroke-width: 2; stroke-dasharray: 5 6; }
+.mka { fill: var(--accent-text); }
+.pl { font: 400 14px var(--f-mono); fill: var(--muted); }
+
+/* slide 10 */
+.s10.on { display: grid; grid-template-columns: 1130px 1fr; gap: 60px; }
+.s10 .left, .s10 .right { min-width: 0; }
+.errs { display: grid; gap: 8px; margin-top: 18px; }
+.erow { display: grid; grid-template-columns: 300px 360px 1fr; gap: 18px; padding: 11px 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; font-size: 20px; line-height: 1.28; }
+.erow.head { background: transparent; border-color: transparent; padding: 0 18px; font: 700 17px/1 var(--f-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.erow b { font-weight: 700; }
+.erow .fx { color: var(--accent-text); font-weight: 700; }
+.thr-l { margin-top: 14px; font-size: 22px; line-height: 1.35; color: var(--muted); }
+.thr-l b { color: var(--fg); }
+.debrief { margin-top: 18px; padding: 26px; background: var(--panel); border: 1px solid var(--accent); border-radius: 6px; }
+.debrief ol { margin: 0; padding-left: 36px; display: grid; gap: 24px; font-size: 30px; line-height: 1.3; }
+.debrief ol li::marker { font: 700 26px var(--f-mono); color: var(--accent-text); }
+
+/* slide 11 */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 28px; }
+.stat { padding: 22px 26px; }
+.stat .num { font: 700 112px/0.95 var(--f-disp); color: var(--lift); white-space: nowrap; }
+.stat .cap { margin-top: 10px; font-size: 24px; line-height: 1.3; color: var(--muted); }
+.why { margin-top: 26px; font-size: 34px; line-height: 1.35; max-width: 1500px; }
+.remember { margin-top: 22px; padding: 24px 32px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; font: 700 44px/1.2 var(--f-disp); letter-spacing: 0.01em; }
+
+/* controls and notes */
+#controls { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(12px, env(safe-area-inset-bottom, 0px)); display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 6px; max-width: calc(100% - 32px); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; z-index: 20; transition: opacity 0.3s; }
+body.idle #controls { opacity: 0; pointer-events: none; }
+#controls button { font: 700 14px/1 var(--f-mono); color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; cursor: pointer; }
+#controls button:hover { border-color: var(--accent); }
+#controls button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+#notes { position: fixed; left: 0; right: 0; bottom: 0; max-height: 44vh; overflow: auto; z-index: 15; background: var(--panel); border-top: 2px solid var(--accent); font: 400 17px/1.5 var(--f-body); color: var(--fg); padding: 16px max(24px, env(safe-area-inset-right, 0px)) 72px max(24px, env(safe-area-inset-left, 0px)); }
+#notes h4 { margin: 0 0 6px; font: 700 14px/1 var(--f-mono); letter-spacing: 0.14em; color: var(--accent-text); text-transform: uppercase; }
+#notes p { margin: 0 0 8px; max-width: 110ch; }
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <header class="top">
+      <div class="brand">NOK AIR · TRAINING</div>
+      <ol class="stages" aria-label="CBTA stages">
+        <li data-s="1"><b>1</b> Competencies</li>
+        <li data-s="2"><b>2</b> Questions</li>
+        <li data-s="3"><b>3</b> Knowledge</li>
+        <li data-s="4"><b>4</b> Simulator</li>
+      </ol>
+      <div class="topic">CIRCLING APPROACH · B737-800</div>
+    </header>
+
+    <!-- 1 TITLE -->
+    <section class="slide s1" data-stage="0" data-comp="">
+      <p class="eyebrow">Competency-based training · mini briefing</p>
+      <h1>Circling Approach</h1>
+      <p class="sub">Protected area · procedure · MCP set-up · track patterns · Boeing 737-800 · Full flight simulator</p>
+      <p class="by">Prepared by Capt. Supakit Punyangam</p>
+      <div class="roadmap">
+        <div class="panel"><div class="num">1</div><div class="t">Competencies</div><div class="d">What we will assess</div></div>
+        <div class="panel"><div class="num">2</div><div class="t">Questions</div><div class="d">What you already know</div></div>
+        <div class="panel"><div class="num">3</div><div class="t">Knowledge</div><div class="d">Why the area exists, the rules, where it is written</div></div>
+        <div class="panel"><div class="num">4</div><div class="t">Simulator</div><div class="d">Procedure, MCP set-up, patterns, errors</div></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>About 15 minutes. Controls: arrow keys or page keys to step, N notes (keep notes off the projector), F fullscreen, A reveal everything on a slide, T light or dark.</p>
+        <p>Order follows the agreed CBTA outline: competencies, questions, knowledge (design background first, then rules and references), then how to perform in the simulator. The grid and picture in the bottom-right corner show which competencies are assessed on each slide: solid for primary, outlined for secondary.</p>
+        <p>Sources used for this draft: B737 FCTM Rev 25 (Approach and Missed Approach, pp. 5.69 to 5.73), company OM-A Issue 08 Rev 00 (Circling Operations, pp. 8-57 to 8-62), SOP, and FTM MN3-LAD-0032. Items tagged VERIFY come from general knowledge and must be checked before presenting.</p>
+      </div>
+    </section>
+
+    <!-- 2 COMPETENCIES -->
+    <section class="slide s2" data-stage="1" data-comp="PRO*,FPA,SAW,WLM,FPM">
+      <p class="eyebrow">Stage 1 · Assessment competencies</p>
+      <h1>What we are assessing</h1>
+      <div class="wrap">
+        <div class="comp-list">
+          <div class="panel comp"><div class="chip p">PRO</div><div><div class="nm">Application of Procedures and Compliance with Regulations</div><div class="ob">Applies the OM-A circling rules and the FCTM procedure: minima, landing gate, missed approach.</div></div></div>
+          <div class="panel comp"><div class="chip">FPA</div><div><div class="nm">Aeroplane Flight Path Management, Automation</div><div class="ob">Chooses the right modes to MDA(H), level off and maneuver, and disconnects at the right time.</div></div></div>
+          <div class="panel comp"><div class="chip">SAW</div><div><div class="nm">Situation Awareness and Management of Information</div><div class="ob">Keeps the runway in sight and knows the position inside the protected area.</div></div></div>
+          <div class="panel comp"><div class="chip">WLM</div><div><div class="nm">Workload Management</div><div class="ob">Configures and decelerates before the base turn, so the final turn has spare capacity.</div></div></div>
+          <div class="outcome">Outcome: the pilot circles within the protected area, configured by 500 ft and stable by 300 ft AAL, or goes around.</div>
+        </div>
+        <div class="cgrid big" id="bigGrid" aria-label="Boeing nine competencies"></div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Primary competency is PRO (solid), because circling is rule-driven (minima, gates, go-around criteria). FPA, SAW and WLM are secondary and shown outlined. FPM (outlined in the grid) is assessed once the autopilot is disconnected on the visual profile.</p>
+        <p>Observable behaviors are examples. Replace them with the exact OB wording from the current grade slip and competency framework. Read the outcome line aloud before any question is asked.</p>
+      </div>
+    </section>
+
+    <!-- 3 QUESTIONS -->
+    <section class="slide s3 focus" data-stage="2" data-comp="PRO*,FPA,SAW,KNO">
+      <p class="eyebrow">Stage 2 · Assessment questions</p>
+      <h1>What do you already know?</h1>
+      <p class="hint">Think first. Answer aloud before the next question appears.</p>
+      <div class="qs">
+        <div class="q rv h" data-step="1" data-comp="KNO*,PRO"><span class="lv">Understand</span><p>What does the circling MDA(H) protect, and what sets the size of that area?</p><span class="chip">KNO</span></div>
+        <div class="q rv h" data-step="2" data-comp="PRO*"><span class="lv">Recall</span><p>What are the company minimum MDH and VIS for your circling category, and when must you be configured and stable?</p><span class="chip">PRO</span></div>
+        <div class="q rv h" data-step="3" data-comp="FPA*,PRO"><span class="lv">Apply</span><p>Which MCP modes do you use down to the MDA(H) and while maneuvering, and which one do you avoid?</p><span class="chip">FPA</span></div>
+        <div class="q rv h" data-step="4" data-comp="SAW*,WLM"><span class="lv">Apply</span><p>You lose sight of the runway on the downwind leg. What do you do, and which way do you turn?</p><span class="chip">SAW</span></div>
+      </div>
+      <div class="notes">
+        <h4>Expected answers and probes</h4>
+        <p><b>Q1 (KNO).</b> Obstacle clearance within a defined area. It is built from circles around each runway threshold joined by tangents. The radius depends on the maximum circling IAS (and on MDA for the newer FAA criteria). Faster means a bigger area, more terrain and a higher MDA(H). Probe: why does flying slower help twice? (smaller area, smaller turn radius.)</p>
+        <p><b>Q2 (PRO).</b> OM-A Table 8.1.3.12.3: MDH A 400, B 500, C 600, D 700 ft; minimum VIS A 1,500, B 1,600, C 2,400, D 3,600 m. Never below the published Jeppesen circling minima. Configured by 500 ft AAL, maneuvering complete by 300 ft AAL, stabilised or go-around. Probe: is MDA a height or an altitude?</p>
+        <p><b>Q3 (FPA).</b> VNAV or V/S down to MDA(H), ALT HLD or VNAV ALT to level, HDG SEL to maneuver. Avoid APP: it does not level off at the MCP altitude and leaving it needs a go-around or autopilot and F/D off. Probe: what happens to VNAV ALT if the MCP altitude is higher than the MDA?</p>
+        <p><b>Q4 (SAW).</b> Runway environment must remain in visual contact at all times. If lost, go around: climbing turn in the shortest direction toward the landing runway, which may be more than 180 degrees, then intercept the missed approach course. Probe: why toward the runway?</p>
+        <p>Pause after each question. Do not advance until the pilot has committed to an answer.</p>
+      </div>
+    </section>
+
+    <!-- 4 THEORY: PROTECTED AREA -->
+    <section class="slide s4" data-stage="3" data-comp="KNO*,PRO">
+      <div class="left">
+        <svg id="areaSvg" viewBox="0 0 760 560" role="img" aria-label="Circling protected area: a circle of radius r around each runway threshold joined by tangent lines, with radius set by maximum IAS">
+          <path id="areaPath" class="area" d=""/>
+          <line id="rLine" class="rline" x1="420" y1="280" x2="500" y2="200"/>
+          <rect class="rwy" x="340" y="272" width="80" height="16" rx="3"/>
+          <text class="rwyl" x="380" y="285" text-anchor="middle">RWY</text>
+          <circle class="thr" cx="340" cy="280" r="6"/>
+          <circle class="thr" cx="420" cy="280" r="6"/>
+          <text id="tR" class="lbl acc" x="470" y="236">r</text>
+          <text id="tIas" class="lbl big" x="20" y="48">180 kt</text>
+          <text id="tSrc" class="lbl muted" x="20" y="84" style="font-size:20px">ICAO Cat C</text>
+          <line class="scalebar" x1="20" y1="512" x2="70" y2="512"/>
+          <text class="lbl muted" x="82" y="519" style="font-size:20px">1 nm</text>
+          <text class="lbl muted" x="20" y="544" style="font-size:16px">Runway drawn schematic, about 1.6 nm</text>
+        </svg>
+        <div class="pre" role="group" aria-label="Maximum circling speed">
+          <button type="button" data-i="0">FAA C · 140 kt</button>
+          <button type="button" data-i="1">FAA D · 165 kt</button>
+          <button type="button" data-i="2" aria-pressed="true">ICAO C · 180 kt</button>
+          <button type="button" data-i="3">ICAO D · 205 kt</button>
+        </div>
+      </div>
+      <div class="right">
+        <p class="eyebrow">Stage 3 · Theoretical knowledge</p>
+        <h1>Speed sets the area</h1>
+        <div class="panel readout">
+          <div class="n"><span id="rOut">4.2</span><small>nm</small></div>
+          <div class="kv">Radius from each threshold</div>
+          <div class="kv">Max circling IAS <b id="iasOut">180 kt</b></div>
+          <div class="bars">
+            <span>Smallest</span><div class="track"><div class="fill a" style="width:32%"></div></div><span>1.70</span>
+            <span>Now</span><div class="track"><div class="fill b" id="barNow" style="width:80%"></div></div><span id="barVal">4.20</span>
+          </div>
+        </div>
+        <ol class="chain">
+          <li class="rv" data-step="1"><span class="k">1</span><span>Plate shows maximum IAS, not just a category</span></li>
+          <li class="rv" data-step="2"><span class="k">2</span><span>Area: circle at each threshold, joined by tangents</span></li>
+          <li class="rv" data-step="3"><span class="k">3</span><span>Faster aircraft: larger radius, more terrain to clear</span></li>
+          <li class="rv" data-step="4"><span class="k">4</span><span>More terrain: higher circling minimum</span></li>
+          <li class="rv" data-step="5"><span class="k">5</span><span>Slower also gives a smaller turn radius</span></li>
+          <li class="rv" data-step="6"><span class="k">6</span><span>Ground track must never leave the area</span></li>
+        </ol>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Use the four buttons (or keys 1 to 4 on this slide) to show how the area grows. Radii are from the 737 FCTM, Obstruction Clearance, p. 5.71: FAA 140 kt 1.7 nm, FAA 165 kt 2.3 nm, ICAO 180 kt 4.2 nm, ICAO 205 kt 5.28 nm. The FCTM also notes newer FAA criteria (procedures developed from 2013, inverse C icon) use larger radii that also depend on circling altitude, for example Cat C 2.7 nm and Cat D 3.6 nm at 1,000 ft or less.</p>
+        <p>Boeing wording: circling minima use the weather minima for the anticipated circling speed, and the pilot must adjust heading and timing so the ground track does not exceed the obstruction clearance distance from the runway at any time. The plate in use always overrides the generic radii shown here (VERIFY against the Jeppesen chart).</p>
+        <p>Reveal the chain one line at a time and ask "and then what?" before each step.</p>
+      </div>
+    </section>
+
+    <!-- 5 THEORY: MINIMA AND COMPANY RULES -->
+    <section class="slide s5" data-stage="3" data-comp="PRO*,KNO">
+      <div class="left">
+        <p class="eyebrow">Stage 3 · Company minima and gates</p>
+        <h1>Minimums and rules</h1>
+        <div class="rv h" data-step="1">
+          <table class="tbl">
+            <thead><tr><th>Category</th><th>Min MDH</th><th>Min VIS</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td class="num">400 ft</td><td class="num">1,500 m</td></tr>
+              <tr><td>B</td><td class="num">500 ft</td><td class="num">1,600 m</td></tr>
+              <tr><td>C</td><td class="num">600 ft</td><td class="num">2,400 m</td></tr>
+              <tr><td>D</td><td class="num">700 ft</td><td class="num">3,600 m</td></tr>
+            </tbody>
+          </table>
+          <p class="tbl-note">OM-A Table 8.1.3.12.3. Use the published Jeppesen minima, never less than this table. MDH is a height above aerodrome, MDA is an altitude. <span class="v">VERIFY YOUR CATEGORY</span></p>
+        </div>
+        <div class="gates rv h" data-step="2">
+          <div class="gate"><b>500 ft AAL</b><span>Fully configured for landing</span></div>
+          <div class="gate"><b>300 ft AAL</b><span>Maneuvering complete, stable, or go-around</span></div>
+        </div>
+      </div>
+      <div class="right">
+        <h3 style="margin-top:6px">Rules you will be graded on</h3>
+        <ol class="chain">
+          <li class="rv" data-step="3"><span class="k">1</span><span>Runway environment in visual contact at all times</span></li>
+          <li class="rv" data-step="4"><span class="k">2</span><span>No descent below MDA(H) until the threshold is identified and a normal descent to the touchdown zone is possible</span></li>
+          <li class="rv" data-step="5"><span class="k">3</span><span>Circle at the circling MDA(H): that keeps you inside the area</span></li>
+          <li class="rv" data-step="6"><span class="k">4</span><span>Not stable, in profile and on centerline at 300 ft: go around</span></li>
+          <li class="rv" data-step="7"><span class="k">5</span><span>Night landing from a circling approach needs PAPI or VASI</span></li>
+        </ol>
+        <p class="fsf rv h" data-step="8">Flight Safety Foundation CFIT studies: runway-aligned approaches are some <b>25 times safer</b> than circling approaches. <span class="v">OM-A 8.1.3.12.3</span></p>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>All numbers on this slide are from company OM-A Issue 08 Rev 00, Chapter 8, Circling Operations (pp. 8-57 to 8-62). The gate rule (500 ft configured, 300 ft complete) is OM-A; SOP and FCTM also say wings level on final by 300 ft AFE.</p>
+        <p>Ask which category the B737-800 is flown in at the pilot's airport and why (circling speed and Vref). The category is not stated in the pages read, so it is tagged VERIFY. Night rule: initial approach is an instrument approach with a break at MDA/H to circling, and the PIC must expect to keep visual contact until landing.</p>
+        <p>The 25 times statistic is quoted by OM-A from FSF CFIT studies.</p>
+      </div>
+    </section>
+
+    <!-- 6 REFERENCES -->
+    <section class="slide s6" data-stage="3" data-comp="KNO*,PRO">
+      <p class="eyebrow">Stage 3 · References</p>
+      <h1>Where it is written</h1>
+      <div class="cols3">
+        <section class="col rv h" data-step="1">
+          <p class="tag">Company</p>
+          <ul>
+            <li><b>OM-A Issue 08 Rev 00</b><span class="d">Ch 8, Circling Operations, pp. 8-57 to 8-62; Table 8.1.3.12.3; night and daylight circling</span></li>
+            <li><b>SOP MN4-FLO-0025</b><span class="d">Brief a missed approach for specific points along the circling pattern; wings level at 300 ft AFE <span class="v">VERIFY SECTION</span></span></li>
+            <li><b>FTM MN3-LAD-0032</b><span class="d">Item 3.8.5: approach to circling minima and circling to a runway at least 90° off final (tri-annual) <span class="v">VERIFY LIST</span></span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="2">
+          <p class="tag">Regulation</p>
+          <ul>
+            <li><b>CAAT AOCR</b><span class="d">Basis of circling operations and training <span class="v">VERIFY</span></span></li>
+            <li><b>AMC7 CAT.OP.MPA.110</b><span class="d">Circling minima: MDH not below published OCH, Table minimum, or preceding approach DH/MDH (quoted in OM-A)</span></li>
+            <li><b>Jeppesen chart</b><span class="d">Circling minima and maximum IAS for the procedure in use</span></li>
+          </ul>
+        </section>
+        <section class="col rv h" data-step="3">
+          <p class="tag">Boeing</p>
+          <ul>
+            <li><b>FCTM 737 NG Rev 25</b><span class="d">Ch 5, Circling Approach, pp. 5.69 to 5.73: general, obstruction clearance, one engine, missed approach</span></li>
+            <li><b>FCTM Ch 5, p. 5.4</b><span class="d">Obstruction Clearance for a Circling Approach</span></li>
+            <li><b>FCOM</b><span class="d">AFDS modes and FMA <span class="v">VERIFY SECTION</span></span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="fn">VERIFY marks items taken from general knowledge or from a list whose context was not confirmed. Check against the current manual revision before the session.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Show one column at a time. Page references were read from the manuals in the library: FCTM Rev 25 (page footer February 27, 2026), OM-A Issue 08 Rev 00 (30 Jan 2026), SOP Issue 04 Rev 00. FTM item 3.8.5 appears in the list of PPC items with the wording "approach to authorized circling minima, followed by a circling approach to a runway 90° or more off the final approach centerline (tri-annual requirement)". Confirm which list in the FTM this item belongs to before quoting it.</p>
+      </div>
+    </section>
+
+    <!-- 7 SIMULATOR: PROCEDURE -->
+    <section class="slide s7" data-stage="4" data-comp="PRO*,SAW,WLM,FPM">
+      <p class="eyebrow">Stage 4 · How to perform in the simulator</p>
+      <h1>Four phases, one sequence</h1>
+      <div class="phases">
+        <div class="panel phase rv h" data-step="1" data-comp="PRO*,WLM">
+          <div class="ph">Brief</div><h3>Before the FAF</h3>
+          <ul><li>Max circling IAS and MDA(H) from the plate</li><li>Pattern side, runway, PAPI, wind additive</li><li>Missed approach for points along the pattern</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="2" data-comp="PRO*,SAW">
+          <div class="ph">Level off</div><h3>At MDA(H)</h3>
+          <ul><li>Gear down, Flaps 15, speedbrake armed</li><li>Flaps 15 maneuver speed</li><li>Runway in sight, then maneuver</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="3" data-comp="SAW*,WLM">
+          <div class="ph">Maneuver</div><h3>Stay in the area</h3>
+          <ul><li>Fly the pattern at circling MDA(H)</li><li>Landing flaps before the base turn</li><li>Decelerate to approach speed plus wind</li><li>Landing checklist</li></ul>
+        </div>
+        <div class="panel phase rv h" data-step="4" data-comp="FPM*,PRO">
+          <div class="ph">Final</div><h3>Visual profile</h3>
+          <ul><li>Turn to final aiming at the inside edge of the threshold</li><li>Descend only after intercepting the visual profile</li><li>Wings level, stable by 300 ft</li></ul>
+        </div>
+      </div>
+      <div class="tols">
+        <div class="tol"><span>CONFIGURED</span><b>500 ft AAL</b></div>
+        <div class="tol"><span>STABLE</span><b>300 ft AAL</b></div>
+        <div class="tol"><span>WINGS LEVEL</span><b>300 ft AFE</b></div>
+        <span class="v" style="margin:0">OM-A 8.1.3.12.3 · FCTM 5.69</span>
+      </div>
+      <p class="pm rv h" data-step="5" data-comp="PRO*,PSD,SAW"><b>Missed approach while circling:</b> climbing turn in the shortest direction toward the landing runway (it may be more than 180°), intercept the missed approach course, keep the missed approach flaps until close-in maneuvering is complete.</p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Demonstrate right after this slide. Sequence is from FCTM Circling Approach – General (p. 5.70): gear down, Flaps 15, Flaps 15 maneuver speed; select landing flaps and decelerate before the turn to base; aim at the inside edge of the threshold when turning to final; do not descend below MDA(H) until intercepting the visual descent profile.</p>
+        <p>PM role: monitors position against the area, speed and configuration, and calls deviations. The exact callout wording is company SOP, so confirm it before adding callouts to the slide (VERIFY).</p>
+        <p>Competency tags follow the phase on screen. Scanning and position awareness are SAW and WLM, not FPM. FPM is assessed from the moment the autopilot is disconnected on the visual profile.</p>
+        <p>Missed approach text is from FCTM p. 5.73.</p>
+      </div>
+    </section>
+
+    <!-- 8 SIMULATOR: MCP SET-UP -->
+    <section class="slide s8" data-stage="4" data-comp="FPA*,PRO,FPM">
+      <div class="left">
+        <p class="eyebrow">Stage 4 · MCP set-up</p>
+        <h1>Modes, step by step</h1>
+        <ol class="mcp">
+          <li class="rv h" data-step="1" data-comp="FPA*,PRO"><span class="k">1</span><span class="w">VNAV or V/S<small>FAF to MDA(H)</small></span><span>Set MCP altitude to MDA(H); if it is not a round 100, set the next 100 ft above and circle at that altitude</span></li>
+          <li class="rv h" data-step="2" data-comp="FPA*"><span class="k">2</span><span class="w">ALT HLD / VNAV ALT<small>Level at MDA(H)</small></span><span>Before maneuvering, set the missed approach altitude</span></li>
+          <li class="rv h" data-step="3" data-comp="FPA*,PRO"><span class="k">3</span><span class="w">HDG SEL<small>Maneuvering</small></span><span>Gear down, Flaps 15, speedbrake armed; fly the pattern with heading select</span></li>
+          <li class="rv h" data-step="4" data-comp="WLM*,PRO"><span class="k">4</span><span class="w">Before base turn<small>Configure</small></span><span>Landing flaps, decelerate to approach speed plus wind additive, Landing checklist</span></li>
+          <li class="rv h" data-step="5" data-comp="FPM*,FPA"><span class="k">5</span><span class="w">Visual profile<small>Intercepting</small></span><span>Disengage autopilot and autothrottle, then cycle both F/D OFF, then ON</span></li>
+        </ol>
+      </div>
+      <div class="right">
+        <div class="donts rv h" data-step="6" data-comp="FPA*,KNO">
+          <h3>Traps</h3>
+          <ul>
+            <li><b>APP</b> does not level off at the MCP altitude, and leaving it needs a go-around or A/P and F/D off</li>
+            <li><b>VNAV ALT</b> with a higher missed approach altitude set reverts to <b>CWS P</b></li>
+            <li>Do not reset the MCP or FMC on the visual profile: look outside</li>
+          </ul>
+        </div>
+        <div class="fma rv h" data-step="7" data-comp="FPA*,SAW">Check the FMA after every change: the mode you selected is the mode you get.</div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>All steps come from FCTM Circling Approach – General (p. 5.70) and the figure on p. 5.69 (configuration at MDA(H): gear down, Flaps 15, speedbrake armed; MCP altitude / MDA(H): select ALT HLD as needed, set missed approach altitude, select HDG SEL; intercepting landing profile: disengage autopilot and autothrottle).</p>
+        <p>The F/D cycle (OFF then ON) removes unwanted commands for both pilots and gives F/D guidance if a go-around is flown. Note in the FCTM: if go-around is selected with an F/D switch OFF, that pitch command bar disappears when the first pitch mode engages.</p>
+        <p>Ask the pilot to name the FMA indication expected at each step. Exact FMA labels depend on installed equipment (VERIFY with FCOM).</p>
+      </div>
+    </section>
+
+    <!-- 9 SIMULATOR: PATTERNS -->
+    <section class="slide s9" data-stage="4" data-comp="FPM*,SAW,WLM,PRO">
+      <p class="eyebrow">Stage 4 · Track patterns</p>
+      <h1>Three common patterns</h1>
+      <div class="pats">
+        <div class="panel pat rv h" data-step="1" data-comp="SAW*,WLM,PRO">
+          <svg viewBox="0 0 330 200" role="img" aria-label="Downwind, base and final pattern">
+            <defs><marker id="mkP" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mka"/></marker></defs>
+            <rect class="pr" x="50" y="40" width="100" height="12" rx="2"/><text class="prl" x="100" y="50" text-anchor="middle">RWY</text>
+            <path class="trk" marker-end="url(#mkP)" d="M10,100 H215 Q245,100 245,73 Q245,46 215,46 H160"/>
+            <text class="pl" x="14" y="124">approach course</text><text class="pl" x="256" y="76">base</text><text class="pl" x="185" y="30">final</text>
+          </svg>
+          <h3>Downwind, base, final</h3>
+          <div class="pc pro"><p><b>+</b> Time to configure and brief</p></div>
+          <div class="pc con"><p><b>−</b> Widest track: watch the area edge</p></div>
+        </div>
+        <div class="panel pat rv h" data-step="2" data-comp="WLM*,FPM,SAW">
+          <svg viewBox="0 0 330 200" role="img" aria-label="Direct turn onto final">
+            <rect class="pr" x="50" y="40" width="100" height="12" rx="2"/><text class="prl" x="100" y="50" text-anchor="middle">RWY</text>
+            <path class="trk" marker-end="url(#mkP)" d="M320,110 H260 C220,110 215,46 180,46 H160"/>
+            <text class="pl" x="212" y="134">approach</text><text class="pl" x="185" y="30">final</text>
+          </svg>
+          <h3>Direct turn-in</h3>
+          <div class="pc pro"><p><b>+</b> Shortest track, least exposure</p></div>
+          <div class="pc con"><p><b>−</b> Little time to configure and slow down</p></div>
+        </div>
+        <div class="panel pat rv h" data-step="3" data-comp="SAW*,FPM,WLM">
+          <svg viewBox="0 0 330 200" role="img" aria-label="Teardrop with 45 degree break-out and turn back to final">
+            <rect class="pr" x="50" y="40" width="100" height="12" rx="2"/><text class="prl" x="100" y="50" text-anchor="middle">RWY</text>
+            <path class="trk" marker-end="url(#mkP)" d="M10,100 H130 L190,160 A66.8 66.8 0 1 0 237.2,46 H160"/>
+            <text class="pl" x="14" y="124">approach course</text><text class="pl" x="20" y="170">45° break-out</text><text class="pl" x="185" y="30">final</text>
+          </svg>
+          <h3>Teardrop (45° break-out)</h3>
+          <div class="pc pro"><p><b>+</b> Builds distance and time to the runway</p></div>
+          <div class="pc con"><p><b>−</b> Runway out of view; wide turn, more to monitor</p></div>
+        </div>
+      </div>
+      <p class="pm">Choose by where the runway is relative to the approach course. All three must stay inside the area for the speed you fly. <span class="v">VERIFY WITH COMPANY TECHNIQUE</span></p>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Diagrams are schematic and not to scale. The FCTM and OM-A define the area and the gates but do not prescribe one pattern, so the pros and cons are instructor technique from general knowledge (VERIFY against company guidance). Add the standard offset and timing the company teaches if it has one.</p>
+        <p>Ask the pilot: where is the area edge for this pattern at your speed? What is your first cue to start the base turn? Tie back to slide 4: the wider the pattern, the sooner you meet the edge of the area.</p>
+        <p>Instrument scanning and keeping track of position is assessed under SAW and WLM, not FPM.</p>
+      </div>
+    </section>
+
+    <!-- 10 ERRORS AND DEBRIEF -->
+    <section class="slide s10" data-stage="4" data-comp="PRO*,SAW,WLM,FPA,PSD">
+      <div class="left">
+        <p class="eyebrow">Stage 4 · Threats, errors and deviations</p>
+        <h1>Read the error back to the competency</h1>
+        <div class="errs">
+          <div class="erow head"><span>What you see</span><span>Where it breaks</span><span>Fix</span></div>
+          <div class="erow rv h" data-step="1" data-comp="SAW*,WLM"><b>Track drifts wide of the runway</b><span>SAW: distance from threshold not monitored, speed too high</span><span class="fx">Fly the plate IAS, PM tracks position, start the base turn early</span></div>
+          <div class="erow rv h" data-step="2" data-comp="PRO*"><b>Descends below MDA(H) early</b><span>PRO: threshold not identified, gate rule not applied</span><span class="fx">Level at circling MDA(H) until in position for a normal descent</span></div>
+          <div class="erow rv h" data-step="3" data-comp="FPA*"><b>APP selected, or VNAV ALT reverts to CWS P</b><span>FPA: wrong mode for the task</span><span class="fx">VNAV or V/S, then ALT HLD and HDG SEL; check the FMA</span></div>
+          <div class="erow rv h" data-step="4" data-comp="WLM*,PRO"><b>Late configuration, unstable at 300 ft</b><span>WLM: configure not done before the base turn</span><span class="fx">Landing flaps before base; not stable at 300 ft: go around</span></div>
+          <div class="erow rv h" data-step="5" data-comp="PSD*,SAW"><b>Loses the runway and hesitates</b><span>PSD: delayed decision to go around</span><span class="fx">Go around now: climbing turn toward the runway, intercept MA course</span></div>
+        </div>
+        <p class="thr-l"><b>Threats:</b> low ceiling or visibility, night with no PAPI, short-notice runway change, terrain in the circling area, strong or gusty wind, ATC pressure.</p>
+      </div>
+      <div class="right">
+        <div class="debrief">
+          <h3>Debrief prompts</h3>
+          <ol>
+            <li class="rv h" data-step="6" data-comp="SAW*">Where were you inside the area, and how did you know?</li>
+            <li class="rv h" data-step="7" data-comp="PRO*,FPA">Which rule or mode drove your decision?</li>
+            <li class="rv h" data-step="8" data-comp="WLM*,FPM">What would you do earlier next time?</li>
+          </ol>
+        </div>
+      </div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Ask the pilot to name the competency before you show the fix. Rows 2 to 4 come from OM-A and FCTM (gate rule, APP and VNAV ALT warnings, landing flaps before the base turn). Row 5 uses the FCTM missed approach rule.</p>
+        <p>Threats list is general TEM knowledge for circling (VERIFY with the company TEM list). Link back to the FSF statistic on slide 5 when discussing why circling is higher risk.</p>
+        <p>Debrief prompts are open questions. Tie the answer to the competency grid: SAW for position awareness, PRO for rules, FPA for modes, WLM for configuration timing.</p>
+      </div>
+    </section>
+
+    <!-- 11 SUMMARY -->
+    <section class="slide s11" data-stage="0" data-comp="PRO*,FPA,SAW,WLM">
+      <p class="eyebrow">Summary</p>
+      <h1>What to take away</h1>
+      <div class="stats">
+        <div class="panel stat"><div class="num">MDA</div><div class="cap">No descent until the threshold is identified</div></div>
+        <div class="panel stat"><div class="num">F15</div><div class="cap">Gear down, Flaps 15 for circling</div></div>
+        <div class="panel stat"><div class="num">500 ft</div><div class="cap">Configured for landing, AAL</div></div>
+        <div class="panel stat"><div class="num">300 ft</div><div class="cap">Stable and complete, or go around</div></div>
+      </div>
+      <p class="why rv h" data-step="1">The area grows with speed, so fly the plate speed, slow down early and stay inside it.</p>
+      <div class="remember rv h" data-step="2">Keep the runway in sight. Stay in the area. Configured by 500, stable by 300, or go around.</div>
+      <div class="notes">
+        <h4>Instructor notes</h4>
+        <p>Close with the one sentence to remember, then move to the simulator. Items tagged VERIFY in earlier slides still need checking against the current manuals.</p>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="count" id="count"></div>
+      <div class="credit">© Capt. Supakit Punyangam · Do not copy or distribute without permission</div>
+      <div class="corner">
+        <svg class="wheel" id="wheel" viewBox="0 0 200 200" role="img" aria-label="Competency pyramid with communication and leadership arrows, assessed ones highlighted"></svg>
+        <div class="cgrid" id="cgrid" aria-label="Nine competencies grid, assessed ones highlighted"></div>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<div id="controls" role="toolbar" aria-label="Presentation controls">
+  <button type="button" data-act="prev" aria-label="Previous">← Prev</button>
+  <button type="button" data-act="next" aria-label="Next">Next →</button>
+  <button type="button" data-act="all" aria-pressed="false" title="Reveal everything on this slide (A)">Reveal all</button>
+  <button type="button" data-act="notes" aria-pressed="false" title="Instructor notes (N)">Notes</button>
+  <button type="button" data-act="theme" title="Light or dark (T)">Theme</button>
+  <button type="button" data-act="full" id="fullBtn" title="Fullscreen (F)">Fullscreen</button>
+</div>
+<aside id="notes" hidden aria-label="Instructor notes"></aside>
+
+<script>
+(function () {
+  var COMPS = [
+    ['KNO', 'Application of Knowledge'], ['FPM', 'Aeroplane Flight Path Management, Manual Control'], ['FPA', 'Aeroplane Flight Path Management, Automation'],
+    ['PRO', 'Application of Procedures and Compliance with Regulations'], ['WLM', 'Workload Management'], ['SAW', 'Situation Awareness and Management of Information'],
+    ['PSD', 'Problem Solving and Decision Making'], ['COM', 'Communication'], ['LTW', 'Leadership and Teamwork']
+  ];
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+
+  var stage = $('#stage'), vp = $('#viewport');
+  var slides = $$('.slide');
+  var si = 0, st = 0, all = false;
+  var AREA_SLIDE = 3;
+
+  function fit() {
+    var s = Math.min(vp.clientWidth / 1920, vp.clientHeight / 1080);
+    stage.style.setProperty('--s', s > 0 ? s : 1);
+  }
+  function buildGrid(el) {
+    el.innerHTML = COMPS.map(function (c) {
+      return '<div class="cell" data-c="' + c[0] + '" title="' + c[1] + '"><span class="c">' + c[0] + '</span><span class="n">' + c[1] + '</span></div>';
+    }).join('');
+  }
+  function paintGrid(el, spec) {
+    var m = {};
+    (spec || '').split(',').forEach(function (x) {
+      if (!x) return;
+      m[x.replace('*', '')] = x.indexOf('*') > -1 ? 'p' : 's';
+    });
+    $$('.cell, .seg', el).forEach(function (c) {
+      c.classList.remove('p', 's');
+      var k = m[c.dataset.c];
+      if (k) c.classList.add(k);
+    });
+  }
+  function buildWheel(el) {
+    var out = '', order = ['PSD', 'SAW', 'WLM', 'PRO', 'FPA', 'FPM', 'KNO'];
+    var names = {}; COMPS.forEach(function (c) { names[c[0]] = c[1]; });
+    var top = 38, bot = 150, h = (bot - top) / order.length;
+    function wAt(y) { return 46 + 74 * (y - top) / (bot - top); }
+    order.forEach(function (code, i) {
+      var y0 = top + i * h, y1 = y0 + h, w0 = wAt(y0) / 2, w1 = wAt(y1) / 2;
+      var pts = [(100 - w0), y0, (100 + w0), y0, (100 + w1), y1, (100 - w1), y1].map(function (n) { return n.toFixed(1); });
+      var poly = pts[0] + ',' + pts[1] + ' ' + pts[2] + ',' + pts[3] + ' ' + pts[4] + ',' + pts[5] + ' ' + pts[6] + ',' + pts[7];
+      out += '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title><polygon class="sh" points="' + poly + '"/><text x="100" y="' + ((y0 + y1) / 2 + 4.2).toFixed(1) + '">' + code + '</text></g>';
+    });
+    var R = 92, C = 100;
+    function pt(d) { var a = d * Math.PI / 180; return [C + R * Math.sin(a), C - R * Math.cos(a)]; }
+    function arrow(code, d0, d1, ty) {
+      var a = pt(d0), b = pt(d1), r = d1 * Math.PI / 180;
+      var tx = Math.cos(r), tyv = Math.sin(r), nx = -tyv, ny = tx;
+      var tip = [b[0] + tx * 18, b[1] + tyv * 18], l = [b[0] + nx * 13, b[1] + ny * 13], rr = [b[0] - nx * 13, b[1] - ny * 13];
+      return '<g class="seg" data-c="' + code + '"><title>' + names[code] + '</title>' +
+        '<path class="ar" d="M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + '"/>' +
+        '<polygon class="ah" points="' + tip[0].toFixed(1) + ',' + tip[1].toFixed(1) + ' ' + l[0].toFixed(1) + ',' + l[1].toFixed(1) + ' ' + rr[0].toFixed(1) + ',' + rr[1].toFixed(1) + '"/>' +
+        '<text class="at" x="100" y="' + ty + '">' + code + '</text></g>';
+    }
+    out += arrow('COM', -60, 56, 12.6);
+    out += arrow('LTW', 120, 236, 196.4);
+    el.innerHTML = out;
+  }
+  function maxStep(sl) {
+    var m = 0;
+    $$('[data-step]', sl).forEach(function (e) { m = Math.max(m, +e.dataset.step); });
+    return m;
+  }
+
+  var cgrid = $('#cgrid'), bigGrid = $('#bigGrid'), notes = $('#notes');
+  var wheel = $('#wheel');
+  buildGrid(cgrid); buildGrid(bigGrid); buildWheel(wheel);
+
+  function render() {
+    var sl = slides[si], max = maxStep(sl), eff = all ? max : st;
+    slides.forEach(function (s, i) { s.classList.toggle('on', i === si); });
+    $$('[data-step]', sl).forEach(function (e) {
+      var n = +e.dataset.step;
+      e.classList.toggle('on', n <= eff);
+      e.classList.toggle('cur', eff > 0 && n === eff);
+    });
+    var spec = sl.dataset.comp;
+    if (eff > 0) {
+      var cur = $$('[data-step]', sl).filter(function (e) { return +e.dataset.step === eff && e.dataset.comp; })[0];
+      if (cur) spec = cur.dataset.comp;
+    }
+    paintGrid(cgrid, spec);
+    paintGrid(wheel, spec);
+    if (si === 1) paintGrid(bigGrid, sl.dataset.comp);
+    $$('.stages li').forEach(function (li) { li.classList.toggle('on', li.dataset.s === sl.dataset.stage); });
+    var n = si + 1;
+    $('#count').innerHTML = '<b>' + (n < 10 ? '0' + n : n) + '</b> / ' + (slides.length < 10 ? '0' + slides.length : slides.length) + (max > 0 ? '  ·  ' + eff + '/' + max : '');
+    var nt = $('.notes', sl);
+    notes.innerHTML = nt ? nt.innerHTML : '';
+    $('[data-act="all"]').setAttribute('aria-pressed', String(all));
+  }
+  function next() {
+    var max = maxStep(slides[si]);
+    if (!all && st < max) { st++; }
+    else if (si < slides.length - 1) { si++; st = 0; }
+    render();
+  }
+  function prev() {
+    if (!all && st > 0) { st--; }
+    else if (si > 0) { si--; st = maxStep(slides[si]); }
+    render();
+  }
+
+  /* slide 4: protected area diagram */
+  var AREAS = [
+    { src: 'FAA Cat C', kt: 140, r: 1.7 },
+    { src: 'FAA Cat D', kt: 165, r: 2.3 },
+    { src: 'ICAO Cat C', kt: 180, r: 4.2 },
+    { src: 'ICAO Cat D', kt: 205, r: 5.28 }
+  ];
+  var PX = 50, TL = 340, TR = 420, CY = 280;
+  function drawArea(i) {
+    var a = AREAS[i], r = a.r * PX;
+    $('#areaPath').setAttribute('d', 'M' + TL + ' ' + (CY - r) + ' H' + TR + ' A' + r + ' ' + r + ' 0 0 1 ' + TR + ' ' + (CY + r) + ' H' + TL + ' A' + r + ' ' + r + ' 0 0 1 ' + TL + ' ' + (CY - r) + ' Z');
+    var k = r * Math.SQRT1_2;
+    var rl = $('#rLine');
+    rl.setAttribute('x2', (TR + k).toFixed(1)); rl.setAttribute('y2', (CY - k).toFixed(1));
+    var tr = $('#tR');
+    tr.setAttribute('x', (TR + k * 0.5 + 16).toFixed(1)); tr.setAttribute('y', (CY - k * 0.5 + 40).toFixed(1));
+    tr.textContent = 'r = ' + a.r.toFixed(2).replace(/0$/, '') + ' nm';
+    $('#tIas').textContent = a.kt + ' kt';
+    $('#tSrc').textContent = a.src;
+    $('#rOut').textContent = a.r.toFixed(2).replace(/0$/, '');
+    $('#iasOut').textContent = a.kt + ' kt';
+    $('#barNow').style.width = (a.r / 5.28 * 100).toFixed(1) + '%';
+    $('#barVal').textContent = a.r.toFixed(2);
+    $$('#areaSvg ~ .pre button, .s4 .pre button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.i === i)); });
+  }
+  $$('.s4 .pre button').forEach(function (b) {
+    b.addEventListener('click', function () { drawArea(+b.dataset.i); b.blur(); });
+  });
+
+  /* controls */
+  function effTheme() {
+    var t = document.documentElement.getAttribute('data-theme');
+    if (t) return t;
+    return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  function toggleTheme() {
+    var nt = effTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', nt);
+    try { localStorage.setItem('circlingTheme', nt); } catch (e) {}
+  }
+  function toggleNotes() {
+    notes.hidden = !notes.hidden;
+    $('[data-act="notes"]').setAttribute('aria-pressed', String(!notes.hidden));
+  }
+  function toggleFull() {
+    try {
+      if (document.fullscreenElement) { document.exitFullscreen(); }
+      else if (document.documentElement.requestFullscreen) {
+        var p = document.documentElement.requestFullscreen();
+        if (p && p.catch) p.catch(function () {});
+      }
+    } catch (e) {}
+  }
+  if (!document.fullscreenEnabled) $('#fullBtn').hidden = true;
+
+  $('#controls').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var a = b.dataset.act;
+    if (a === 'next') next();
+    else if (a === 'prev') prev();
+    else if (a === 'all') { all = !all; render(); }
+    else if (a === 'notes') toggleNotes();
+    else if (a === 'theme') toggleTheme();
+    else if (a === 'full') toggleFull();
+    b.blur();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var tg = e.target, tag = tg && tg.tagName;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (tag === 'INPUT') return;
+    if (tag === 'BUTTON' && (e.key === 'Enter' || e.key === ' ')) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { e.preventDefault(); next(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); }
+    else if (k === 'Home') { e.preventDefault(); si = 0; st = 0; render(); }
+    else if (k === 'End') { e.preventDefault(); si = slides.length - 1; st = 0; render(); }
+    else if (si === AREA_SLIDE && k >= '1' && k <= '4') { drawArea(+k - 1); }
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 't' || k === 'T') toggleTheme();
+    else if (k === 'a' || k === 'A') { all = !all; render(); }
+  });
+
+  var tx0 = null;
+  document.addEventListener('touchstart', function (e) { tx0 = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (tx0 === null) return;
+    var dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+    if (Math.abs(dx) > 60 && !e.target.closest('input,button,#notes')) { if (dx < 0) next(); else prev(); }
+  }, { passive: true });
+
+  var idleT;
+  function wake() {
+    document.body.classList.remove('idle');
+    clearTimeout(idleT);
+    idleT = setTimeout(function () { document.body.classList.add('idle'); }, 3000);
+  }
+  ['pointermove', 'pointerdown'].forEach(function (ev) { document.addEventListener(ev, wake); });
+
+  try {
+    var saved = localStorage.getItem('circlingTheme');
+    if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+
+  window.addEventListener('resize', fit);
+  fit(); drawArea(2); render(); wake();
+})();
+</script>
+</body>
+</html>
