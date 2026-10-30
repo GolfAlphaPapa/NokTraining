@@ -349,7 +349,7 @@ body.idle #controls { opacity:0; pointer-events:none; }
           <text id="tWMsg" class="msg" x="640" y="330" style="font-size:22px">WHEEL APPROX LEVEL</text>
           <text class="dgl" x="640" y="378" style="font-size:20px">RUDDER PEDALS</text>
           <g id="tPedHost"></g>
-          <text id="tPMsg" class="msg" x="640" y="530" style="font-size:22px">LEFT RUDDER</text>
+          <text id="tPMsg" class="msg" x="640" y="544" style="font-size:22px">LEFT RUDDER</text>
         </svg>
         <div class="rud-ctl">
           <label for="rs">RUDDER</label>
@@ -396,7 +396,7 @@ body.idle #controls { opacity:0; pointer-events:none; }
       <div class="left">
         <p class="eyebrow">Stage 3 · Profile, controls, engine instruments</p>
         <h1>Rudder input follows thrust</h1>
-        <div class="rv h" data-step="1" data-comp="FPM*,KNO" style="margin-top:12px">
+        <div data-comp="FPM*,KNO" style="margin-top:12px">
           <p class="pt"><i>1</i> Flight profile <em>Not to scale</em></p>
           <div class="panel">
             <svg id="profSvg" viewBox="0 0 1060 324" role="img" aria-label="Side view profile: level flight with one thrust lever retarded, descent for final approach, then go-around, left to right">
@@ -452,7 +452,7 @@ body.idle #controls { opacity:0; pointer-events:none; }
             <button type="button" data-seek="25">Go-around</button>
           </div>
         </div>
-        <div class="panel cap rv h" data-step="4" data-comp="FPM*,SAW,KNO">
+        <div class="panel cap" data-comp="FPM*,SAW,KNO">
           <div class="ct" id="capT">1 · Level</div>
           <div class="cg">
             <div><b>1 PROFILE</b><span id="capP"></span></div>
@@ -462,32 +462,51 @@ body.idle #controls { opacity:0; pointer-events:none; }
         </div>
       </div>
       <div class="right">
-        <div class="rv h" data-step="2" data-comp="FPM*,KNO" style="margin-top:2px">
+        <div data-comp="FPM*,KNO" style="margin-top:2px">
           <p class="pt"><i>2</i> Flight controls <em>Illustrative</em></p>
           <div class="panel">
-            <svg id="ctlSvg" viewBox="0 0 600 284" role="img" aria-label="Control wheel and rudder pedals">
-              <text class="dgl" x="130" y="18">CONTROL WHEEL</text>
+            <svg id="ctlSvg" viewBox="0 0 600 284" role="img" aria-label="Control wheel, rudder pedals, attitude indicator with roll pointer and slip/skid bar">
+              <defs><clipPath id="attClip"><rect x="425" y="30" width="150" height="150" rx="14"/></clipPath></defs>
+              <text class="dgl" x="80" y="18">CONTROL WHEEL</text>
               <g id="aWheelHost"></g>
-              <text id="wMsg" class="msg" x="130" y="252">WHEEL APPROX LEVEL</text>
-              <text class="dgl" x="440" y="18">RUDDER PEDALS</text>
-              <rect class="dg" x="350" y="28" width="180" height="34" rx="4"/>
-              <text class="dgl" x="388" y="50">HDG</text><text id="hdgT" class="dgt xs" x="473" y="51">HOLDS</text>
+              <text id="wMsg" class="msg" x="80" y="232" style="font-size:14px">WHEEL APPROX LEVEL</text>
+              <text class="dgl" x="295" y="18">RUDDER PEDALS</text>
+              <rect class="dg" x="220" y="28" width="150" height="30" rx="4"/>
+              <text class="dgl" x="240" y="48">HDG</text><text id="hdgT" class="dgt xs" x="318" y="49" style="font-size:14px">HOLDS</text>
               <g id="aPedHost"></g>
-              <rect class="pbar" id="lpB" x="393" y="200" width="0" height="9" rx="3"/>
-              <rect class="pbar" id="rpB" x="487" y="200" width="0" height="9" rx="3"/>
-              <text class="dgl" x="393" y="228">LEFT</text><text class="dgl" x="487" y="228">RIGHT</text>
-              <text id="aAct" class="msg" x="440" y="262">NO ASYMMETRY</text>
+              <rect class="pbar" id="lpB" x="258" y="205" width="0" height="9" rx="3"/>
+              <rect class="pbar" id="rpB" x="332" y="205" width="0" height="9" rx="3"/>
+              <text class="dgl" x="258" y="232">LEFT</text><text class="dgl" x="332" y="232">RIGHT</text>
+              <text id="aAct" class="msg" x="295" y="262" style="font-size:14px">NO ASYMMETRY</text>
+              <text class="dgl" x="500" y="18">BANK · SLIP/SKID</text>
+              <g clip-path="url(#attClip)">
+                <g id="attSky" transform="rotate(0 500 105)">
+                  <rect x="340" y="-120" width="320" height="225" fill="#1F63D8"/><rect x="340" y="105" width="320" height="225" fill="#4A3414"/>
+                  <line x1="340" y1="105" x2="660" y2="105" stroke="#FFFFFF" stroke-width="2"/>
+                  <g stroke="#FFFFFF" stroke-width="2"><line x1="480" y1="85" x2="520" y2="85"/><line x1="470" y1="65" x2="530" y2="65"/><line x1="480" y1="125" x2="520" y2="125"/><line x1="470" y1="145" x2="530" y2="145"/></g>
+                </g>
+              </g>
+              <rect x="425" y="30" width="150" height="150" rx="14" fill="none" stroke="var(--line)" stroke-width="3"/>
+              <polygon points="500,32 491,18 509,18" fill="var(--fg)" style="display:none"/>
+              <polygon points="500,33 492,45 508,45" fill="#FFFFFF"/>
+              <path d="M455,106 h28 v10 M545,106 h-28 v10" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linejoin="miter"/><rect x="497" y="103" width="6" height="6" fill="#FFFFFF"/>
+              <g stroke="#FFFFFF" stroke-width="2"><line x1="447.7" y1="52.7" x2="456.2" y2="61.2"/><line x1="463.0" y1="40.9" x2="469.0" y2="51.3"/><line x1="474.7" y1="35.5" x2="477.4" y2="43.0"/><line x1="487.2" y1="32.1" x2="488.5" y2="40.0"/><line x1="512.8" y1="32.1" x2="511.5" y2="40.0"/><line x1="525.3" y1="35.5" x2="522.6" y2="43.0"/><line x1="537.0" y1="40.9" x2="531.0" y2="51.3"/><line x1="552.3" y1="52.7" x2="543.8" y2="61.2"/></g>
+              <g id="attPtr" transform="rotate(0 500 105)">
+                <polygon points="500,40 491,57 509,57" fill="#2F8CFF" stroke="#FFFFFF" stroke-width="1.5"/>
+                <g id="slipB"><polygon points="488,60 512,60 516,68 484,68" fill="#7FC0FF" stroke="#FFFFFF" stroke-width="1.5"/></g>
+              </g>
+              <text id="aSlip" class="msg" x="500" y="204" style="font-size:13px">BANK 0° · BALL CENTER</text>
             </svg>
           </div>
         </div>
-        <div class="rv h" data-step="3" data-comp="SAW*,KNO" style="margin-top:8px">
+        <div data-comp="SAW*,KNO" style="margin-top:8px">
           <p class="pt"><i>3</i> Engine instruments <em>Upper display unit</em></p>
           <div class="panel"><svg id="instSvg" viewBox="0 0 600 340" role="img" aria-label="N1 and EGT dials, N2 and fuel flow for engine 1 and engine 2"></svg></div>
         </div>
       </div>
       <div class="notes">
         <h4>Instructor notes</h4>
-        <p><b>Build order:</b> step 1 flight profile, step 2 flight controls, step 3 engine instruments, step 4 starts the animation and shows the caption. P plays or pauses. The phase buttons jump to the start of each phase. "Late rudder" delays the rudder input so the wheel moves, which is the wrong way to fly it.</p>
+        <p><b>Layout:</b> everything is visible from the start and the animation plays on arrival, in your order: 1 flight profile (with the top view), 2 flight controls (wheel, pedals, bank pointer and slip/skid bar), 3 engine instruments with the thrust lever positions (ENG 1 follows N1, ENG 2 at idle; the lever positions are illustrative, and the autothrottle is off per FCTM 7.4, CONFIRMED). P plays or pauses. Bank and ball are illustrative: with correct rudder the airplane holds heading with a small bank toward the operating engine and the slip/skid bar under the roll pointer slightly toward it (FCTM 7.3, CONFIRMED); the values are not performance data. The phase buttons jump to the start of each phase. "Late rudder" delays the rudder input so the wheel moves, which is the wrong way to fly it.</p>
         <p><b>What the controls show.</b> The pedals are the rudder INPUT. The wheel only moves when the rudder input does not match the thrust. Rudder trim is covered on the next slide.</p>
         <p><b>Level.</b> Both engines at the same thrust, no rudder. Then one thrust lever (right) is retarded to idle while the other engine holds airspeed. Rudder goes in at the same rate that thrust changes and the wheel stays approximately level. CONFIRMED, FCTM 7.2 table ("When in trim, retard one thrust lever to idle") and 7.3.</p>
         <p><b>Descent.</b> Thrust on the operating engine comes back, so the rudder input is eased off at the same rate. Pedal pressure first, then trim, to stay in trim on approaches. CONFIRMED, FCTM 5.31.</p>
@@ -838,9 +857,9 @@ body.idle #controls { opacity:0; pointer-events:none; }
     l.firstChild.classList.toggle('act', lp > 0.08); r.firstChild.classList.toggle('act', rp > 0.08);
   }
   $('#tWheelHost').innerHTML = wheelSVG('t', 640, 170, 1.15);
-  $('#tPedHost').innerHTML = pedalsSVG('t', 640, 440, 1.3);
-  $('#aWheelHost').innerHTML = wheelSVG('a', 130, 128, 0.8);
-  $('#aPedHost').innerHTML = pedalsSVG('a', 440, 150, 1);
+  $('#tPedHost').innerHTML = pedalsSVG('t', 640, 462, 1.3);
+  $('#aWheelHost').innerHTML = wheelSVG('a', 80, 125, 0.62);
+  $('#aPedHost').innerHTML = pedalsSVG('a', 295, 145, 0.8);
   $('#rWheelHost').innerHTML = wheelSVG('r', 545, 285, 0.62);
   $('#rPedHost').innerHTML = pedalsSVG('r', 790, 300, 0.85);
 
@@ -943,7 +962,12 @@ body.idle #controls { opacity:0; pointer-events:none; }
     s += dial('egta', 150, 226, 48, 1000, 200, 930, 'EGT', false) + dial('egtb', 450, 226, 48, 1000, 200, 930, 'EGT', false);
     function box(x, y, lab, id) { return '<rect class="dg" x="' + x + '" y="' + y + '" width="130" height="32" rx="4"/><text class="dgl" x="' + (x + 28) + '" y="' + (y + 21) + '">' + lab + '</text><text id="' + id + '" class="dgt s" x="' + (x + 92) + '" y="' + (y + 23) + '">---</text>'; }
     s += box(15, 284, 'N2', 'n2a') + box(155, 284, 'FF', 'ffa') + box(315, 284, 'N2', 'n2b') + box(455, 284, 'FF', 'ffb');
-    s += '<text class="dgl" x="300" y="335">ILLUSTRATIVE VALUES · SCALED FROM N1</text>';
+    s += '<text class="dgl" x="300" y="335">A/T OFF · ILLUSTRATIVE VALUES · SCALED FROM N1</text>';
+    s += '<text class="dgl" x="300" y="47" style="font-size:13px">THRUST LEVERS</text><text class="dgl" x="278" y="63">1</text><text class="dgl" x="322" y="63">2</text>';
+    [278, 322].forEach(function (x, i) {
+      s += '<rect x="' + (x - 5) + '" y="69" width="10" height="215" rx="5" fill="var(--bg)" stroke="var(--line)" stroke-width="2"/>';
+      s += '<g id="lev' + (i ? 'b' : 'a') + '" transform="translate(' + x + ' 240)"><rect x="-15" y="0" width="30" height="40" rx="6" fill="' + (i ? 'var(--muted)' : 'var(--accent)') + '" stroke="var(--bg)" stroke-width="2"/><line x1="-9" y1="12" x2="9" y2="12" stroke="var(--bg)" stroke-width="2.5"/><line x1="-9" y1="20" x2="9" y2="20" stroke="var(--bg)" stroke-width="2.5"/><line x1="-9" y1="28" x2="9" y2="28" stroke="var(--bg)" stroke-width="2.5"/></g>';
+    });
     $('#instSvg').innerHTML = s;
   })();
   function setDial(id, v) { var d = DIALS[id], a = -120 + 240 * clamp(v / d.max, 0, 1); $('#' + id + 'P').setAttribute('transform', 'rotate(' + a.toFixed(1) + ' ' + d.cx + ' ' + d.cy + ')'); }
@@ -985,10 +1009,19 @@ body.idle #controls { opacity:0; pointer-events:none; }
     if (Math.abs(err) < 0.7) { ac.textContent = req < 0.4 ? 'NO ASYMMETRY' : 'RUDDER MATCHES THRUST'; ac.setAttribute('class', 'msg ok'); }
     else if (err > 0) { ac.textContent = 'ADD LEFT RUDDER'; ac.setAttribute('class', 'msg bad'); }
     else { ac.textContent = 'EASE OFF RUDDER'; ac.setAttribute('class', 'msg bad'); }
-    var lb = clamp(inp / 14, 0, 1) * 72;
-    $('#lpB').setAttribute('width', lb.toFixed(1)); $('#lpB').setAttribute('x', (393 - lb / 2).toFixed(1));
+    var lb = clamp(inp / 14, 0, 1) * 50;
+    $('#lpB').setAttribute('width', lb.toFixed(1)); $('#lpB').setAttribute('x', (258 - lb / 2).toFixed(1));
+    var kk = Math.min(1, req / 4), bank = -2 * kk + clamp(err * 1.5, -8, 8), ball = clamp(wd / 50, -1, 1);
+    $('#attSky').setAttribute('transform', 'rotate(' + (-bank).toFixed(1) + ' 500 105)');
+    $('#attPtr').setAttribute('transform', 'rotate(' + (-bank).toFixed(1) + ' 500 105)');
+    $('#slipB').setAttribute('transform', 'translate(' + (ball * 14).toFixed(1) + ' 0)');
+    var bt = Math.abs(bank) < 0.5 ? 'BANK 0°' : 'BANK ' + (bank < 0 ? 'L ' : 'R ') + Math.abs(bank).toFixed(0) + '°';
+    var ballt = Math.abs(ball) < 0.1 ? 'SLIP CENTER' : 'SLIP BAR ' + (ball < 0 ? 'LEFT' : 'RIGHT');
+    $('#aSlip').textContent = bt + ' · ' + ballt;
     $('#rpB').setAttribute('width', '0');
     eng('a', nL); eng('b', nR);
+    $('#leva').setAttribute('transform', 'translate(278 ' + (240 - 168 * T(nL)).toFixed(1) + ')');
+    $('#levb').setAttribute('transform', 'translate(322 ' + (240 - 168 * T(nR)).toFixed(1) + ')');
     var ph = phaseAt(t);
     if (ph !== lastPh) {
       lastPh = ph;
@@ -1122,7 +1155,7 @@ body.idle #controls { opacity:0; pointer-events:none; }
     $('#count').innerHTML = '<b>' + (n < 10 ? '0' + n : n) + '</b> / ' + (slides.length < 10 ? '0' + slides.length : slides.length) + (max > 0 ? '  ·  ' + eff + '/' + max : '');
     var nt = $('.notes', sl); notes.innerHTML = nt ? nt.innerHTML : '';
     $('[data-act="all"]').setAttribute('aria-pressed', String(all));
-    if (si === ANIM && eff >= 4) { if (!startedA) { startedA = true; seekA(0); if (!reduce) A.setPlaying(true); } }
+    if (si === ANIM) { if (!startedA) { startedA = true; seekA(0); if (!reduce) A.setPlaying(true); } }
     else { if (A.playing) A.setPlaying(false); if (startedA) { startedA = false; seekA(0); } }
     if (si === TRIM) loopStart(); else loopStop();
     if (si === TRIM && eff >= 1) { if (!startedB) { startedB = true; B.seek(0); if (!reduce) B.setPlaying(true); } }
